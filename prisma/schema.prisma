@@ -1,0 +1,200 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  SUPER_ADMIN
+  CLUB_OWNER
+  MANAGER
+  COACH
+  PARENT
+  ATHLETE
+}
+
+enum Status {
+  ACTIVE
+  INACTIVE
+  PAUSED
+}
+
+enum SubscriptionStatus {
+  PAID
+  PENDING
+  EXPIRED
+  CANCELLED
+}
+
+enum AttendanceStatus {
+  PRESENT
+  ABSENT
+  LATE
+  EXCUSED
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String
+  role      Role     @default(ATHLETE)
+  phone     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  clubId    String?
+  club      Club?    @relation("ClubUsers", fields: [clubId], references: [id])
+  
+  athlete   Athlete?
+  parent    Parent?
+  ownedClub Club?    @relation("ClubOwner")
+}
+
+model Club {
+  id        String   @id @default(cuid())
+  name      String
+  logo      String?
+  status    Status   @default(ACTIVE)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  ownerId   String   @unique
+  owner     User     @relation("ClubOwner", fields: [ownerId], references: [id])
+  
+  users     User[]   @relation("ClubUsers")
+  athletes  Athlete[]
+  parents   Parent[]
+  groups    Group[]
+  exams     Exam[]
+}
+
+model Athlete {
+  id        String   @id @default(cuid())
+  firstName String
+  lastName  String
+  dob       DateTime
+  gender    String
+  phone     String?
+  qrCode    String   @unique
+  status    Status   @default(ACTIVE)
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  clubId    String
+  club      Club     @relation(fields: [clubId], references: [id])
+
+  userId    String?  @unique
+  user      User?    @relation(fields: [userId], references: [id])
+
+  parentId  String?
+  parent    Parent?  @relation(fields: [parentId], references: [id])
+
+  beltId    String?
+  belt      Belt?    @relation(fields: [beltId], references: [id])
+
+  groups        AthleteGroup[]
+  attendances   Attendance[]
+  subscriptions Subscription[]
+  examResults   ExamResult[]
+}
+
+model Parent {
+  id        String   @id @default(cuid())
+  userId    String   @unique
+  user      User     @relation(fields: [userId], references: [id])
+  clubId    String
+  club      Club     @relation(fields: [clubId], references: [id])
+  athletes  Athlete[]
+}
+
+model Belt {
+  id        String   @id @default(cuid())
+  name      String
+  color     String
+  order     Int
+  athletes  Athlete[]
+  exams     Exam[]
+}
+
+model Group {
+  id        String   @id @default(cuid())
+  name      String
+  clubId    String
+  club      Club     @relation(fields: [clubId], references: [id])
+  coachId   String
+  athletes  AthleteGroup[]
+  sessions  Session[]
+}
+
+model AthleteGroup {
+  athleteId String
+  groupId   String
+  athlete   Athlete @relation(fields: [athleteId], references: [id])
+  group     Group   @relation(fields: [groupId], references: [id])
+  @@id([athleteId, groupId])
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  date      DateTime
+  groupId   String
+  group     Group    @relation(fields: [groupId], references: [id])
+  coachId   String
+  attendances Attendance[]
+}
+
+model Attendance {
+  id        String   @id @default(cuid())
+  status    AttendanceStatus
+  sessionId String
+  session   Session  @relation(fields: [sessionId], references: [id])
+  athleteId String
+  athlete   Athlete  @relation(fields: [athleteId], references: [id])
+}
+
+model Subscription {
+  id        String   @id @default(cuid())
+  plan      String
+  amount    Float
+  startDate DateTime
+  endDate   DateTime
+  status    SubscriptionStatus
+  athleteId String
+  athlete   Athlete  @relation(fields: [athleteId], references: [id])
+  payments  Payment[]
+}
+
+model Payment {
+  id             String   @id @default(cuid())
+  amount         Float
+  date           DateTime @default(now())
+  method         String
+  notes          String?
+  subscriptionId String
+  subscription   Subscription @relation(fields: [subscriptionId], references: [id])
+}
+
+model Exam {
+  id        String   @id @default(cuid())
+  date      DateTime
+  clubId    String
+  club      Club     @relation(fields: [clubId], references: [id])
+  beltId    String
+  belt      Belt     @relation(fields: [beltId], references: [id])
+  results   ExamResult[]
+}
+
+model ExamResult {
+  id        String   @id @default(cuid())
+  status    String   
+  notes     String?
+  examId    String
+  exam      Exam     @relation(fields: [examId], references: [id])
+  athleteId String
+  athlete   Athlete  @relation(fields: [athleteId], references: [id])
+}
