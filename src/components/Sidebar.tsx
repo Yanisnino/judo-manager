@@ -12,13 +12,16 @@ export default function Sidebar() {
     { name: "الحضور", href: "/dashboard/attendance", icon: "✅" },
     { name: "الاشتراكات", href: "/dashboard/subscriptions", icon: "💰" },
     { name: "الأحزمة", href: "/dashboard/belts", icon: "🟨" },
+    { name: "النسخ الاحتياطي (Sheets)", href: "/dashboard/backup", icon: "🔄" },
     { name: "الإعدادات", href: "/dashboard/settings", icon: "⚙️" },
   ];
 
   return (
-    <aside className="w-64 bg-white shadow-xl hidden md:flex flex-col">
+    <aside className="w-64 bg-white shadow-xl hidden md:flex flex-col border-l border-gray-100">
       <div className="p-6 border-b border-gray-100 flex items-center justify-center">
-        <h2 className="text-2xl font-black text-blue-900">JudoManager</h2>
+        <h2 className="text-2xl font-black text-blue-900 flex items-center gap-2">
+          <span>🥋</span> JudoManager
+        </h2>
       </div>
       <nav className="flex-1 p-4 space-y-2">
         {menuItems.map((item) => {
@@ -27,23 +30,26 @@ export default function Sidebar() {
             <Link
               key={item.name}
               href={item.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+              className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                 isActive
-                  ? "bg-blue-600 text-white shadow-md"
-                  : "text-gray-600 hover:bg-blue-50 hover:text-blue-600"
+                  ? "bg-blue-600 text-white shadow-md shadow-blue-600/20 font-bold"
+                  : "text-gray-600 hover:bg-blue-50 hover:text-blue-600 font-semibold"
               }`}
             >
               <span className="text-xl">{item.icon}</span>
-              <span className="font-semibold">{item.name}</span>
+              <span className="text-sm">{item.name}</span>
             </Link>
           );
         })}
       </nav>
       <div className="p-4 border-t border-gray-100">
-        <button className="w-full flex items-center gap-3 px-4 py-3 text-red-600 hover:bg-red-50 rounded-lg transition-all font-semibold">
+        <Link
+          href="/"
+          className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-all font-bold text-xs"
+        >
           <span>🚪</span>
           تسجيل الخروج
-        </button>
+        </Link>
       </div>
     </aside>
   );
