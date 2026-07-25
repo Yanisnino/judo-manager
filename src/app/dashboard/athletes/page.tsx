@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import PrintableAthleteCard from "@/components/PrintableAthleteCard";
 
 interface Athlete {
   id: string;
@@ -22,7 +23,7 @@ const mockAthletes: Athlete[] = [
     name: "محمد أمين بن علي",
     code: "JUDO-2026-0001",
     belt: "حزام أصفر",
-    beltColor: "bg-yellow-400 text-gray-900",
+    beltColor: "bg-yellow-400 text-gray-900 font-bold",
     group: "أشبال (10-12 سنة)",
     age: 11,
     phone: "0555123456",
@@ -34,7 +35,7 @@ const mockAthletes: Athlete[] = [
     name: "أحمد ياسين زروقي",
     code: "JUDO-2026-0002",
     belt: "حزام برتقالي",
-    beltColor: "bg-orange-500 text-white",
+    beltColor: "bg-orange-500 text-white font-bold",
     group: "أشبال (10-12 سنة)",
     age: 12,
     phone: "0661987654",
@@ -46,7 +47,7 @@ const mockAthletes: Athlete[] = [
     name: "يوسف بلقاسم",
     code: "JUDO-2026-0003",
     belt: "حزام أخضر",
-    beltColor: "bg-emerald-600 text-white",
+    beltColor: "bg-emerald-600 text-white font-bold",
     group: "أواسط (13-16 سنة)",
     age: 15,
     phone: "0770112233",
@@ -58,22 +59,10 @@ const mockAthletes: Athlete[] = [
     name: "سارة حداد",
     code: "JUDO-2026-0004",
     belt: "حزام أبيض",
-    beltColor: "bg-gray-100 text-gray-800 border border-gray-300",
+    beltColor: "bg-gray-100 text-gray-800 border border-gray-300 font-bold",
     group: "براعم (6-9 سنوات)",
     age: 8,
     phone: "0550445566",
-    subStatus: "paid",
-    status: "active",
-  },
-  {
-    id: "ATH-005",
-    name: "عبد الرؤوف دراجي",
-    code: "JUDO-2026-0005",
-    belt: "حزام أزرق",
-    beltColor: "bg-blue-600 text-white",
-    group: "كبار (+17 سنة)",
-    age: 20,
-    phone: "0663778899",
     subStatus: "paid",
     status: "active",
   },
@@ -100,14 +89,14 @@ export default function AthletesPage() {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900">إدارة اللاعبين</h1>
+          <h1 className="text-3xl font-black text-gray-900">إدارة اللاعبين وطباعة البطاقات</h1>
           <p className="text-gray-500 text-sm mt-1">
-            قائمة جميع الرياضيين المسجلين بالنادي وحالة اشتراكاتهم وأحزمتهم
+            قائمة جميع الرياضيين المسجلين بالنادي، طباعة بطاقات الكودبار والـ QR الرسمية
           </p>
         </div>
         <button
           onClick={() => setShowAddModal(true)}
-          className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-bold shadow-lg shadow-blue-600/20 transition-all hover:scale-105"
+          className="flex items-center justify-center gap-2 bg-blue-600 hover:bg-blue-700 text-white px-5 py-3 rounded-xl font-bold shadow-lg shadow-blue-600/20 transition-all"
         >
           <span>➕</span> إضافة لاعب جديد
         </button>
@@ -119,17 +108,17 @@ export default function AthletesPage() {
           <span className="absolute right-3 top-3 text-gray-400">🔍</span>
           <input
             type="text"
-            placeholder="البحث باسم اللاعب، الكود، أو رقم الهاتف..."
+            placeholder="البحث باسم اللاعب، الكودبار، أو رقم الهاتف..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full pr-10 pl-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            className="w-full pr-10 pl-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold"
           />
         </div>
 
         <select
           value={filterGroup}
           onChange={(e) => setFilterGroup(e.target.value)}
-          className="py-2.5 px-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          className="py-2.5 px-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-bold"
         >
           <option value="all">جميع المجموعات</option>
           <option value="براعم">براعم (6-9)</option>
@@ -141,16 +130,16 @@ export default function AthletesPage() {
         <select
           value={filterStatus}
           onChange={(e) => setFilterStatus(e.target.value)}
-          className="py-2.5 px-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+          className="py-2.5 px-3 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-bold"
         >
           <option value="all">جميع حالات الاشتراك</option>
           <option value="paid">اشتراك نشط (ساري)</option>
-          <option value="pending">معلق (قريب الانتهاء)</option>
+          <option value="pending">ينتهي قريباً</option>
           <option value="expired">منتهي الاشتراك</option>
         </select>
       </div>
 
-      {/* Athletes Grid / Cards */}
+      {/* Athletes Cards Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredAthletes.map((athlete) => (
           <div
@@ -172,9 +161,7 @@ export default function AthletesPage() {
                     </span>
                   </div>
                 </div>
-                <span
-                  className={`text-xs font-bold px-2.5 py-1 rounded-full ${athlete.beltColor}`}
-                >
+                <span className={`text-xs px-2.5 py-1 rounded-full ${athlete.beltColor}`}>
                   {athlete.belt}
                 </span>
               </div>
@@ -185,48 +172,33 @@ export default function AthletesPage() {
                   <span className="font-semibold text-gray-800">{athlete.group}</span>
                 </div>
                 <div className="flex justify-between">
-                  <span className="text-gray-400">العمر:</span>
-                  <span className="font-semibold text-gray-800">{athlete.age} سنة</span>
-                </div>
-                <div className="flex justify-between">
                   <span className="text-gray-400">الهاتف:</span>
                   <span className="font-mono text-gray-800">{athlete.phone}</span>
                 </div>
               </div>
             </div>
 
-            {/* Footer Status & Actions */}
-            <div className="bg-gray-50 px-6 py-3 border-t border-gray-100 flex items-center justify-between">
-              <div>
-                {athlete.subStatus === "paid" && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">
-                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
-                    اشتراك نشط
-                  </span>
-                )}
-                {athlete.subStatus === "pending" && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full">
-                    <span className="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
-                    ينتهي قريباً
-                  </span>
-                )}
-                {athlete.subStatus === "expired" && (
-                  <span className="inline-flex items-center gap-1.5 text-xs font-bold text-rose-700 bg-rose-100 px-2.5 py-1 rounded-full">
-                    <span className="w-1.5 h-1.5 rounded-full bg-rose-500"></span>
-                    منتهي
-                  </span>
-                )}
-              </div>
+            {/* Actions & Print Button Footer */}
+            <div className="bg-gray-50 px-6 py-3 border-t border-gray-100 space-y-2">
+              <div className="flex items-center justify-between">
+                <div>
+                  {athlete.subStatus === "paid" && (
+                    <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">
+                      اشتراك نشط
+                    </span>
+                  )}
+                  {athlete.subStatus === "pending" && (
+                    <span className="text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full">
+                      ينتهي قريباً
+                    </span>
+                  )}
+                  {athlete.subStatus === "expired" && (
+                    <span className="text-xs font-bold text-rose-700 bg-rose-100 px-2.5 py-1 rounded-full">
+                      منتهي
+                    </span>
+                  )}
+                </div>
 
-              <div className="flex gap-2">
-                <Link
-                  href={`/qr/${athlete.code}`}
-                  target="_blank"
-                  className="p-2 text-gray-600 hover:text-blue-600 hover:bg-white rounded-lg transition-all border border-gray-200 text-xs font-semibold flex items-center gap-1"
-                  title="عرض بطاقة الـ QR"
-                >
-                  📱 QR
-                </Link>
                 <Link
                   href={`/dashboard/athletes/${athlete.id}`}
                   className="px-3 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all"
@@ -234,68 +206,60 @@ export default function AthletesPage() {
                   الملف الكامل
                 </Link>
               </div>
+
+              {/* Printable Barcode Button */}
+              <div className="pt-2 border-t border-gray-200/60 flex justify-end">
+                <PrintableAthleteCard athlete={athlete} />
+              </div>
             </div>
           </div>
         ))}
       </div>
 
-      {/* Add Athlete Modal Mock */}
+      {/* Add Athlete Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-white rounded-3xl p-6 max-w-lg w-full space-y-4 shadow-2xl animate-in fade-in zoom-in duration-200">
+          <div className="bg-white rounded-3xl p-6 max-w-lg w-full space-y-4 shadow-2xl">
             <div className="flex justify-between items-center border-b pb-3">
-              <h2 className="text-xl font-bold text-gray-900">تسجيل لاعب جديد</h2>
-              <button
-                onClick={() => setShowAddModal(false)}
-                className="text-gray-400 hover:text-gray-600 text-xl font-bold"
-              >
-                ✕
-              </button>
+              <h2 className="text-xl font-bold text-gray-900">تسجيل لاعب جديد وترقيم الكودبار</h2>
+              <button onClick={() => setShowAddModal(false)} className="text-gray-400 font-bold text-xl">✕</button>
             </div>
             <form className="space-y-4 text-sm" onSubmit={(e) => { e.preventDefault(); setShowAddModal(false); }}>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">الاسم الأول</label>
-                  <input type="text" required placeholder="محمد" className="w-full p-2.5 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500" />
+                  <label className="block text-gray-700 font-semibold mb-1">الاسم واللقب</label>
+                  <input type="text" required placeholder="محمد بن علي" className="w-full p-2.5 border rounded-xl bg-gray-50" />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">اللقب</label>
-                  <input type="text" required placeholder="أمين" className="w-full p-2.5 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500" />
+                  <label className="block text-gray-700 font-semibold mb-1">تاريخ الميلاد</label>
+                  <input type="date" required className="w-full p-2.5 border rounded-xl bg-gray-50" />
                 </div>
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">تاريخ الميلاد</label>
-                  <input type="date" required className="w-full p-2.5 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500" />
-                </div>
-                <div>
                   <label className="block text-gray-700 font-semibold mb-1">المجموعة التدريبية</label>
-                  <select className="w-full p-2.5 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500">
+                  <select className="w-full p-2.5 border rounded-xl bg-gray-50">
                     <option>براعم (6-9)</option>
                     <option>أشبال (10-12)</option>
                     <option>أواسط (13-16)</option>
                     <option>كبار (+17)</option>
                   </select>
                 </div>
+                <div>
+                  <label className="block text-gray-700 font-semibold mb-1">الحزام المبدئي</label>
+                  <select className="w-full p-2.5 border rounded-xl bg-gray-50">
+                    <option>حزام أبيض</option>
+                    <option>حزام أصفر</option>
+                  </select>
+                </div>
               </div>
               <div>
-                <label className="block text-gray-700 font-semibold mb-1">رقم هاتف ولي الأمر / اللاعب</label>
-                <input type="tel" required placeholder="0550123456" className="w-full p-2.5 border rounded-xl bg-gray-50 focus:ring-2 focus:ring-blue-500" />
+                <label className="block text-gray-700 font-semibold mb-1">رقم هاتف ولي الأمر</label>
+                <input type="tel" required placeholder="0550123456" className="w-full p-2.5 border rounded-xl bg-gray-50" />
               </div>
               <div className="pt-4 flex justify-end gap-3 border-t">
-                <button
-                  type="button"
-                  onClick={() => setShowAddModal(false)}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-xl font-semibold"
-                >
-                  إلغاء
-                </button>
-                <button
-                  type="submit"
-                  className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl shadow-lg shadow-blue-600/20"
-                >
-                  حفظ البيانات
-                </button>
+                <button type="button" onClick={() => setShowAddModal(false)} className="px-4 py-2 text-gray-600 font-semibold">إلغاء</button>
+                <button type="submit" className="px-6 py-2 bg-blue-600 text-white font-bold rounded-xl shadow-lg">حفظ وتوليد الكودبار</button>
               </div>
             </form>
           </div>
