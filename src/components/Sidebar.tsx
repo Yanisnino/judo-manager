@@ -1,10 +1,13 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import ParentShareModal from "./ParentShareModal";
 
 export default function Sidebar() {
   const pathname = usePathname();
+  const [showShareModal, setShowShareModal] = useState(false);
 
   const menuItems = [
     { name: "الرئيسية", href: "/dashboard", icon: "📊" },
@@ -24,7 +27,17 @@ export default function Sidebar() {
           <span>🥋</span> JudoManager
         </h2>
       </div>
-      <nav className="flex-1 p-4 space-y-2">
+
+      <div className="p-3 border-b border-gray-100">
+        <button
+          onClick={() => setShowShareModal(true)}
+          className="w-full py-2.5 px-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white rounded-xl font-bold text-xs shadow-md flex items-center justify-center gap-2"
+        >
+          <span>👨‍👩‍👧</span> رابط ومسح تطبيق الأولياء
+        </button>
+      </div>
+
+      <nav className="flex-1 p-4 space-y-1.5">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -43,6 +56,7 @@ export default function Sidebar() {
           );
         })}
       </nav>
+
       <div className="p-4 border-t border-gray-100">
         <Link
           href="/"
@@ -52,6 +66,8 @@ export default function Sidebar() {
           تسجيل الخروج
         </Link>
       </div>
+
+      {showShareModal && <ParentShareModal onClose={() => setShowShareModal(false)} />}
     </aside>
   );
 }
