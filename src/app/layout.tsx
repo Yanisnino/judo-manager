@@ -1,8 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Cairo } from "next/font/google";
 import "./globals.css";
-
-const font = Cairo({ subsets: ["arabic", "latin"] });
 
 export const viewport: Viewport = {
   themeColor: "#2563eb",
@@ -31,7 +28,7 @@ export default function RootLayout({
         <meta name="mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-title" content="JudoManager" />
       </head>
-      <body className={`${font.className} bg-gray-50 text-gray-900 selection:bg-blue-600 selection:text-white`}>
+      <body className="bg-gray-50 text-gray-900 selection:bg-blue-600 selection:text-white font-sans">
         {children}
       </body>
     </html>
