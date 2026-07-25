@@ -13,16 +13,51 @@ export default function ParentPortalPage() {
   const [notifications, setNotifications] = useState<any[]>([]);
   const [showScanner, setShowScanner] = useState(false);
 
+  // PWA Prompt event handler
+  const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
+  const [isInstallable, setIsInstallable] = useState(false);
+  const [installedSuccess, setInstalledSuccess] = useState(false);
+
   useEffect(() => {
     const list = LocalAuthDb.getNotifications();
     setNotifications(list);
+
+    // Listen for PWA installation prompt
+    const handleBeforeInstallPrompt = (e: any) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setIsInstallable(true);
+    };
+
+    window.addEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+
+    return () => {
+      window.removeEventListener("beforeinstallprompt", handleBeforeInstallPrompt);
+    };
   }, []);
+
+  const handleInstallPwa = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      if (outcome === "accepted") {
+        setInstalledSuccess(true);
+        setIsInstallable(false);
+        setDeferredPrompt(null);
+      }
+    } else {
+      alert("💡 لتثبيت التطبيق على هاتفك:\nاضغط على خيارات المتصفح (⋮ أو ⬆️) ثم اختر 'الإضافة إلى الشاشة الرئيسية' (Add to Home screen).");
+    }
+  };
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (parentPhone.trim()) {
+    const clean = parentPhone.replace(/\D/g, "");
+    if (clean.length >= 8) {
       setIsLoggedIn(true);
       playNotificationSound();
+    } else {
+      alert("يرجى إدخال رقم هاتف صحيح (مثال: 0550123456)");
     }
   };
 
@@ -54,6 +89,20 @@ export default function ParentPortalPage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 font-sans selection:bg-blue-600 selection:text-white">
+      {/* Top Banner Installer for Parent Phone */}
+      <div className="bg-gradient-to-r from-blue-600 via-indigo-600 to-purple-600 text-white p-3 text-center text-xs font-bold shadow-md flex items-center justify-between px-4">
+        <div className="flex items-center gap-2">
+          <span className="text-base">📲</span>
+          <span>تطبيق أولياء الأمور الرسمـي</span>
+        </div>
+        <button
+          onClick={handleInstallPwa}
+          className="bg-white text-blue-900 px-3.5 py-1.5 rounded-full font-black text-xs hover:bg-blue-50 shadow-md transition-all border border-white/40"
+        >
+          {installedSuccess ? "✓ تم التثبيت!" : "تثبيت التطبيق على الهاتف ⬇️"}
+        </button>
+      </div>
+
       {/* Top Header */}
       <header className="bg-slate-900/90 backdrop-blur-md border-b border-slate-800 p-4 sticky top-0 z-40">
         <div className="max-w-md mx-auto flex justify-between items-center">
@@ -85,27 +134,27 @@ export default function ParentPortalPage() {
       <main className="max-w-md mx-auto p-4 space-y-6">
         {!isLoggedIn ? (
           /* Login Card for Parent */
-          <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-5 my-8">
+          <div className="bg-slate-900/90 p-6 rounded-3xl border border-slate-800 shadow-2xl space-y-5 my-6">
             <div className="text-center space-y-2">
               <div className="w-16 h-16 bg-blue-600/10 border border-blue-500/20 text-blue-400 rounded-3xl flex items-center justify-center text-3xl mx-auto mb-2 shadow-inner">
                 📲
               </div>
-              <h2 className="text-2xl font-black text-white">متابعة الأبناء والنادي</h2>
+              <h2 className="text-2xl font-black text-white">دخول تطبيق ولي الأمر</h2>
               <p className="text-xs text-slate-400 leading-relaxed">
-                تطبيق خاص بأولياء الأمور لمتابعة مستويات الأبناء، الحضور، الإشعارات، ومواعيد البطولات.
+                أدخل رقم هاتفك المسجل لدى إدارة النادي لمتابعة الحضور، الأحزمة، والإشعارات فوراً.
               </p>
             </div>
 
             <form onSubmit={handleLogin} className="space-y-4 pt-2">
               <div>
-                <label className="block text-xs font-bold text-slate-400 mb-1.5">رقم هاتف ولي الأمر المسجل</label>
+                <label className="block text-xs font-bold text-slate-400 mb-1.5">رقم هاتف ولي الأمر (أي صيغة)</label>
                 <input
                   type="tel"
                   required
-                  placeholder="0550123456"
+                  placeholder="مثال: 0550123456 أو 0661122334"
                   value={parentPhone}
                   onChange={(e) => setParentPhone(e.target.value)}
-                  className="w-full px-4 py-3.5 bg-slate-950 border border-slate-800 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-white text-sm"
+                  className="w-full px-4 py-3.5 bg-slate-950 border border-slate-800 rounded-2xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-white text-sm font-mono"
                 />
               </div>
 
@@ -116,6 +165,16 @@ export default function ParentPortalPage() {
                 الدخول لمتابعة الأبناء ➔
               </button>
             </form>
+
+            <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 text-center space-y-2">
+              <span className="text-xs font-bold text-slate-300 block">💡 لتثبيت التطبيق على الشاشة الرئيسية للهاتف:</span>
+              <button
+                onClick={handleInstallPwa}
+                className="w-full py-2.5 bg-slate-800 hover:bg-slate-700 text-blue-400 font-bold rounded-xl text-xs border border-slate-700"
+              >
+                اضغط هنا لتنزيل التطبيق على الهاتف 📲
+              </button>
+            </div>
           </div>
         ) : (
           /* Logged In Content */
