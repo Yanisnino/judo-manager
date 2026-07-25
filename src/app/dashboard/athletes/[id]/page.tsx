@@ -2,18 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useParams } from "next/navigation";
 
-interface PageProps {
-  params: {
-    id: string;
-  };
-}
+export default function AthleteProfilePage() {
+  const routeParams = useParams();
+  const id = typeof routeParams?.id === "string" ? routeParams.id : "ATH-001";
 
-export default function AthleteProfilePage({ params }: PageProps) {
   const [activeTab, setActiveTab] = useState<"overview" | "attendance" | "subscriptions" | "belts" | "competitions" | "notes">("overview");
 
   const athlete = {
-    id: params.id || "ATH-001",
+    id: id,
     name: "محمد أمين بن علي",
     code: "JUDO-2026-0001",
     dob: "2015-04-12",
@@ -129,7 +127,7 @@ export default function AthleteProfilePage({ params }: PageProps) {
 
         {activeTab === "subscriptions" && (
           <div className="space-y-4">
-            <h3 className="font-bold text-lg text-gray-900">سجل مدفوعات واشتراكات اللاعب</h3>
+            <h3 className="font-bold text-lg text-gray-900">سجل مدفوعات وااشتراكات اللاعب</h3>
             <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100 flex justify-between items-center">
               <div>
                 <div className="font-bold text-gray-900">اشتراك شهري عادي</div>

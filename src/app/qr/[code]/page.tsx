@@ -1,13 +1,14 @@
 import Link from "next/link";
 
 interface QrPageProps {
-  params: {
+  params: Promise<{
     code: string;
-  };
+  }>;
 }
 
-export default function PublicAthleteQrPage({ params }: QrPageProps) {
-  const code = params.code || "JUDO-2026-0001";
+export default async function PublicAthleteQrPage({ params }: QrPageProps) {
+  const resolvedParams = await params;
+  const code = resolvedParams?.code || "JUDO-2026-0001";
 
   // Mock public safe athlete data
   const athlete = {
