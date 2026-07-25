@@ -1,14 +1,17 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Cairo } from "next/font/google";
 import "./globals.css";
 
 const font = Cairo({ subsets: ["arabic", "latin"] });
 
+export const viewport: Viewport = {
+  themeColor: "#2563eb",
+};
+
 export const metadata: Metadata = {
   title: "منصة إدارة أندية الجودو والفنون القتالية - JudoManager",
   description: "النظام المتكامل لإدارة أندية الرياضات القتالية واللاعبين والاشتراكات",
   manifest: "/manifest.json",
-  themeColor: "#2563eb",
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
