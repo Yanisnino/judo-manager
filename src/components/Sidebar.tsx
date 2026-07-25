@@ -21,14 +21,16 @@ export default function Sidebar() {
   ];
 
   return (
-    <aside className="w-64 bg-white shadow-xl hidden md:flex flex-col border-l border-gray-100">
-      <div className="p-6 border-b border-gray-100 flex items-center justify-center">
+    <aside className="w-64 bg-white shadow-xl hidden md:flex flex-col border-l border-gray-100 h-screen sticky top-0">
+      {/* Header */}
+      <div className="p-6 border-b border-gray-100 flex items-center justify-center shrink-0">
         <h2 className="text-2xl font-black text-blue-900 flex items-center gap-2">
           <span>🥋</span> JudoManager
         </h2>
       </div>
 
-      <div className="p-3 border-b border-gray-100">
+      {/* Parent App Quick Share Button */}
+      <div className="p-3 border-b border-gray-100 shrink-0">
         <button
           onClick={() => setShowShareModal(true)}
           className="w-full py-2.5 px-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white rounded-xl font-bold text-xs shadow-md flex items-center justify-center gap-2"
@@ -37,7 +39,8 @@ export default function Sidebar() {
         </button>
       </div>
 
-      <nav className="flex-1 p-4 space-y-1.5">
+      {/* Scrollable Navigation Sections List */}
+      <nav className="flex-1 p-4 space-y-1.5 overflow-y-auto overflow-x-hidden scrollbar-thin scrollbar-thumb-gray-200 hover:scrollbar-thumb-gray-300">
         {menuItems.map((item) => {
           const isActive = pathname === item.href;
           return (
@@ -57,7 +60,8 @@ export default function Sidebar() {
         })}
       </nav>
 
-      <div className="p-4 border-t border-gray-100">
+      {/* Footer */}
+      <div className="p-4 border-t border-gray-100 shrink-0">
         <Link
           href="/"
           className="w-full flex items-center justify-center gap-2 px-4 py-3 text-red-600 hover:bg-red-50 rounded-xl transition-all font-bold text-xs"
