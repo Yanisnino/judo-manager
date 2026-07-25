@@ -151,7 +151,7 @@ export default function SubscriptionsPage() {
               <tr key={sub.id} className="hover:bg-gray-50/60 transition-colors">
                 <td className="p-4 font-bold text-gray-900">{sub.athleteName}</td>
                 <td className="p-4 text-gray-600">{sub.planName}</td>
-                <td className="p-4 font-mono font-bold text-gray-900">{sub.amount.toLocaleString()} دج</td>
+                <td className="p-4 font-mono font-bold text-gray-900">{sub.amount} دج</td>
                 <td className="p-4 text-gray-500 font-mono text-xs">{sub.startDate}</td>
                 <td className="p-4 text-gray-500 font-mono text-xs">{sub.endDate}</td>
                 <td className="p-4">
