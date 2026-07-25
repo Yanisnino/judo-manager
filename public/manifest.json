@@ -1,0 +1,19 @@
+{
+  "short_name": "JudoManager",
+  "name": "منصة إدارة أندية الجودو والفنون القتالية",
+  "icons": [
+    {
+      "src": "/file.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ],
+  "start_url": "/dashboard",
+  "background_color": "#0f172a",
+  "theme_color": "#2563eb",
+  "display": "standalone",
+  "orientation": "portrait",
+  "dir": "rtl",
+  "lang": "ar"
+}
