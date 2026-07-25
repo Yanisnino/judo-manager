@@ -8,6 +8,7 @@ export default function ClubNotificationsPage() {
   const [notifType, setNotifType] = useState("تذكير بحصة تدريبية");
   const [title, setTitle] = useState("");
   const [message, setMessage] = useState("");
+  const [parentPhone, setParentPhone] = useState("");
   const [notifications, setNotifications] = useState<any[]>([]);
   const [statusMsg, setStatusMsg] = useState<string | null>(null);
 
@@ -32,20 +33,33 @@ export default function ClubNotificationsPage() {
     setTimeout(() => setStatusMsg(null), 3000);
   };
 
-  const handleWhatsAppSend = (parentPhone: string, text: string) => {
+  const handleWhatsAppShareParentApp = () => {
+    const parentPortalUrl = typeof window !== "undefined" ? `${window.location.origin}/parent` : "http://localhost:3000/parent";
+    const text = `السلام عليكم ورحمة الله وبركاته،\nمرحباً بكم في *تطبيق أولياء الأمور للنادي الرياضي* 🥋\nيمكنكم الآن تثبيت التطبيق ومتابعة حضور ومستوى أبنائكم ومواعيد التدريب والبطولات عبر الرابط المباشر التالي:\n${parentPortalUrl}`;
+    
     const cleanPhone = parentPhone.replace(/\D/g, "");
     const formattedPhone = cleanPhone.startsWith("0") ? "213" + cleanPhone.slice(1) : cleanPhone;
-    const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(text)}`;
+    const url = formattedPhone ? `https://wa.me/${formattedPhone}?text=${encodeURIComponent(text)}` : `https://wa.me/?text=${encodeURIComponent(text)}`;
     window.open(url, "_blank");
   };
 
   return (
     <div className="space-y-6 max-w-5xl mx-auto">
-      <div>
-        <h1 className="text-3xl font-black text-gray-900">نظام الإشعارات والتواصل مع الأولياء</h1>
-        <p className="text-gray-500 text-sm mt-1">
-          إرسال وتوجيه إشعارات فورية حول الحصص التدريبية، تغيير المواعيد، والبطولات لأولياء الأمور عبر التطبيق وواتساب
-        </p>
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-black text-gray-900">نظام الإشعارات وتوزيع رابط الأولياء</h1>
+          <p className="text-gray-500 text-sm mt-1">
+            إرسال إشعارات الحصص والبطولات، ومشاركة رابط تطبيق أولياء الأمور عبر WhatsApp
+          </p>
+        </div>
+
+        {/* WhatsApp Parent Link Share Button */}
+        <button
+          onClick={handleWhatsAppShareParentApp}
+          className="bg-emerald-600 hover:bg-emerald-700 text-white px-5 py-3 rounded-xl font-bold shadow-lg shadow-emerald-600/20 transition-all flex items-center justify-center gap-2 text-sm"
+        >
+          <span>📲</span> مشاركة رابط تطبيق الأولياء عبر WhatsApp
+        </button>
       </div>
 
       {statusMsg && (
@@ -94,16 +108,29 @@ export default function ClubNotificationsPage() {
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-bold text-gray-700 mb-1">عنوان الإشعار</label>
-            <input
-              type="text"
-              required
-              placeholder="مثال: تغيير موعد حصة الأشبال اليوم"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none font-bold"
-            />
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-gray-700 mb-1">عنوان الإشعار</label>
+              <input
+                type="text"
+                required
+                placeholder="مثال: تغيير موعد حصة الأشبال اليوم"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none font-bold"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-gray-700 mb-1">رقم هاتف ولي الأمر (اختياري للإرسال المباشر)</label>
+              <input
+                type="tel"
+                placeholder="0550123456"
+                value={parentPhone}
+                onChange={(e) => setParentPhone(e.target.value)}
+                className="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none font-mono"
+              />
+            </div>
           </div>
 
           <div>
@@ -121,10 +148,10 @@ export default function ClubNotificationsPage() {
           <div className="flex flex-col sm:flex-row justify-end gap-3 pt-2">
             <button
               type="button"
-              onClick={() => handleWhatsAppSend("0550123456", `*${title}*\n${message}`)}
+              onClick={handleWhatsAppShareParentApp}
               className="px-5 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs shadow-md flex items-center justify-center gap-2"
             >
-              <span>💬</span> إرسال مباشر عبر WhatsApp
+              <span>💬</span> إرسال الرسالة ورابط التطبيق عبر WhatsApp
             </button>
             <button
               type="submit"
