@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>منصة JudoManager - تحميل وتثبيت نظام إدارة أندية الجودو</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Cairo', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-blue-600 selection:text-white">
+
+  <!-- Header -->
+  <header className="border-b border-slate-800 bg-slate-900/80 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-2xl bg-blue-600 flex items-center justify-center font-black text-2xl shadow-lg shadow-blue-600/30">
+          🥋
+        </div>
+        <span class="font-black text-xl text-white">JudoManager</span>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <a href="#download-section" class="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all shadow-md">
+          📥 تحميل النظام الآن
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Hero Section -->
+  <section class="max-w-5xl mx-auto px-4 py-16 text-center space-y-6">
+    <span class="px-4 py-1.5 bg-blue-600/20 text-blue-400 border border-blue-500/30 rounded-full font-bold text-xs inline-block">
+      🏆 المنصة الأولى لإدارة أندية الجودو والفنون القتالية
+    </span>
+
+    <h1 class="text-4xl md:text-6xl font-black text-white leading-tight">
+      نظام رقمي متكامل لتنظيم النادي، الحضور، وتطبيق الأولياء
+    </h1>
+
+    <p class="text-slate-400 text-base md:text-lg max-w-2xl mx-auto leading-relaxed">
+      قم بتثبيت وتنزيل نظام JudoManager على حواسيب النادي أوفلاين، ومشاركة تطبيق أولياء الأمور والرياضيين على الهواتف بنقرة واحدة.
+    </p>
+
+    <!-- Downloads Container -->
+    <div id="download-section" class="pt-8 grid grid-cols-1 md:grid-cols-2 gap-6 max-w-3xl mx-auto text-right">
+      
+      <!-- Card 1: PC Installer -->
+      <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 space-y-4 hover:border-blue-500/50 transition-all shadow-xl flex flex-col justify-between">
+        <div class="space-y-3">
+          <div class="w-14 h-14 rounded-2xl bg-blue-600/20 text-blue-400 font-bold text-3xl flex items-center justify-center border border-blue-500/30">
+            🖥️
+          </div>
+          <h3 class="text-2xl font-bold text-white">برنامج الكمبيوتر للنادي (PC)</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            حزمة التثبيت المستقلة لأجهزة الويندوز داخل قاعة ومكتب إدارة النادي. يعمل بدون إنترنت مع حماية دقيقة للبيانات وطباعة الكودبار.
+          </p>
+        </div>
+
+        <a href="./تثبيت_وتشغيل_التطبيق.bat" download class="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl text-sm text-center block transition-all shadow-lg shadow-blue-600/30">
+          📥 تحميل برنامج الكمبيوتر (.bat)
+        </a>
+      </div>
+
+      <!-- Card 2: Parent Mobile App -->
+      <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 space-y-4 hover:border-emerald-500/50 transition-all shadow-xl flex flex-col justify-between">
+        <div class="space-y-3">
+          <div class="w-14 h-14 rounded-2xl bg-emerald-600/20 text-emerald-400 font-bold text-3xl flex items-center justify-center border border-emerald-500/30">
+            📱
+          </div>
+          <h3 class="text-2xl font-bold text-white">تطبيق أولياء الأمور (Mobile App)</h3>
+          <p class="text-xs text-slate-400 leading-relaxed">
+            تطبيق هاتف خفيف لأولياء الأمور لمتابعة نسبة حضور وغياب الأبناء، الحزام الحالي، البطولات والإشعارات الفورية.
+          </p>
+        </div>
+
+        <a href="./parent.html" class="w-full py-4 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl text-sm text-center block transition-all shadow-lg shadow-emerald-600/30">
+          📲 فتح وتثبيت تطبيق الأولياء على الهاتف
+        </a>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Features Section -->
+  <section class="max-w-5xl mx-auto px-4 py-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+    <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800/80 space-y-2">
+      <span class="text-2xl">🖨️</span>
+      <h4 class="font-bold text-white text-base">طباعة بطاقات الكودبار</h4>
+      <p class="text-xs text-slate-400">توليد وتطبيقة بطاقة رياضية مع رمز QR وكودبار احترافي لكل لاعب.</p>
+    </div>
+
+    <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800/80 space-y-2">
+      <span class="text-2xl">⚡</span>
+      <h4 class="font-bold text-white text-base">تسجيل حضور سريع</h4>
+      <p class="text-xs text-slate-400">تأكيد حضور الحصص التدريبية بنقرة زر واحدة أو بمسح رمز البطاقة.</p>
+    </div>
+
+    <div class="bg-slate-900/60 p-6 rounded-2xl border border-slate-800/80 space-y-2">
+      <span class="text-2xl">💰</span>
+      <h4 class="font-bold text-white text-base">إدارة الاشتراكات والوصل</h4>
+      <p class="text-xs text-slate-400">تتبع المدفوعات وتوليد إيصالات الدفع الرسمية وإشعارات التجديد.</p>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-800 py-8 text-center text-xs text-slate-500">
+    منصة JudoManager الرسمية © جميع الحقوق محفوظة للمبرمج
+  </footer>
+
+</body>
+</html>
