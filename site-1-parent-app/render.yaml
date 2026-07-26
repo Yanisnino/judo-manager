@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: judo-parent-app
+    env: static
+    buildCommand: ""
+    staticPublishPath: .
