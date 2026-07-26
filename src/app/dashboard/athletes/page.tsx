@@ -17,56 +17,7 @@ interface Athlete {
   status: "active" | "inactive";
 }
 
-const initialAthletes: Athlete[] = [
-  {
-    id: "ATH-001",
-    name: "محمد أمين بن علي",
-    code: "JUDO-2026-0001",
-    belt: "حزام أصفر",
-    beltColor: "bg-yellow-400 text-gray-900 font-bold",
-    group: "أشبال (10-12 سنة)",
-    age: 11,
-    phone: "0555123456",
-    subStatus: "paid",
-    status: "active",
-  },
-  {
-    id: "ATH-002",
-    name: "أحمد ياسين زروقي",
-    code: "JUDO-2026-0002",
-    belt: "حزام برتقالي",
-    beltColor: "bg-orange-500 text-white font-bold",
-    group: "أشبال (10-12 سنة)",
-    age: 12,
-    phone: "0661987654",
-    subStatus: "pending",
-    status: "active",
-  },
-  {
-    id: "ATH-003",
-    name: "يوسف بلقاسم",
-    code: "JUDO-2026-0003",
-    belt: "حزام أخضر",
-    beltColor: "bg-emerald-600 text-white font-bold",
-    group: "أواسط (13-16 سنة)",
-    age: 15,
-    phone: "0770112233",
-    subStatus: "expired",
-    status: "active",
-  },
-  {
-    id: "ATH-004",
-    name: "سارة حداد",
-    code: "JUDO-2026-0004",
-    belt: "حزام أبيض",
-    beltColor: "bg-gray-100 text-gray-800 border border-gray-300 font-bold",
-    group: "براعم (6-9 سنوات)",
-    age: 8,
-    phone: "0550445566",
-    subStatus: "paid",
-    status: "active",
-  },
-];
+const initialAthletes: Athlete[] = [];
 
 export default function AthletesPage() {
   const [athletes, setAthletes] = useState<Athlete[]>(initialAthletes);
@@ -234,7 +185,27 @@ export default function AthletesPage() {
       </div>
 
       {/* Athletes Cards Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      {filteredAthletes.length === 0 ? (
+        <div className="bg-white rounded-3xl p-12 text-center border border-dashed border-gray-300 space-y-4 my-6">
+          <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-4xl mx-auto font-black shadow-inner">
+            🥋
+          </div>
+          <h3 className="text-2xl font-black text-gray-900">نظام النادي جديد وفارغ تماماً</h3>
+          <p className="text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
+            المنصة جاهزة 100% لبدء العمل بها بدقة. قم بإضافة أسرار وتسجيلات لاعبي ناديك بالضغط على الزر أدناه لتوليد الكودبار الخاص بكل رياضي.
+          </p>
+          <button
+            onClick={() => {
+              resetForm();
+              setShowAddModal(true);
+            }}
+            className="px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl text-sm shadow-lg shadow-blue-600/20 transition-all inline-flex items-center gap-2"
+          >
+            <span>➕</span> إضافة أول لاعب في النادي الان
+          </button>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {filteredAthletes.map((athlete) => (
           <div
             key={athlete.id}
@@ -330,6 +301,7 @@ export default function AthletesPage() {
           </div>
         ))}
       </div>
+      )}
 
       {/* Add Athlete Modal */}
       {showAddModal && (

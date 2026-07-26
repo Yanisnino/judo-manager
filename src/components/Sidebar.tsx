@@ -16,6 +16,7 @@ export default function Sidebar() {
     { name: "الاشتراكات", href: "/dashboard/subscriptions", icon: "💰" },
     { name: "الأحزمة", href: "/dashboard/belts", icon: "🟨" },
     { name: "الإشعارات للأولياء", href: "/dashboard/notifications", icon: "📩" },
+    { name: "صفحة المبرمج والتثبيت", href: "/developer", icon: "💻" },
     { name: "النسخ الاحتياطي", href: "/dashboard/backup", icon: "🔄" },
     { name: "الإعدادات", href: "/dashboard/settings", icon: "⚙️" },
   ];

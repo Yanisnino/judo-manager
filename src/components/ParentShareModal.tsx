@@ -18,7 +18,7 @@ export default function ParentShareModal({ onClose }: ParentShareModalProps) {
       const hostname = window.location.hostname;
       const port = window.location.port ? `:${window.location.port}` : "";
       const protocol = window.location.protocol;
-      
+
       if (hostname === "localhost" || hostname === "127.0.0.1") {
         setLocalIpUrl(`${protocol}//192.168.1.35${port}/parent`);
       } else {
@@ -44,21 +44,26 @@ export default function ParentShareModal({ onClose }: ParentShareModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black/70 backdrop-blur-md flex items-center justify-center p-4 z-50 animate-in fade-in duration-200">
-      <div className="bg-slate-900 border border-slate-800 text-white rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl">
+    <div className="fixed inset-0 z-[9999] bg-slate-950/80 backdrop-blur-md flex items-center justify-center p-4 animate-in fade-in duration-200 overflow-y-auto">
+      <div className="bg-slate-900 border border-slate-700 text-white rounded-3xl p-6 max-w-md w-full space-y-5 shadow-2xl relative my-auto">
         <div className="flex justify-between items-center border-b border-slate-800 pb-3">
           <div className="flex items-center gap-2">
             <span className="text-xl">👨‍👩‍👧</span>
             <h3 className="font-bold text-white text-lg">رابط ومسح تطبيق الأولياء</h3>
           </div>
-          <button onClick={onClose} className="text-slate-400 hover:text-white font-bold text-xl">✕</button>
+          <button
+            onClick={onClose}
+            className="w-8 h-8 rounded-full bg-slate-800 hover:bg-slate-700 text-slate-300 hover:text-white font-bold flex items-center justify-center text-lg transition-colors"
+          >
+            ✕
+          </button>
         </div>
 
         {/* IP Explanation Alert */}
-        <div className="bg-blue-950/60 border border-blue-800/80 p-3.5 rounded-2xl text-xs text-blue-200 space-y-1">
+        <div className="bg-blue-950/80 border border-blue-700/80 p-3.5 rounded-2xl text-xs text-blue-200 space-y-1">
           <strong className="text-blue-300 block">💡 تنبيه هام لفتح الرابط على الهواتف:</strong>
           <p className="leading-relaxed">
-            كلمة <code className="bg-slate-900 px-1 py-0.5 rounded text-yellow-300 font-mono">localhost</code> تعمل فقط داخل حاسوبك. لفتح الرابط على هاتف ولي الأمر استخدم رابط شبكة الواي فاي أو رابط الموقع أونلاين بالأسفل.
+            كلمة <code className="bg-slate-900 px-1 py-0.5 rounded text-yellow-300 font-mono">localhost</code> تعمل فقط داخل حاسوبك. لفتح الرابط على هاتف ولي الأمر استخدم رابط شبكة الواي فاي أو أدخل رابط الموقع أونلاين بالأسفل.
           </p>
         </div>
 
@@ -92,7 +97,7 @@ export default function ParentShareModal({ onClose }: ParentShareModalProps) {
 
         {/* Wifi IP Link */}
         <div className="space-y-1.5">
-          <label className="block text-xs font-bold text-slate-300">رابط الشباكة المحلية للواي فاي (داخل الصالة):</label>
+          <label className="block text-xs font-bold text-slate-300">رابط الشبكة المحلية للواي فاي (داخل الصالة):</label>
           <div className="flex gap-2">
             <input
               type="text"
@@ -102,7 +107,7 @@ export default function ParentShareModal({ onClose }: ParentShareModalProps) {
             />
             <button
               onClick={handleCopy}
-              className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all"
+              className="px-4 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all shadow-md"
             >
               {copied ? "✓ تم النسخ!" : "نسخ الرابط"}
             </button>
@@ -134,7 +139,7 @@ export default function ParentShareModal({ onClose }: ParentShareModalProps) {
             />
             <button
               onClick={handleWhatsAppSend}
-              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-1"
+              className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs flex items-center gap-1 shadow-md"
             >
               💬 إرسال
             </button>
