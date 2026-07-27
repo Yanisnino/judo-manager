@@ -1,17 +1,30 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { getStoredLicense } from "@/lib/licenseSystem";
 
 export default function DashboardOverview() {
+  const router = useRouter();
   const [showAddModal, setShowAddModal] = useState(false);
   const [showAttendanceModal, setShowAttendanceModal] = useState(false);
 
   const [formName, setFormName] = useState("");
   const [formGroup, setFormGroup] = useState("أشبال (10-12 سنة)");
 
-  // State for club data (starts 100% clean and zero by default for new clubs)
+  // State for club data
   const [athletesList, setAthletesList] = useState<any[]>([]);
+  const [licenseInfo, setLicenseInfo] = useState<any>(null);
+
+  useEffect(() => {
+    const lic = getStoredLicense();
+    setLicenseInfo(lic);
+    if (!lic.isActivated) {
+      // If not activated, redirect to activation page
+      router.push("/activate");
+    }
+  }, [router]);
 
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -29,6 +42,24 @@ export default function DashboardOverview() {
 
   return (
     <div className="space-y-6">
+      {/* License Trial Notification Banner */}
+      {licenseInfo?.type === "TRIAL_14_DAYS" && (
+        <div className="bg-indigo-600 text-white px-5 py-3 rounded-2xl shadow-md flex flex-wrap items-center justify-between gap-3 text-xs">
+          <div className="flex items-center gap-2">
+            <span class="text-base">⏱️</span>
+            <span class="font-bold">
+              نسخة تجريبية نشطة - متبقي {licenseInfo.daysRemaining} يوماً على انتهاء الصلاحية التجريبية
+            </span>
+          </div>
+          <Link
+            href="/activate"
+            className="px-3.5 py-1.5 bg-white text-indigo-900 font-black rounded-xl hover:bg-indigo-50 transition-all text-xs"
+          >
+            التجميع والشراء مدى الحياة (BaridiMob) 💳
+          </Link>
+        </div>
+      )}
+
       {/* Top Header & Working Quick Actions */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
@@ -51,7 +82,7 @@ export default function DashboardOverview() {
         </div>
       </div>
 
-      {/* Stat Cards - ALL CLEAN & ZERO FOR NEW CLUB */}
+      {/* Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <StatCard title="إجمالي اللاعبين" value={athletesList.length.toString()} trend="لا يوجد لاعبون بعد" color="blue" />
         <StatCard title="حاضرون اليوم" value="0" trend="0 حصص" color="green" />
