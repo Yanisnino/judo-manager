@@ -3,173 +3,1099 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>لوحة التحكم السرية للمبرمج - JudoManager Admin Secret Portal</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <title>Admin Panel – JudoManager</title>
+  <meta name="robots" content="noindex, nofollow">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Cairo', sans-serif; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #060b14;
+      --sb-bg:     #09111f;
+      --card:      #0d1b2e;
+      --border:    rgba(255,255,255,0.06);
+      --purple:    #a855f7;
+      --purple-d:  rgba(168,85,247,0.12);
+      --blue:      #4f8ef7;
+      --blue-d:    rgba(79,142,247,0.12);
+      --emerald:   #2ed8a8;
+      --emerald-d: rgba(46,216,168,0.1);
+      --amber:     #f59e0b;
+      --amber-d:   rgba(245,158,11,0.1);
+      --red:       #f87171;
+      --red-d:     rgba(248,113,113,0.1);
+      --white:     #e8f0fe;
+      --muted:     #4a5e78;
+      --text:      #8fa8c8;
+      --sb-w:      230px;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    /* ══════════ LOGIN SCREEN ══════════ */
+    #loginScreen {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 60% 40%, rgba(168,85,247,0.08) 0%, transparent 60%),
+                  radial-gradient(ellipse at 20% 80%, rgba(79,142,247,0.07) 0%, transparent 50%),
+                  var(--bg);
+      padding: 20px;
+    }
+
+    .login-card {
+      background: var(--card);
+      border: 1px solid rgba(168,85,247,0.2);
+      border-radius: 20px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 380px;
+      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
+    }
+
+    .login-logo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 32px;
+      text-align: center;
+    }
+    .login-logo-icon {
+      width: 56px; height: 56px;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+      box-shadow: 0 8px 24px rgba(168,85,247,0.4);
+    }
+    .login-logo h1 { color: var(--white); font-size: 18px; font-weight: 900; }
+    .login-logo p { color: var(--muted); font-size: 12px; }
+
+    .login-fg { margin-bottom: 14px; }
+    .login-fg label { display: block; color: var(--text); font-size: 12px; font-weight: 600; margin-bottom: 7px; }
+    .login-fg input {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      padding: 11px 16px;
+      color: white;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 13px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .login-fg input:focus { border-color: var(--purple); }
+    .login-fg input::placeholder { color: var(--muted); font-family: 'Cairo', sans-serif; }
+
+    .login-err {
+      background: var(--red-d);
+      border: 1px solid rgba(248,113,113,0.2);
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 12px;
+      color: var(--red);
+      margin-bottom: 14px;
+      display: none;
+      text-align: center;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      border: none;
+      border-radius: 12px;
+      color: white;
+      font-family: 'Cairo', sans-serif;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 6px 20px rgba(168,85,247,0.35);
+      margin-top: 4px;
+    }
+    .btn-login:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(168,85,247,0.5); }
+
+    /* ══════════ APP SHELL ══════════ */
+    #appShell { display: none; min-height: 100vh; flex-direction: row; }
+    #appShell.visible { display: flex; }
+
+    /* ══════════ SIDEBAR ══════════ */
+    .sb {
+      width: var(--sb-w);
+      min-height: 100vh;
+      background: var(--sb-bg);
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      position: fixed; top: 0; right: 0;
+      z-index: 100;
+    }
+
+    .sb-logo {
+      padding: 20px 16px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .sb-logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      border-radius: 11px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+    .sb-logo-name { color: var(--white); font-weight: 900; font-size: 13px; }
+    .sb-logo-sub { color: var(--muted); font-size: 10px; }
+
+    .sb-nav { flex: 1; padding: 12px 8px; display: flex; flex-direction: column; gap: 3px; }
+    .nav-lbl { font-size: 10px; font-weight: 700; color: var(--muted); padding: 10px 8px 4px; letter-spacing: 0.08em; }
+
+    .nav-btn {
+      display: flex; align-items: center; gap: 9px;
+      padding: 9px 11px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 12.5px; font-weight: 600;
+      color: var(--muted);
+      border: 1px solid transparent;
+      background: none; width: 100%; text-align: right;
+      font-family: 'Cairo', sans-serif;
+      transition: all 0.18s;
+      position: relative;
+    }
+    .nav-btn:hover { background: rgba(255,255,255,0.03); color: var(--white); }
+    .nav-btn.active { background: var(--purple-d); color: var(--purple); border-color: rgba(168,85,247,0.18); }
+
+    .nav-badge {
+      margin-right: auto;
+      background: var(--amber);
+      color: #060b14;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 1px 7px;
+      border-radius: 100px;
+      min-width: 18px;
+      text-align: center;
+    }
+
+    .sb-footer {
+      padding: 14px 8px;
+      border-top: 1px solid var(--border);
+    }
+    .sb-user {
+      display: flex; align-items: center; gap: 8px;
+      padding: 10px;
+      background: rgba(255,255,255,0.03);
+      border-radius: 11px;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      transition: background 0.2s;
+    }
+    .sb-user:hover { background: rgba(255,255,255,0.06); }
+    .sb-avatar {
+      width: 32px; height: 32px; flex-shrink: 0;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      border-radius: 9px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px;
+    }
+    .sb-user-name { color: var(--white); font-size: 12px; font-weight: 700; }
+    .sb-user-role { color: var(--muted); font-size: 10px; }
+    .sb-logout { margin-right: auto; font-size: 14px; color: var(--red); cursor: pointer; }
+
+    /* ══════════ MAIN ══════════ */
+    .main {
+      margin-right: var(--sb-w);
+      flex: 1;
+      padding: 28px 28px;
+      min-height: 100vh;
+      max-width: calc(100vw - var(--sb-w));
+    }
+
+    .page-sec { display: none; }
+    .page-sec.active { display: block; }
+
+    /* ══════════ PAGE HEADER ══════════ */
+    .ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
+    .ph h1 { color: var(--white); font-size: 20px; font-weight: 900; margin-bottom: 3px; }
+    .ph p { color: var(--muted); font-size: 12px; }
+
+    /* ══════════ STATS ══════════ */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px 18px;
+    }
+    .stat-val { font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+    .stat-lbl { color: var(--muted); font-size: 11px; }
+    .stat-chg { font-size: 10px; margin-top: 4px; display: flex; align-items: center; gap: 3px; }
+
+    /* ══════════ TABLE ══════════ */
+    .tbl-wrap {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .tbl-head {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap; gap: 10px;
+    }
+    .tbl-head h2 { color: var(--white); font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
+    .tbl-head p { color: var(--muted); font-size: 11px; margin-top: 2px; }
+
+    .tbl-filter {
+      display: flex; gap: 8px; flex-wrap: wrap;
+    }
+    .filter-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Cairo', sans-serif;
+      transition: all 0.18s;
+    }
+    .filter-btn.active { background: var(--purple-d); border-color: rgba(168,85,247,0.3); color: var(--purple); }
+    .filter-btn:hover { color: var(--white); }
+
+    table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    thead tr { background: rgba(255,255,255,0.02); }
+    th { padding: 10px 16px; color: var(--muted); font-weight: 700; text-align: right; font-size: 11px; white-space: nowrap; border-bottom: 1px solid var(--border); }
+    td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
+    tbody tr { transition: background 0.15s; }
+    tbody tr:hover { background: rgba(255,255,255,0.02); }
+    tbody tr:last-child td { border-bottom: none; }
+
+    .badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 3px 9px;
+      border-radius: 100px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .badge-pending  { background: var(--amber-d);   color: var(--amber);   border: 1px solid rgba(245,158,11,0.2); }
+    .badge-approved { background: var(--emerald-d); color: var(--emerald); border: 1px solid rgba(46,216,168,0.2); }
+    .badge-trial    { background: var(--blue-d);    color: var(--blue);    border: 1px solid rgba(79,142,247,0.2); }
+    .badge-paid     { background: var(--purple-d);  color: var(--purple);  border: 1px solid rgba(168,85,247,0.2); }
+    .badge-rejected { background: var(--red-d);     color: var(--red);     border: 1px solid rgba(248,113,113,0.2); }
+
+    .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--emerald); letter-spacing: 0.04em; }
+    .email-txt { color: var(--blue); font-size: 11px; }
+
+    /* ══════════ ACTION BUTTONS ══════════ */
+    .act-btn {
+      padding: 6px 12px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      font-family: 'Cairo', sans-serif;
+      transition: all 0.18s;
+      white-space: nowrap;
+    }
+    .act-approve { background: var(--emerald-d); color: var(--emerald); border: 1px solid rgba(46,216,168,0.25); }
+    .act-approve:hover { background: rgba(46,216,168,0.2); }
+    .act-reject  { background: var(--red-d);     color: var(--red);     border: 1px solid rgba(248,113,113,0.2); }
+    .act-reject:hover  { background: rgba(248,113,113,0.18); }
+    .act-send    { background: var(--blue-d);    color: var(--blue);    border: 1px solid rgba(79,142,247,0.2); }
+    .act-send:hover    { background: rgba(79,142,247,0.18); }
+
+    /* ══════════ MODAL ══════════ */
+    .modal-ov {
+      display: none; position: fixed; inset: 0;
+      background: rgba(6,11,20,0.8);
+      backdrop-filter: blur(6px);
+      z-index: 500;
+      align-items: center; justify-content: center;
+      padding: 20px;
+    }
+    .modal-ov.show { display: flex; }
+    .modal-box {
+      background: var(--card);
+      border: 1px solid rgba(168,85,247,0.2);
+      border-radius: 18px;
+      padding: 30px;
+      max-width: 440px;
+      width: 100%;
+      animation: su 0.25s ease;
+    }
+    @keyframes su { from { opacity:0; transform: translateY(20px); } }
+    .modal-box h3 { color: var(--white); font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+    .modal-box p  { color: var(--muted); font-size: 12px; margin-bottom: 20px; line-height: 1.7; }
+    .key-display {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(46,216,168,0.25);
+      border-radius: 12px;
+      padding: 14px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      color: var(--emerald);
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 16px;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      user-select: all;
+    }
+    .key-display:hover { background: rgba(46,216,168,0.06); }
+    .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+
+    .btn-m {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      font-family: 'Cairo', sans-serif;
+      transition: all 0.18s;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .btn-m-green  { background: linear-gradient(135deg, #2ed8a8, #4f8ef7); color: #060b14; }
+    .btn-m-wa     { background: #16a34a; color: white; }
+    .btn-m-close  { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); }
+
+    /* ══════════ EMPTY STATE ══════════ */
+    .empty {
+      text-align: center;
+      padding: 50px 20px;
+      color: var(--muted);
+    }
+    .empty-icon { font-size: 36px; margin-bottom: 12px; }
+    .empty h3 { color: var(--text); font-size: 14px; font-weight: 700; margin-bottom: 6px; }
+    .empty p { font-size: 12px; line-height: 1.6; }
+
+    /* ══════════ ADD REQUEST FORM ══════════ */
+    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .fg { margin-bottom: 0; }
+    .fg label { display: block; color: var(--text); font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+    .fg input, .fg select, .fg textarea {
+      width: 100%;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: white;
+      font-family: 'Cairo', sans-serif;
+      font-size: 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--purple); }
+    .fg select option { background: #0d1b2e; }
+    .fg textarea { resize: vertical; min-height: 72px; }
+    .fg.full { grid-column: 1 / -1; }
+
+    .btn-add {
+      padding: 10px 20px;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      border: none;
+      border-radius: 10px;
+      color: white;
+      font-family: 'Cairo', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex; align-items: center; gap: 7px;
+    }
+    .btn-add:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(168,85,247,0.35); }
+    .btn-add-ghost {
+      padding: 10px 16px;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Cairo', sans-serif;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    .btn-add-ghost:hover { background: rgba(255,255,255,0.07); }
+
+    .toast {
+      position: fixed;
+      bottom: 24px; left: 50%; transform: translateX(-50%);
+      background: #1a2d1a;
+      border: 1px solid rgba(46,216,168,0.3);
+      border-radius: 12px;
+      padding: 12px 22px;
+      color: var(--emerald);
+      font-size: 13px;
+      font-weight: 700;
+      z-index: 900;
+      display: none;
+      animation: fadeUp 0.3s ease;
+    }
+    @keyframes fadeUp { from { opacity:0; transform: translateX(-50%) translateY(10px); } }
+
+    @media (max-width: 700px) {
+      .sb { display: none; }
+      .main { margin-right: 0; max-width: 100%; padding: 20px 14px; }
+      .form-grid { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 10px; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-blue-600 selection:text-white">
+<body>
 
-  <!-- Admin Secret Top Header -->
-  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-3">
-      <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center font-black text-2xl shadow-lg shadow-purple-600/30">
-          🔐
-        </div>
-        <div>
-          <span class="font-black text-xl text-white block">JudoManager Secret Admin</span>
-          <span class="text-[11px] text-purple-400 font-bold">لوحة التحكم السرية الخاصة بالمبرمج فقط</span>
-        </div>
-      </div>
+<!-- ══════════ LOGIN ══════════ -->
+<div id="loginScreen">
+  <div class="login-card">
+    <div class="login-logo">
+      <div class="login-logo-icon">🔐</div>
+      <h1>لوحة تحكم الأدمن</h1>
+      <p>JudoManager Pro – وصول خاص فقط</p>
+    </div>
+    <div class="login-err" id="loginErr">❌ كلمة المرور أو اسم المستخدم غير صحيح</div>
+    <div class="login-fg">
+      <label>اسم المستخدم</label>
+      <input type="text" id="loginUser" placeholder="admin" autocomplete="off">
+    </div>
+    <div class="login-fg">
+      <label>كلمة المرور السرية</label>
+      <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn-login" onclick="doLogin()">🔓 دخول إلى لوحة التحكم</button>
+  </div>
+</div>
 
-      <div class="flex items-center gap-2">
-        <span class="px-3 py-1 bg-purple-600/20 text-purple-300 border border-purple-500/30 rounded-full font-bold text-xs">
-          🔒 حماية مشفرة
-        </span>
+<!-- ══════════ APP SHELL ══════════ -->
+<div id="appShell">
+
+  <!-- SIDEBAR -->
+  <aside class="sb">
+    <div class="sb-logo">
+      <div class="sb-logo-icon">🔐</div>
+      <div>
+        <div class="sb-logo-name">Admin Panel</div>
+        <div class="sb-logo-sub">JudoManager Pro</div>
       </div>
     </div>
-  </header>
 
-  <!-- Main Admin Dashboard Content -->
-  <main class="max-w-6xl mx-auto px-4 py-10 space-y-8">
+    <nav class="sb-nav">
+      <div class="nav-lbl">الرئيسية</div>
+      <button class="nav-btn active" onclick="showPage('dashboard',this)">
+        <span>📊</span> لوحة البيانات
+      </button>
 
-    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 space-y-4 shadow-2xl">
-      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
+      <div class="nav-lbl" style="margin-top:8px;">الطلبات</div>
+      <button class="nav-btn" onclick="showPage('requests',this)">
+        <span>📋</span> طلبات التفعيل
+        <span class="nav-badge" id="pendingBadge">0</span>
+      </button>
+      <button class="nav-btn" onclick="showPage('add',this)">
+        <span>➕</span> إضافة طلب يدوي
+      </button>
+      <button class="nav-btn" onclick="showPage('approved',this)">
+        <span>✅</span> تم تفعيلها
+      </button>
+
+      <div class="nav-lbl" style="margin-top:8px;">الإعدادات</div>
+      <button class="nav-btn" onclick="showPage('settings',this)">
+        <span>⚙️</span> الإعدادات
+      </button>
+    </nav>
+
+    <div class="sb-footer">
+      <div class="sb-user" onclick="doLogout()">
+        <div class="sb-avatar">👤</div>
         <div>
-          <h2 class="text-2xl font-black text-white flex items-center gap-2">
-            <span>📋</span> طلبات تفعيل وتراخيص الأندية
-          </h2>
-          <p class="text-xs text-slate-400 mt-1">
-            فحص طلبات التجربة المجانية والاشتراكات الدائمة المطابقة لوصل تحويل BaridiMob
-          </p>
+          <div class="sb-user-name">المبرمج</div>
+          <div class="sb-user-role">Super Admin</div>
         </div>
-        <button onclick="loadRequests()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs flex items-center gap-1.5">
-          🔄 تحديث الطلبات
+        <div class="sb-logout" title="تسجيل الخروج">⏻</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <main class="main">
+
+    <!-- ── DASHBOARD ── -->
+    <div class="page-sec active" id="page-dashboard">
+      <div class="ph">
+        <div>
+          <h1>📊 لوحة البيانات</h1>
+          <p>نظرة عامة على طلبات التفعيل والتراخيص</p>
+        </div>
+        <button class="btn-add" onclick="refreshAll()" style="padding:9px 16px; font-size:12px;">
+          🔄 تحديث
         </button>
       </div>
 
-      <!-- Requests Table -->
-      <div class="overflow-x-auto">
-        <table class="w-full text-right text-xs">
-          <thead class="bg-slate-950 text-slate-400 font-bold border-b border-slate-800">
-            <tr>
-              <th className="p-3.5">رقم الطلب</th>
-              <th className="p-3.5">اسم النادي</th>
-              <th className="p-3.5">المسؤول والهاتف</th>
-              <th className="p-3.5">البريد الإلكتروني (الإيميل)</th>
-              <th className="p-3.5">نوع الاشتراك</th>
-              <th className="p-3.5">وصل BaridiMob</th>
-              <th className="p-3.5">الحالة</th>
-              <th className="p-3.5 text-left">إجراء التفعيل والإرسال</th>
-            </tr>
-          </thead>
-          <tbody id="requestsTableBody" className="divide-y divide-slate-800/60">
-            <!-- Dynamic Javascript Table Rows -->
-          </tbody>
-        </table>
+      <div class="stats">
+        <div class="stat">
+          <div class="stat-val" id="st-total" style="color:var(--white);">0</div>
+          <div class="stat-lbl">إجمالي الطلبات</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="st-pending" style="color:var(--amber);">0</div>
+          <div class="stat-lbl">قيد التحقق</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="st-approved" style="color:var(--emerald);">0</div>
+          <div class="stat-lbl">تم التفعيل</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="st-paid" style="color:var(--purple);">0</div>
+          <div class="stat-lbl">مدفوع (مدى الحياة)</div>
+        </div>
+        <div class="stat">
+          <div class="stat-val" id="st-trial" style="color:var(--blue);">0</div>
+          <div class="stat-lbl">نسخة تجريبية</div>
+        </div>
+      </div>
+
+      <!-- Recent requests preview -->
+      <div class="tbl-wrap">
+        <div class="tbl-head">
+          <div>
+            <h2>📋 أحدث الطلبات</h2>
+            <p>الطلبات الأخيرة التي تحتاج مراجعة</p>
+          </div>
+          <button class="filter-btn active" onclick="showPage('requests', document.querySelectorAll('.nav-btn')[1])">عرض الكل →</button>
+        </div>
+        <div id="dashRecentTable">
+          <div class="empty"><div class="empty-icon">📭</div><h3>لا توجد طلبات حتى الآن</h3><p>عند إرسال مستخدم طلباً سيظهر هنا</p></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── REQUESTS ── -->
+    <div class="page-sec" id="page-requests">
+      <div class="ph">
+        <div>
+          <h1>📋 طلبات التفعيل</h1>
+          <p>فحص الطلبات وتأكيد الدفع وإرسال مفتاح التفعيل</p>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <div class="tbl-head">
+          <div>
+            <h2>كل الطلبات</h2>
+          </div>
+          <div class="tbl-filter">
+            <button class="filter-btn active" onclick="filterReqs('all',this)">الكل</button>
+            <button class="filter-btn" onclick="filterReqs('PENDING',this)">⏳ قيد التحقق</button>
+            <button class="filter-btn" onclick="filterReqs('APPROVED',this)">✅ مفعّل</button>
+          </div>
+        </div>
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>النادي</th>
+                <th>البريد الإلكتروني</th>
+                <th>الهاتف</th>
+                <th>النوع</th>
+                <th>وصل الدفع</th>
+                <th>الحالة</th>
+                <th>المفتاح</th>
+                <th>إجراء</th>
+              </tr>
+            </thead>
+            <tbody id="reqsTbody"></tbody>
+          </table>
+        </div>
+        <div id="reqsEmpty" class="empty" style="display:none;">
+          <div class="empty-icon">📭</div>
+          <h3>لا توجد طلبات</h3>
+          <p>لا يوجد طلبات تطابق هذا الفلتر</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── ADD MANUAL ── -->
+    <div class="page-sec" id="page-add">
+      <div class="ph">
+        <div>
+          <h1>➕ إضافة طلب يدوي</h1>
+          <p>أضف طلب تفعيل يدوياً لنادٍ تواصل معك مباشرة</p>
+        </div>
+      </div>
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:26px; max-width:580px;">
+        <div class="form-grid">
+          <div class="fg">
+            <label>اسم النادي *</label>
+            <input type="text" id="add-club" placeholder="نادي الرياضي للجودو">
+          </div>
+          <div class="fg">
+            <label>مسؤول النادي</label>
+            <input type="text" id="add-manager" placeholder="الاسم الكامل">
+          </div>
+          <div class="fg">
+            <label>البريد الإلكتروني *</label>
+            <input type="email" id="add-email" placeholder="example@gmail.com">
+          </div>
+          <div class="fg">
+            <label>رقم الهاتف</label>
+            <input type="tel" id="add-phone" placeholder="0551234567">
+          </div>
+          <div class="fg">
+            <label>نوع الاشتراك *</label>
+            <select id="add-type">
+              <option value="TRIAL">تجربة مجانية 14 يوم</option>
+              <option value="LIFETIME">ترخيص مدى الحياة (مدفوع)</option>
+            </select>
+          </div>
+          <div class="fg">
+            <label>وصل الدفع (BaridiMob)</label>
+            <input type="text" id="add-receipt" placeholder="رقم العملية أو وصف الوصل">
+          </div>
+          <div class="fg full">
+            <label>ملاحظات إضافية</label>
+            <textarea id="add-notes" placeholder="أي معلومات إضافية..."></textarea>
+          </div>
+        </div>
+        <div style="display:flex; gap:10px; margin-top:16px;">
+          <button class="btn-add" onclick="addRequest()">➕ إضافة الطلب</button>
+          <button class="btn-add-ghost" onclick="clearAddForm()">مسح الحقول</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── APPROVED ── -->
+    <div class="page-sec" id="page-approved">
+      <div class="ph">
+        <div>
+          <h1>✅ الطلبات المفعّلة</h1>
+          <p>سجل كامل للمفاتيح التي تم إصدارها</p>
+        </div>
+      </div>
+      <div class="tbl-wrap">
+        <div style="overflow-x:auto;">
+          <table>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>النادي</th>
+                <th>البريد</th>
+                <th>النوع</th>
+                <th>المفتاح الصادر</th>
+                <th>إرسال مجدداً</th>
+              </tr>
+            </thead>
+            <tbody id="approvedTbody"></tbody>
+          </table>
+        </div>
+        <div id="approvedEmpty" class="empty" style="display:none;">
+          <div class="empty-icon">🔑</div>
+          <h3>لا يوجد تفعيلات بعد</h3>
+          <p>المفاتيح المصدرة ستظهر هنا</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── SETTINGS ── -->
+    <div class="page-sec" id="page-settings">
+      <div class="ph">
+        <div><h1>⚙️ الإعدادات</h1><p>إعدادات لوحة التحكم</p></div>
+      </div>
+      <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:26px; max-width:480px;">
+        <h3 style="color:var(--white); font-size:14px; font-weight:800; margin-bottom:18px;">🔑 تغيير كلمة المرور</h3>
+        <div class="fg" style="margin-bottom:12px;">
+          <label>كلمة المرور الجديدة</label>
+          <input type="password" id="newPass" placeholder="••••••••">
+        </div>
+        <div class="fg" style="margin-bottom:16px;">
+          <label>تأكيد كلمة المرور</label>
+          <input type="password" id="confPass" placeholder="••••••••">
+        </div>
+        <button class="btn-add" style="font-size:12px;" onclick="changePassword()">💾 حفظ كلمة المرور</button>
+
+        <hr style="border-color:var(--border); margin:24px 0;">
+
+        <h3 style="color:var(--white); font-size:14px; font-weight:800; margin-bottom:14px;">🗑️ إدارة البيانات</h3>
+        <button class="btn-add-ghost" onclick="if(confirm('هل أنت متأكد؟ سيتم حذف جميع البيانات!')) clearAllData()" style="border-color:rgba(248,113,113,0.2); color:var(--red);">
+          🗑️ حذف جميع البيانات
+        </button>
+
+        <hr style="border-color:var(--border); margin:24px 0;">
+
+        <h3 style="color:var(--white); font-size:14px; font-weight:800; margin-bottom:14px;">📞 معلومات التواصل</h3>
+        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:12px; padding:14px; font-size:12px; line-height:2;">
+          <div>📱 واتساب: <span style="color:var(--emerald);">0553823611</span></div>
+          <div>✈️ تلغرام: <span style="color:var(--blue);">@nisoo09</span></div>
+        </div>
       </div>
     </div>
 
   </main>
+</div>
 
-  <footer class="border-t border-slate-800 py-8 text-center text-xs text-slate-500">
-    لوحة الأدمن السرية لـ JudoManager © المبرمج (0553823611 - @nisoo09)
-  </footer>
+<!-- ══════════ MODAL: KEY GENERATED ══════════ -->
+<div class="modal-ov" id="keyModal">
+  <div class="modal-box">
+    <h3>🎉 تم توليد مفتاح التفعيل</h3>
+    <p id="keyModalDesc">تم قبول الطلب وتوليد المفتاح. أرسله للعميل عبر واتساب أو بريد إلكتروني.</p>
+    <div class="key-display" id="keyDisplay" onclick="copyKey()">JUDO-XXXX-XXXX-XXXX</div>
+    <p style="font-size:11px; text-align:center; margin-top:-10px; margin-bottom:14px;">اضغط على المفتاح لنسخه</p>
+    <div class="modal-actions">
+      <button class="btn-m btn-m-green" onclick="sendViaEmail()">📧 إرسال بالإيميل</button>
+      <button class="btn-m btn-m-wa" onclick="sendViaWhatsApp()">💬 إرسال واتساب</button>
+      <button class="btn-m btn-m-close" onclick="closeModal()">إغلاق</button>
+    </div>
+  </div>
+</div>
 
-  <script>
-    const defaultData = [
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<script>
+  // ══════════ CONFIG ══════════
+  const ADMIN_USER = 'admin';
+  let ADMIN_PASS = localStorage.getItem('adminPass') || 'judo2025secret';
+  let currentRequest = null;
+  let filterState = 'all';
+
+  // ══════════ DATA ══════════
+  function getData() {
+    return JSON.parse(localStorage.getItem('judoRequests') || '[]');
+  }
+  function saveData(d) {
+    localStorage.setItem('judoRequests', JSON.stringify(d));
+    refreshAll();
+  }
+
+  // ══════════ LOGIN ══════════
+  function doLogin() {
+    const u = document.getElementById('loginUser').value.trim();
+    const p = document.getElementById('loginPass').value;
+    if (u === ADMIN_USER && p === ADMIN_PASS) {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('appShell').classList.add('visible');
+      refreshAll();
+    } else {
+      document.getElementById('loginErr').style.display = 'block';
+      document.getElementById('loginPass').value = '';
+    }
+  }
+  function doLogout() {
+    if (confirm('هل تريد تسجيل الخروج؟')) {
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('appShell').classList.remove('visible');
+      document.getElementById('loginPass').value = '';
+      document.getElementById('loginErr').style.display = 'none';
+    }
+  }
+
+  // ══════════ NAVIGATION ══════════
+  function showPage(id, btn) {
+    document.querySelectorAll('.page-sec').forEach(s => s.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
+    if (btn) btn.classList.add('active');
+  }
+
+  // ══════════ STATS ══════════
+  function refreshAll() {
+    const data = getData();
+    const pending  = data.filter(r => r.status === 'PENDING');
+    const approved = data.filter(r => r.status === 'APPROVED');
+    const paid     = data.filter(r => r.type === 'LIFETIME');
+    const trial    = data.filter(r => r.type === 'TRIAL');
+
+    document.getElementById('st-total').textContent    = data.length;
+    document.getElementById('st-pending').textContent  = pending.length;
+    document.getElementById('st-approved').textContent = approved.length;
+    document.getElementById('st-paid').textContent     = paid.length;
+    document.getElementById('st-trial').textContent    = trial.length;
+    document.getElementById('pendingBadge').textContent = pending.length;
+
+    renderRecentDash(data.slice(-5).reverse());
+    renderReqs(data);
+    renderApproved(approved);
+  }
+
+  // ══════════ RECENT DASH ══════════
+  function renderRecentDash(items) {
+    const el = document.getElementById('dashRecentTable');
+    if (!items.length) {
+      el.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><h3>لا توجد طلبات حتى الآن</h3><p>عند إرسال مستخدم طلباً سيظهر هنا</p></div>`;
+      return;
+    }
+    el.innerHTML = `
+      <table>
+        <thead><tr>
+          <th>النادي</th><th>البريد</th><th>النوع</th><th>الحالة</th>
+        </tr></thead>
+        <tbody>
+          ${items.map(r => `
+            <tr>
+              <td style="color:var(--white); font-weight:700;">${r.clubName}</td>
+              <td class="email-txt">${r.email}</td>
+              <td>${typeBadge(r.type)}</td>
+              <td>${statusBadge(r.status)}</td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+  }
+
+  // ══════════ REQUESTS TABLE ══════════
+  function renderReqs(data) {
+    const filtered = filterState === 'all' ? data : data.filter(r => r.status === filterState);
+    const tbody = document.getElementById('reqsTbody');
+    const empty = document.getElementById('reqsEmpty');
+    if (!filtered.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    tbody.innerHTML = filtered.map((r, i) => `
+      <tr>
+        <td style="color:var(--muted); font-size:11px;">${i + 1}</td>
+        <td style="color:var(--white); font-weight:700; max-width:140px;">${r.clubName}</td>
+        <td class="email-txt">${r.email}</td>
+        <td style="font-size:11px;">${r.phone || '–'}</td>
+        <td>${typeBadge(r.type)}</td>
+        <td style="font-size:11px; color:var(--amber); max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${r.receipt || '–'}</td>
+        <td>${statusBadge(r.status)}</td>
+        <td>${r.key ? `<span class="mono">${r.key}</span>` : '–'}</td>
+        <td>
+          ${r.status === 'PENDING' ? `
+            <div style="display:flex; gap:6px; flex-wrap:wrap;">
+              <button class="act-btn act-approve" onclick="approveReq('${r.id}')">⚡ تفعيل وإرسال المفتاح</button>
+              <button class="act-btn act-reject" onclick="rejectReq('${r.id}')">✕ رفض</button>
+            </div>
+          ` : r.status === 'APPROVED' ? `
+            <button class="act-btn act-send" onclick="resendKey('${r.id}')">📤 إعادة إرسال</button>
+          ` : `<span style="color:var(--red); font-size:11px;">مرفوض</span>`}
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  function filterReqs(f, btn) {
+    filterState = f;
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    renderReqs(getData());
+  }
+
+  // ══════════ APPROVED TABLE ══════════
+  function renderApproved(items) {
+    const tbody = document.getElementById('approvedTbody');
+    const empty = document.getElementById('approvedEmpty');
+    if (!items.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
+    empty.style.display = 'none';
+    tbody.innerHTML = items.map((r, i) => `
+      <tr>
+        <td style="color:var(--muted);">${i + 1}</td>
+        <td style="color:var(--white); font-weight:700;">${r.clubName}</td>
+        <td class="email-txt">${r.email}</td>
+        <td>${typeBadge(r.type)}</td>
+        <td><span class="mono">${r.key}</span></td>
+        <td>
+          <button class="act-btn act-send" onclick="resendKey('${r.id}')">📤 إرسال مجدداً</button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  // ══════════ HELPERS ══════════
+  function typeBadge(t) {
+    return t === 'LIFETIME'
+      ? `<span class="badge badge-paid">♾️ مدى الحياة</span>`
+      : `<span class="badge badge-trial">⏱️ تجريبي 14 يوم</span>`;
+  }
+  function statusBadge(s) {
+    if (s === 'APPROVED') return `<span class="badge badge-approved">✅ مفعّل</span>`;
+    if (s === 'REJECTED') return `<span class="badge badge-rejected">✕ مرفوض</span>`;
+    return `<span class="badge badge-pending">⏳ قيد التحقق</span>`;
+  }
+
+  function genKey(type) {
+    const prefix = type === 'LIFETIME' ? 'JUDO-PRO' : 'JUDO-TRL';
+    const rnd = () => Math.floor(1000 + Math.random() * 9000);
+    return `${prefix}-${rnd()}-${rnd()}`;
+  }
+
+  // ══════════ ACTIONS ══════════
+  function approveReq(id) {
+    const data = getData();
+    const req = data.find(r => r.id === id);
+    if (!req) return;
+    req.key = genKey(req.type);
+    req.status = 'APPROVED';
+    saveData(data);
+    currentRequest = req;
+    showKeyModal(req);
+  }
+
+  function rejectReq(id) {
+    if (!confirm('هل أنت متأكد من رفض هذا الطلب؟')) return;
+    const data = getData();
+    const req = data.find(r => r.id === id);
+    if (req) { req.status = 'REJECTED'; saveData(data); }
+    showToast('تم رفض الطلب');
+  }
+
+  function resendKey(id) {
+    const data = getData();
+    const req = data.find(r => r.id === id);
+    if (!req) return;
+    currentRequest = req;
+    showKeyModal(req);
+  }
+
+  // ══════════ KEY MODAL ══════════
+  function showKeyModal(req) {
+    document.getElementById('keyDisplay').textContent = req.key;
+    document.getElementById('keyModalDesc').textContent =
+      `تم قبول طلب نادي "${req.clubName}" - أرسل المفتاح إلى: ${req.email}`;
+    document.getElementById('keyModal').classList.add('show');
+  }
+  function closeModal() {
+    document.getElementById('keyModal').classList.remove('show');
+    currentRequest = null;
+  }
+  function copyKey() {
+    navigator.clipboard.writeText(document.getElementById('keyDisplay').textContent);
+    showToast('✅ تم نسخ المفتاح!');
+  }
+  function sendViaEmail() {
+    if (!currentRequest) return;
+    const sub = encodeURIComponent(`مفتاح تفعيل نظام JudoManager - ${currentRequest.clubName}`);
+    const body = encodeURIComponent(
+      `السلام عليكم،\n\nتم قبول طلبكم بنجاح!\nمفتاح التفعيل الخاص بناديكم:\n\n${currentRequest.key}\n\nشكراً لاختياركم JudoManager Pro.\n\nللتواصل: 0553823611`
+    );
+    window.open(`mailto:${currentRequest.email}?subject=${sub}&body=${body}`, '_blank');
+  }
+  function sendViaWhatsApp() {
+    if (!currentRequest) return;
+    const msg = encodeURIComponent(
+      `السلام عليكم ${currentRequest.clubName}،\n\nتم قبول طلبكم! مفتاح التفعيل هو:\n${currentRequest.key}\n\nشكراً لاختياركم JudoManager Pro 🥋`
+    );
+    window.open(`https://wa.me/+?text=${msg}`, '_blank');
+  }
+
+  // ══════════ ADD MANUAL REQUEST ══════════
+  function addRequest() {
+    const club    = document.getElementById('add-club').value.trim();
+    const email   = document.getElementById('add-email').value.trim();
+    const manager = document.getElementById('add-manager').value.trim();
+    const phone   = document.getElementById('add-phone').value.trim();
+    const type    = document.getElementById('add-type').value;
+    const receipt = document.getElementById('add-receipt').value.trim();
+    const notes   = document.getElementById('add-notes').value.trim();
+
+    if (!club || !email) { alert('الرجاء إدخال اسم النادي والبريد الإلكتروني'); return; }
+
+    const data = getData();
+    data.push({
+      id: 'REQ-' + Date.now(),
+      clubName: club,
+      manager,
+      email,
+      phone,
+      type,
+      receipt,
+      notes,
+      status: 'PENDING',
+      createdAt: new Date().toLocaleDateString('ar-DZ'),
+      key: null
+    });
+    saveData(data);
+    clearAddForm();
+    showToast('✅ تم إضافة الطلب بنجاح');
+    showPage('requests', document.querySelectorAll('.nav-btn')[1]);
+  }
+
+  function clearAddForm() {
+    ['add-club','add-manager','add-email','add-phone','add-receipt','add-notes'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+  }
+
+  // ══════════ SETTINGS ══════════
+  function changePassword() {
+    const np = document.getElementById('newPass').value;
+    const cp = document.getElementById('confPass').value;
+    if (!np) { alert('أدخل كلمة مرور جديدة'); return; }
+    if (np !== cp) { alert('كلمتا المرور غير متطابقتين'); return; }
+    if (np.length < 6) { alert('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
+    ADMIN_PASS = np;
+    localStorage.setItem('adminPass', np);
+    document.getElementById('newPass').value = '';
+    document.getElementById('confPass').value = '';
+    showToast('✅ تم تغيير كلمة المرور');
+  }
+
+  function clearAllData() {
+    localStorage.removeItem('judoRequests');
+    refreshAll();
+    showToast('🗑️ تم حذف جميع البيانات');
+  }
+
+  // ══════════ TOAST ══════════
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.style.display = 'block';
+    setTimeout(() => { t.style.display = 'none'; }, 2800);
+  }
+
+  // ══════════ SAMPLE DATA (first run) ══════════
+  if (!localStorage.getItem('judoRequests')) {
+    const sample = [
       {
-        id: "REQ-1001",
-        clubName: "نادي الأمل الرياضي للجودو",
-        managerName: "عبد القادر بلحاج",
-        phone: "0550123456",
-        email: "elamal.judo@gmail.com",
-        requestType: "TRIAL_14_DAYS",
-        status: "PENDING",
-        createdAt: "اليوم"
+        id: 'REQ-1001',
+        clubName: 'نادي الأمل الرياضي للجودو',
+        manager: 'عبد القادر بلحاج',
+        email: 'elamal.judo@gmail.com',
+        phone: '0550123456',
+        type: 'TRIAL',
+        receipt: null,
+        notes: '',
+        status: 'PENDING',
+        createdAt: new Date().toLocaleDateString('ar-DZ'),
+        key: null
       },
       {
-        id: "REQ-1002",
-        clubName: "جمعية الأبطال للجودو والقتال",
-        managerName: "ياسين زروقي",
-        phone: "0661987654",
-        email: "champions.judo.dz@gmail.com",
-        requestType: "LIFETIME_PRO",
-        receiptUrl: "وصل تحويل بريدي موب #00982415 (مبلغ 15,000 دج)",
-        status: "PENDING",
-        createdAt: "اليوم"
+        id: 'REQ-1002',
+        clubName: 'جمعية الأبطال للجودو والقتال',
+        manager: 'ياسين زروقي',
+        email: 'champions.judo.dz@gmail.com',
+        phone: '0661987654',
+        type: 'LIFETIME',
+        receipt: '#00982415 بريدي موب - 15,000 دج',
+        notes: 'تم التحويل',
+        status: 'PENDING',
+        createdAt: new Date().toLocaleDateString('ar-DZ'),
+        key: null
       }
     ];
+    localStorage.setItem('judoRequests', JSON.stringify(sample));
+  }
+</script>
 
-    function loadRequests() {
-      const tbody = document.getElementById('requestsTableBody');
-      tbody.innerHTML = '';
-
-      defaultData.forEach((req, idx) => {
-        const isApproved = req.status === 'APPROVED';
-        const tr = document.createElement('tr');
-        tr.className = "hover:bg-slate-800/40 transition-all";
-        tr.innerHTML = `
-          <td class="p-3.5 font-mono text-slate-400 font-bold">${req.id}</td>
-          <td class="p-3.5 font-bold text-white">${req.clubName}</td>
-          <td class="p-3.5">
-            <span class="block text-slate-300 font-medium">${req.managerName}</span>
-            <span class="font-mono text-blue-400 text-[11px]">${req.phone}</span>
-          </td>
-          <td class="p-3.5 font-mono text-indigo-300 font-bold">${req.email}</td>
-          <td class="p-3.5">
-            ${req.requestType === 'LIFETIME_PRO' 
-              ? '<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px] border border-emerald-500/30">🏆 دائم مدى الحياة (مدفوع)</span>' 
-              : '<span class="px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-[10px] border border-indigo-500/30">⏱️ تجربة 14 يوماً</span>'}
-          </td>
-          <td class="p-3.5">
-            ${req.receiptUrl ? `<span class="bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 text-emerald-400 font-mono text-[11px] block max-w-[180px] truncate">${req.receiptUrl}</span>` : '<span class="text-slate-600">-</span>'}
-          </td>
-          <td class="p-3.5">
-            ${isApproved 
-              ? '<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">✅ تم التفعيل والإرسال</span>' 
-              : '<span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 font-bold text-[10px]">⏳ قيد التحقق</span>'}
-          </td>
-          <td class="p-3.5 text-left">
-            ${isApproved ? `
-              <div class="flex flex-col items-end gap-1">
-                <span class="font-mono text-emerald-400 font-black bg-slate-950 px-3 py-1 rounded-xl border border-emerald-500/30 text-xs">${req.generatedKey}</span>
-              </div>
-            ` : `
-              <button onclick="approveReq(${idx})" class="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl shadow-md text-xs">
-                ⚡ تأكيد الدفع وتوليد المفتاح
-              </button>
-            `}
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
-    }
-
-    function approveReq(idx) {
-      const item = defaultData[idx];
-      const keyPrefix = item.requestType === 'LIFETIME_PRO' ? 'JUDO-PRO' : 'JUDO-TRL';
-      const key = `${keyPrefix}-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`;
-      item.status = 'APPROVED';
-      item.generatedKey = key;
-
-      loadRequests();
-
-      // Email & WhatsApp direct trigger link
-      const mailSubject = encodeURIComponent(`مفتاح تفعيل نظام JudoManager لـ ${item.clubName}`);
-      const mailBody = encodeURIComponent(`مرحباً ${item.managerName}،\n\nتم قبول وتأكيد طلبكم بنجاح!\nمفتاح التفعيل الخاص بناديكم هو:\n${key}\n\nشكراً لكم.`);
-      
-      const whatsappMsg = encodeURIComponent(`مرحباً ${item.managerName}، تم قبول وتأكيد طلبكم بنجاح! مفتاح التفعيل الخاص بكم على البريد ${item.email} هو: ${key}`);
-
-      alert(`✅ تم تأكيد الطلب وتوليد المفتاح: ${key}\nتم إعداده للإرسال إلى البريد الإلكتروني: ${item.email}`);
-      
-      window.open(`mailto:${item.email}?subject=${mailSubject}&body=${mailBody}`, '_blank');
-    }
-
-    loadRequests();
-  </script>
 </body>
 </html>
