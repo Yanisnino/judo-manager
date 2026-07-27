@@ -39,7 +39,7 @@
         تشغيل نظام JudoManager على جهازك (حاسوب أو هاتف)
       </h1>
       <p class="text-slate-300 text-sm leading-relaxed max-w-2xl">
-        يمكن لإدارة النادي والمدربين استخدام النظام كاملاً من الحواسيب أو من الهواتف المحمولة بسهولة تامة.
+        يمكن لإدارة النادي والمدربين استخدام النظام كاملاً من الحواسيب أو من الهواتف المحمولة بسهولة تامة مع مزامنة البيانات تلقائياً.
       </p>
     </div>
 
@@ -63,7 +63,7 @@
         </a>
       </div>
 
-      <!-- Mobile Club Manager App (NEW: Full Responsive Mobile Club Manager) -->
+      <!-- Mobile Club Manager App (Dynamic Smart Link to Main Dashboard) -->
       <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 space-y-4 hover:border-indigo-500/50 transition-all shadow-xl flex flex-col justify-between">
         <div class="space-y-3">
           <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 text-indigo-400 font-bold text-2xl flex items-center justify-center border border-indigo-500/30">
@@ -75,7 +75,7 @@
           </p>
         </div>
 
-        <a href="../src/app/dashboard/page.tsx" target="_blank" onclick="window.location.href='/dashboard'" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl text-xs text-center block transition-all shadow-lg shadow-indigo-600/30">
+        <a href="/dashboard" id="clubMobileLink" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl text-xs text-center block transition-all shadow-lg shadow-indigo-600/30">
           🥋 فتح نظام النادي كاملاً على الهاتف
         </a>
       </div>
@@ -102,18 +102,18 @@
     <!-- Activation Guide -->
     <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 space-y-4 shadow-xl">
       <h3 class="text-lg font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
-        <span>💡</span> مرونة الاستخدام حسب رغبة النادي
+        <span>💡</span> مزامنة البيانات التلقائية بين الحاسوب والهاتف
       </h3>
 
       <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs">
         <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-1.5">
-          <h4 class="font-bold text-blue-400">إذا أراد النادي استخدام الكمبيوتر:</h4>
-          <p class="text-slate-300">يضغط على "تحميل برنامج تثبيت الويندوز" ويشغله على حاسوب قاعة الرياضة.</p>
+          <h4 class="font-bold text-blue-400">على الكمبيوتر (PC):</h4>
+          <p class="text-slate-300">يتم إدخال وتسجيل الرياضيين، طباعة بطاقات الكودبار، ومتابعة الاشتراكات.</p>
         </div>
 
         <div class="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-1.5">
-          <h4 class="font-bold text-indigo-400">إذا أراد المدرب أو رئيس النادي استخدام الهاتف:</h4>
-          <p class="text-slate-300">يضغط على "فتح نظام النادي كاملاً على الهاتف" ويقوم بطلب "إضافة للشاشة الرئيسية".</p>
+          <h4 class="font-bold text-indigo-400">على الهاتف (Mobile):</h4>
+          <p class="text-slate-300">يستطيع المدرب فتح لوحة التحكم بنفس البيانات، مسح الكودبار بكاميرا الهاتف، وتسجيل الحضور فوراً.</p>
         </div>
       </div>
     </div>
@@ -124,5 +124,12 @@
     بوابة JudoManager الشاملة © جميع الحقوق محفوظة
   </footer>
 
+  <script>
+    // Ensure smooth dynamic URL routing if accessed on Vercel or Render web service
+    const link = document.getElementById('clubMobileLink');
+    if (window.location.origin.includes('render') || window.location.origin.includes('vercel')) {
+      link.href = window.location.origin.replace('download-portal', 'app') + '/dashboard';
+    }
+  </script>
 </body>
 </html>
