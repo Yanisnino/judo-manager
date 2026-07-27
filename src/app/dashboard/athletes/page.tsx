@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import Link from "next/link";
 import PrintableAthleteCard from "@/components/PrintableAthleteCard";
 
 interface Athlete {
@@ -16,8 +15,6 @@ interface Athlete {
   subStatus: "paid" | "pending" | "expired";
   status: "active" | "inactive";
 }
-
-const STORAGE_KEY = "judo_manager_athletes";
 
 export default function AthletesPage() {
   const [athletes, setAthletes] = useState<Athlete[]>([]);
@@ -38,28 +35,24 @@ export default function AthletesPage() {
   const [formBelt, setFormBelt] = useState("حزام أبيض");
   const [formSubStatus, setFormSubStatus] = useState<"paid" | "pending" | "expired">("paid");
 
-  // Load persistent athletes on start
-  useEffect(() => {
+  // Fetch athletes from file system API
+  const fetchAthletes = async () => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        setAthletes(JSON.parse(saved));
+      const res = await fetch("/api/athletes");
+      if (res.ok) {
+        const data = await res.json();
+        setAthletes(data);
       }
     } catch (e) {
-      console.error("Failed to load athletes", e);
-    }
-    setIsLoaded(true);
-  }, []);
-
-  // Save persistent athletes on change
-  const saveAthletesToStorage = (updated: Athlete[]) => {
-    setAthletes(updated);
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
-    } catch (e) {
-      console.error("Failed to save athletes", e);
+      console.error("Failed to fetch athletes", e);
+    } finally {
+      setIsLoaded(true);
     }
   };
+
+  useEffect(() => {
+    fetchAthletes();
+  }, []);
 
   const filteredAthletes = athletes.filter((a) => {
     const matchesSearch =
@@ -81,10 +74,10 @@ export default function AthletesPage() {
     return "bg-gray-100 text-gray-800 border border-gray-300 font-bold";
   };
 
-  const handleAddAthlete = (e: React.FormEvent) => {
+  const handleAddAthlete = async (e: React.FormEvent) => {
     e.preventDefault();
     const newAthlete: Athlete = {
-      id: "ATH-" + (athletes.length + 1).toString().padStart(3, "0"),
+      id: "ATH-" + Date.now(),
       name: formName,
       code: `JUDO-2026-${(athletes.length + 1).toString().padStart(4, "0")}`,
       belt: formBelt,
@@ -96,7 +89,21 @@ export default function AthletesPage() {
       status: "active",
     };
 
-    saveAthletesToStorage([newAthlete, ...athletes]);
+    try {
+      const res = await fetch("/api/athletes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newAthlete),
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        setAthletes(result.data);
+      }
+    } catch (e) {
+      console.error("Failed to add athlete", e);
+    }
+
     setShowAddModal(false);
     resetForm();
   };
@@ -111,33 +118,54 @@ export default function AthletesPage() {
     setFormSubStatus(athlete.subStatus);
   };
 
-  const handleUpdateAthlete = (e: React.FormEvent) => {
+  const handleUpdateAthlete = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!editingAthlete) return;
 
-    const updated = athletes.map((a) =>
-      a.id === editingAthlete.id
-        ? {
-            ...a,
-            name: formName,
-            age: Number(formAge),
-            phone: formPhone,
-            group: formGroup,
-            belt: formBelt,
-            beltColor: getBeltColor(formBelt),
-            subStatus: formSubStatus,
-          }
-        : a
-    );
+    const updatedData: Athlete = {
+      ...editingAthlete,
+      name: formName,
+      age: Number(formAge),
+      phone: formPhone,
+      group: formGroup,
+      belt: formBelt,
+      beltColor: getBeltColor(formBelt),
+      subStatus: formSubStatus,
+    };
 
-    saveAthletesToStorage(updated);
+    try {
+      const res = await fetch("/api/athletes", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedData),
+      });
+
+      if (res.ok) {
+        const result = await res.json();
+        setAthletes(result.data);
+      }
+    } catch (e) {
+      console.error("Failed to update athlete", e);
+    }
+
     setEditingAthlete(null);
     resetForm();
   };
 
-  const handleDeleteAthlete = (id: string, name: string) => {
+  const handleDeleteAthlete = async (id: string, name: string) => {
     if (window.confirm(`هل أنت تأكد من رغبتك في حذف اللاعب "${name}" نهائياً من النادي؟`)) {
-      saveAthletesToStorage(athletes.filter((a) => a.id !== id));
+      try {
+        const res = await fetch(`/api/athletes?id=${id}`, {
+          method: "DELETE",
+        });
+
+        if (res.ok) {
+          const result = await res.json();
+          setAthletes(result.data);
+        }
+      } catch (e) {
+        console.error("Failed to delete athlete", e);
+      }
     }
   };
 
@@ -151,7 +179,7 @@ export default function AthletesPage() {
   };
 
   if (!isLoaded) {
-    return <div className="p-12 text-center text-gray-500 font-bold">جاري تحميل بيانات النادي...</div>;
+    return <div className="p-12 text-center text-gray-500 font-bold">جاري تحميل البيانات الحقيقية من الملف...</div>;
   }
 
   return (
@@ -161,7 +189,7 @@ export default function AthletesPage() {
         <div>
           <h1 className="text-3xl font-black text-gray-900">إدارة اللاعبين والتسجيلات</h1>
           <p className="text-gray-500 text-sm mt-1">
-            جميع البيانات مضافة ومحفوظة بصفة دائمية بدون أي ضياع مع تحديث الصفحة
+            جميع بيانات اللاعبين تُحفظ في ملف حقيقي (data/athletes.json) ولا تختفي نهائياً عند التحديث!
           </p>
         </div>
         <button
@@ -220,7 +248,7 @@ export default function AthletesPage() {
           </div>
           <h3 className="text-2xl font-black text-gray-900">لا يوجد لاعبون مضافون بعد</h3>
           <p className="text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
-            اضغط على الزر أدناه لتسجيل أوّل لاعب، وسيتم حفظ بياناته بشكل دائم ولن تختفي عند تحديث الصفحة!
+            قم بإضافة لاعبك الأول، وسيتم كتابة بياناته مباشرة في ملف النظام الدائم ولن تختفي أبداً عند إعادة تحديث الصفحة!
           </p>
           <button
             onClick={() => {
@@ -229,7 +257,7 @@ export default function AthletesPage() {
             }}
             className="px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl text-sm shadow-lg shadow-blue-600/20 transition-all inline-flex items-center gap-2"
           >
-            <span>➕</span> إضافة لاعب في النادي
+            <span>➕</span> إضافة أول لاعب الآن
           </button>
         </div>
       ) : (
@@ -330,7 +358,7 @@ export default function AthletesPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-3xl p-6 max-w-lg w-full space-y-4 shadow-2xl">
             <div className="flex justify-between items-center border-b pb-3">
-              <h2 className="text-xl font-bold text-gray-900">تسجيل لاعب جديد وتوليد الكودبار</h2>
+              <h2 className="text-xl font-bold text-gray-900">تسجيل لاعب جديد وترقيم الكودبار</h2>
               <button onClick={() => setShowAddModal(false)} className="text-gray-400 font-bold text-xl">✕</button>
             </div>
             <form className="space-y-4 text-sm" onSubmit={handleAddAthlete}>

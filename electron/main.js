@@ -1,37 +1,39 @@
-const { app, BrowserWindow } = require("electron");
-const path = require("path");
+const { app, BrowserWindow } = require('electron');
+const path = require('path');
 
 function createWindow() {
   const mainWindow = new BrowserWindow({
-    width: 1300,
-    height: 900,
-    minWidth: 1000,
+    width: 1280,
+    height: 800,
+    minWidth: 1024,
     minHeight: 700,
-    title: "JudoManager Desktop - منصة إدارة أندية الجودو والفنون القتالية",
-    icon: path.join(__dirname, "../public/favicon.ico"),
+    title: 'JudoManager Pro - نظام إدارة أندية الجودو والرياضات القتالية',
+    icon: path.join(__dirname, '../public/icon.svg'),
+    autoHideMenuBar: true,
     webPreferences: {
       nodeIntegration: true,
       contextIsolation: false,
     },
   });
 
-  // Load Next.js production server or local dev url
-  const startUrl = process.env.ELECTRON_START_URL || "http://localhost:3000";
+  // Load local Next.js dev server or production URL
+  const startUrl = process.env.ELECTRON_START_URL || 'http://localhost:3000/dashboard';
   mainWindow.loadURL(startUrl);
 
-  // Auto-maximize window for smooth UX
-  mainWindow.maximize();
+  mainWindow.on('closed', function () {
+    app.quit();
+  });
 }
 
 app.whenReady().then(createWindow);
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
+app.on('window-all-closed', function () {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-app.on("activate", () => {
+app.on('activate', function () {
   if (BrowserWindow.getAllWindows().length === 0) {
     createWindow();
   }
