@@ -3,768 +3,552 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel – JudoManager</title>
+  <title>Admin Panel – JudoManager Pro</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-
     :root {
-      --bg:        #060b14;
-      --sb-bg:     #09111f;
-      --card:      #0d1b2e;
-      --border:    rgba(255,255,255,0.06);
-      --purple:    #a855f7;
-      --purple-d:  rgba(168,85,247,0.12);
-      --blue:      #4f8ef7;
-      --blue-d:    rgba(79,142,247,0.12);
-      --emerald:   #2ed8a8;
-      --emerald-d: rgba(46,216,168,0.1);
-      --amber:     #f59e0b;
-      --amber-d:   rgba(245,158,11,0.1);
-      --red:       #f87171;
-      --red-d:     rgba(248,113,113,0.1);
-      --white:     #e8f0fe;
-      --muted:     #4a5e78;
-      --text:      #8fa8c8;
-      --sb-w:      230px;
+      --bg: #060b14; --sb: #09111f; --card: #0d1b2e;
+      --bd: rgba(255,255,255,0.06);
+      --pur: #a855f7; --pur-d: rgba(168,85,247,0.12);
+      --blu: #4f8ef7; --blu-d: rgba(79,142,247,0.12);
+      --grn: #2ed8a8; --grn-d: rgba(46,216,168,0.10);
+      --amb: #f59e0b; --amb-d: rgba(245,158,11,0.10);
+      --red: #f87171; --red-d: rgba(248,113,113,0.10);
+      --wh: #e8f0fe; --mu: #4a5e78; --tx: #8fa8c8;
+      --sbw: 230px;
     }
+    html { scroll-behavior: smooth; }
+    body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--tx); min-height: 100vh; }
+    input, select, textarea, button { font-family: 'Cairo', sans-serif; }
 
-    body {
-      font-family: 'Cairo', sans-serif;
-      background: var(--bg);
-      color: var(--text);
-      min-height: 100vh;
-    }
-
-    /* ══════════ LOGIN SCREEN ══════════ */
+    /* ═══ LOGIN ═══ */
     #loginScreen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(ellipse at 60% 40%, rgba(168,85,247,0.08) 0%, transparent 60%),
-                  radial-gradient(ellipse at 20% 80%, rgba(79,142,247,0.07) 0%, transparent 50%),
-                  var(--bg);
-      padding: 20px;
+      min-height:100vh; display:flex; align-items:center; justify-content:center;
+      background: radial-gradient(ellipse at 60% 40%, rgba(168,85,247,.08) 0%, transparent 60%), var(--bg);
+      padding:20px;
     }
+    .lc { background:var(--card); border:1px solid rgba(168,85,247,.2); border-radius:20px; padding:40px 36px; width:100%; max-width:370px; box-shadow:0 30px 80px rgba(0,0,0,.5); }
+    .lc-logo { text-align:center; margin-bottom:28px; }
+    .lc-ico { width:54px; height:54px; background:linear-gradient(135deg,#a855f7,#6366f1); border-radius:16px; display:inline-flex; align-items:center; justify-content:center; font-size:26px; box-shadow:0 8px 24px rgba(168,85,247,.4); margin-bottom:12px; }
+    .lc h1 { color:var(--wh); font-size:17px; font-weight:900; }
+    .lc p  { color:var(--mu); font-size:11px; margin-top:3px; }
+    .l-fg  { margin-bottom:13px; }
+    .l-fg label { display:block; color:var(--tx); font-size:12px; font-weight:600; margin-bottom:6px; }
+    .l-fg input { width:100%; background:rgba(255,255,255,.03); border:1px solid var(--bd); border-radius:10px; padding:10px 14px; color:white; font-size:13px; outline:none; transition:border-color .2s; font-family:'JetBrains Mono',monospace; }
+    .l-fg input:focus { border-color:var(--pur); }
+    .l-err { background:var(--red-d); border:1px solid rgba(248,113,113,.2); border-radius:9px; padding:9px 14px; font-size:12px; color:var(--red); margin-bottom:12px; display:none; text-align:center; }
+    .btn-login { width:100%; padding:12px; background:linear-gradient(135deg,#a855f7,#6366f1); border:none; border-radius:11px; color:white; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 6px 20px rgba(168,85,247,.35); margin-top:4px; transition:all .2s; }
+    .btn-login:hover { transform:translateY(-1px); box-shadow:0 10px 30px rgba(168,85,247,.5); }
 
-    .login-card {
-      background: var(--card);
-      border: 1px solid rgba(168,85,247,0.2);
-      border-radius: 20px;
-      padding: 40px 36px;
-      width: 100%;
-      max-width: 380px;
-      box-shadow: 0 30px 80px rgba(0,0,0,0.5);
-    }
+    /* ═══ APP ═══ */
+    #app { display:none; min-height:100vh; }
+    #app.on { display:flex; }
 
-    .login-logo {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 32px;
-      text-align: center;
-    }
-    .login-logo-icon {
-      width: 56px; height: 56px;
-      background: linear-gradient(135deg, #a855f7, #6366f1);
-      border-radius: 18px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 26px;
-      box-shadow: 0 8px 24px rgba(168,85,247,0.4);
-    }
-    .login-logo h1 { color: var(--white); font-size: 18px; font-weight: 900; }
-    .login-logo p { color: var(--muted); font-size: 12px; }
-
-    .login-fg { margin-bottom: 14px; }
-    .login-fg label { display: block; color: var(--text); font-size: 12px; font-weight: 600; margin-bottom: 7px; }
-    .login-fg input {
-      width: 100%;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 11px;
-      padding: 11px 16px;
-      color: white;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 13px;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-    .login-fg input:focus { border-color: var(--purple); }
-    .login-fg input::placeholder { color: var(--muted); font-family: 'Cairo', sans-serif; }
-
-    .login-err {
-      background: var(--red-d);
-      border: 1px solid rgba(248,113,113,0.2);
-      border-radius: 10px;
-      padding: 10px 14px;
-      font-size: 12px;
-      color: var(--red);
-      margin-bottom: 14px;
-      display: none;
-      text-align: center;
-    }
-
-    .btn-login {
-      width: 100%;
-      padding: 13px;
-      background: linear-gradient(135deg, #a855f7, #6366f1);
-      border: none;
-      border-radius: 12px;
-      color: white;
-      font-family: 'Cairo', sans-serif;
-      font-size: 14px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: all 0.2s;
-      box-shadow: 0 6px 20px rgba(168,85,247,0.35);
-      margin-top: 4px;
-    }
-    .btn-login:hover { transform: translateY(-1px); box-shadow: 0 10px 30px rgba(168,85,247,0.5); }
-
-    /* ══════════ APP SHELL ══════════ */
-    #appShell { display: none; min-height: 100vh; flex-direction: row; }
-    #appShell.visible { display: flex; }
-
-    /* ══════════ SIDEBAR ══════════ */
+    /* ═══ SIDEBAR ═══ */
     .sb {
-      width: var(--sb-w);
-      min-height: 100vh;
-      background: var(--sb-bg);
-      border-left: 1px solid var(--border);
-      display: flex; flex-direction: column;
-      position: fixed; top: 0; right: 0;
-      z-index: 100;
+      width:var(--sbw); min-height:100vh; background:var(--sb);
+      border-left:1px solid var(--bd);
+      display:flex; flex-direction:column;
+      position:fixed; top:0; right:0; z-index:100;
     }
+    .sb-logo { padding:18px 14px; border-bottom:1px solid var(--bd); display:flex; align-items:center; gap:10px; }
+    .sb-ico { width:36px; height:36px; background:linear-gradient(135deg,#a855f7,#6366f1); border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
+    .sb-name { color:var(--wh); font-weight:900; font-size:13px; }
+    .sb-sub  { color:var(--mu); font-size:10px; }
+    .sb-nav { flex:1; padding:10px 8px; display:flex; flex-direction:column; gap:2px; overflow-y:auto; }
+    .nl { font-size:10px; font-weight:700; color:var(--mu); padding:10px 8px 4px; letter-spacing:.08em; }
+    .nb {
+      display:flex; align-items:center; gap:9px; padding:9px 11px;
+      border-radius:10px; cursor:pointer; font-size:12.5px; font-weight:600;
+      color:var(--mu); border:1px solid transparent; background:none;
+      width:100%; text-align:right; transition:all .18s; position:relative;
+    }
+    .nb:hover { background:rgba(255,255,255,.03); color:var(--wh); }
+    .nb.on { background:var(--pur-d); color:var(--pur); border-color:rgba(168,85,247,.18); }
+    .nbadge { margin-right:auto; background:var(--amb); color:#060b14; font-size:10px; font-weight:900; padding:1px 7px; border-radius:100px; }
+    .sb-ft { padding:12px 8px; border-top:1px solid var(--bd); }
+    .sb-user { display:flex; align-items:center; gap:8px; padding:9px 10px; background:rgba(255,255,255,.03); border-radius:10px; cursor:pointer; border:1px solid var(--bd); transition:background .2s; }
+    .sb-user:hover { background:rgba(255,255,255,.06); }
+    .sb-av { width:30px; height:30px; background:linear-gradient(135deg,#a855f7,#6366f1); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+    .sb-uname { color:var(--wh); font-size:12px; font-weight:700; }
+    .sb-role  { color:var(--mu); font-size:10px; }
+    .sb-out { margin-right:auto; font-size:14px; color:var(--red); }
 
-    .sb-logo {
-      padding: 20px 16px;
-      border-bottom: 1px solid var(--border);
-      display: flex; align-items: center; gap: 10px;
-    }
-    .sb-logo-icon {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, #a855f7, #6366f1);
-      border-radius: 11px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 17px;
-      flex-shrink: 0;
-    }
-    .sb-logo-name { color: var(--white); font-weight: 900; font-size: 13px; }
-    .sb-logo-sub { color: var(--muted); font-size: 10px; }
+    /* ═══ MAIN ═══ */
+    .mn { margin-right:var(--sbw); flex:1; padding:26px; min-height:100vh; max-width:calc(100vw - var(--sbw)); overflow-x:auto; }
+    .ps { display:none; }
+    .ps.on { display:block; }
 
-    .sb-nav { flex: 1; padding: 12px 8px; display: flex; flex-direction: column; gap: 3px; }
-    .nav-lbl { font-size: 10px; font-weight: 700; color: var(--muted); padding: 10px 8px 4px; letter-spacing: 0.08em; }
+    /* ═══ PAGE HEADER ═══ */
+    .ph { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:22px; flex-wrap:wrap; }
+    .ph h1 { color:var(--wh); font-size:19px; font-weight:900; margin-bottom:3px; }
+    .ph p  { color:var(--mu); font-size:12px; }
 
-    .nav-btn {
-      display: flex; align-items: center; gap: 9px;
-      padding: 9px 11px;
-      border-radius: 10px;
-      cursor: pointer;
-      font-size: 12.5px; font-weight: 600;
-      color: var(--muted);
-      border: 1px solid transparent;
-      background: none; width: 100%; text-align: right;
-      font-family: 'Cairo', sans-serif;
-      transition: all 0.18s;
-      position: relative;
-    }
-    .nav-btn:hover { background: rgba(255,255,255,0.03); color: var(--white); }
-    .nav-btn.active { background: var(--purple-d); color: var(--purple); border-color: rgba(168,85,247,0.18); }
+    /* ═══ STATS ═══ */
+    .stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(135px,1fr)); gap:10px; margin-bottom:22px; }
+    .st { background:var(--card); border:1px solid var(--bd); border-radius:13px; padding:15px 17px; }
+    .st-v { font-size:28px; font-weight:900; line-height:1; margin-bottom:4px; }
+    .st-l { color:var(--mu); font-size:11px; }
 
-    .nav-badge {
-      margin-right: auto;
-      background: var(--amber);
-      color: #060b14;
-      font-size: 10px;
-      font-weight: 900;
-      padding: 1px 7px;
-      border-radius: 100px;
-      min-width: 18px;
-      text-align: center;
-    }
+    /* ═══ TABLE WRAPPER ═══ */
+    .tw { background:var(--card); border:1px solid var(--bd); border-radius:15px; overflow:hidden; margin-bottom:16px; }
+    .th { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--bd); flex-wrap:wrap; gap:10px; }
+    .th h2 { color:var(--wh); font-size:13.5px; font-weight:800; display:flex; align-items:center; gap:7px; }
+    .th p  { color:var(--mu); font-size:11px; margin-top:2px; }
+    .tf { display:flex; gap:7px; flex-wrap:wrap; }
+    .fb { padding:6px 11px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; border:1px solid var(--bd); background:transparent; color:var(--mu); transition:all .18s; }
+    .fb.on { background:var(--pur-d); border-color:rgba(168,85,247,.3); color:var(--pur); }
+    .fb:hover { color:var(--wh); }
+    table { width:100%; border-collapse:collapse; font-size:12px; }
+    thead tr { background:rgba(255,255,255,.02); }
+    th { padding:9px 14px; color:var(--mu); font-weight:700; text-align:right; font-size:11px; white-space:nowrap; border-bottom:1px solid var(--bd); }
+    td { padding:11px 14px; border-bottom:1px solid rgba(255,255,255,.02); vertical-align:middle; }
+    tbody tr { transition:background .15s; }
+    tbody tr:hover { background:rgba(255,255,255,.02); }
+    tbody tr:last-child td { border-bottom:none; }
 
-    .sb-footer {
-      padding: 14px 8px;
-      border-top: 1px solid var(--border);
-    }
-    .sb-user {
-      display: flex; align-items: center; gap: 8px;
-      padding: 10px;
-      background: rgba(255,255,255,0.03);
-      border-radius: 11px;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      transition: background 0.2s;
-    }
-    .sb-user:hover { background: rgba(255,255,255,0.06); }
-    .sb-avatar {
-      width: 32px; height: 32px; flex-shrink: 0;
-      background: linear-gradient(135deg, #a855f7, #6366f1);
-      border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 15px;
-    }
-    .sb-user-name { color: var(--white); font-size: 12px; font-weight: 700; }
-    .sb-user-role { color: var(--muted); font-size: 10px; }
-    .sb-logout { margin-right: auto; font-size: 14px; color: var(--red); cursor: pointer; }
+    /* ═══ BADGES ═══ */
+    .bx { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:100px; font-size:10px; font-weight:700; white-space:nowrap; }
+    .bp { background:var(--amb-d); color:var(--amb); border:1px solid rgba(245,158,11,.2); }
+    .ba { background:var(--grn-d); color:var(--grn); border:1px solid rgba(46,216,168,.2); }
+    .bt { background:var(--blu-d); color:var(--blu); border:1px solid rgba(79,142,247,.2); }
+    .bl { background:var(--pur-d); color:var(--pur); border:1px solid rgba(168,85,247,.2); }
+    .br { background:var(--red-d); color:var(--red); border:1px solid rgba(248,113,113,.2); }
 
-    /* ══════════ MAIN ══════════ */
-    .main {
-      margin-right: var(--sb-w);
-      flex: 1;
-      padding: 28px 28px;
-      min-height: 100vh;
-      max-width: calc(100vw - var(--sb-w));
-    }
+    .mono { font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--grn); letter-spacing:.04em; }
+    .email-c { color:var(--blu); font-size:11px; }
 
-    .page-sec { display: none; }
-    .page-sec.active { display: block; }
+    /* ═══ ACTION BUTTONS ═══ */
+    .acts { display:flex; gap:5px; flex-wrap:wrap; }
+    .ab { padding:5px 10px; border-radius:7px; font-size:11px; font-weight:700; cursor:pointer; border:none; transition:all .18s; white-space:nowrap; }
+    .ab-grn { background:var(--grn-d); color:var(--grn); border:1px solid rgba(46,216,168,.25); }
+    .ab-grn:hover { background:rgba(46,216,168,.2); }
+    .ab-red { background:var(--red-d); color:var(--red); border:1px solid rgba(248,113,113,.2); }
+    .ab-red:hover { background:rgba(248,113,113,.18); }
+    .ab-blu { background:var(--blu-d); color:var(--blu); border:1px solid rgba(79,142,247,.2); }
+    .ab-blu:hover { background:rgba(79,142,247,.18); }
+    .ab-pur { background:var(--pur-d); color:var(--pur); border:1px solid rgba(168,85,247,.2); }
+    .ab-pur:hover { background:rgba(168,85,247,.18); }
+    .ab-amb { background:var(--amb-d); color:var(--amb); border:1px solid rgba(245,158,11,.2); }
+    .ab-amb:hover { background:rgba(245,158,11,.18); }
 
-    /* ══════════ PAGE HEADER ══════════ */
-    .ph { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; margin-bottom: 24px; flex-wrap: wrap; }
-    .ph h1 { color: var(--white); font-size: 20px; font-weight: 900; margin-bottom: 3px; }
-    .ph p { color: var(--muted); font-size: 12px; }
+    /* ═══ RECEIPT IMAGE ═══ */
+    .receipt-thumb { width:40px; height:40px; border-radius:7px; object-fit:cover; border:1px solid var(--bd); cursor:pointer; transition:all .2s; }
+    .receipt-thumb:hover { transform:scale(1.1); border-color:var(--grn); }
+    .receipt-no { color:var(--mu); font-size:10px; }
 
-    /* ══════════ STATS ══════════ */
-    .stats {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 12px;
-      margin-bottom: 24px;
-    }
-    .stat {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      padding: 16px 18px;
-    }
-    .stat-val { font-size: 28px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
-    .stat-lbl { color: var(--muted); font-size: 11px; }
-    .stat-chg { font-size: 10px; margin-top: 4px; display: flex; align-items: center; gap: 3px; }
+    /* ═══ MODALS ═══ */
+    .mo { display:none; position:fixed; inset:0; background:rgba(6,11,20,.85); backdrop-filter:blur(7px); z-index:500; align-items:center; justify-content:center; padding:20px; }
+    .mo.on { display:flex; }
+    .mb { background:var(--card); border:1px solid rgba(168,85,247,.18); border-radius:18px; padding:28px; width:100%; animation:su .25s ease; position:relative; }
+    @keyframes su { from { opacity:0; transform:translateY(18px); } }
+    .mb-close { position:absolute; top:14px; left:14px; background:rgba(255,255,255,.06); border:none; color:var(--wh); width:30px; height:30px; border-radius:8px; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
+    .mb-close:hover { background:rgba(255,255,255,.12); }
+    .mb h3 { color:var(--wh); font-size:16px; font-weight:800; margin-bottom:5px; }
+    .mb > p  { color:var(--mu); font-size:12px; margin-bottom:20px; }
 
-    /* ══════════ TABLE ══════════ */
-    .tbl-wrap {
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 16px;
-      overflow: hidden;
-    }
-    .tbl-head {
-      display: flex; align-items: center; justify-content: space-between;
-      padding: 16px 20px;
-      border-bottom: 1px solid var(--border);
-      flex-wrap: wrap; gap: 10px;
-    }
-    .tbl-head h2 { color: var(--white); font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 8px; }
-    .tbl-head p { color: var(--muted); font-size: 11px; margin-top: 2px; }
+    /* key modal */
+    #keyModal .mb { max-width:440px; }
+    .key-box { background:rgba(255,255,255,.03); border:1px solid rgba(46,216,168,.25); border-radius:11px; padding:13px 16px; font-family:'JetBrains Mono',monospace; font-size:17px; color:var(--grn); font-weight:600; text-align:center; margin-bottom:14px; cursor:pointer; user-select:all; letter-spacing:.08em; }
+    .key-box:hover { background:rgba(46,216,168,.06); }
+    .ma { display:flex; gap:9px; flex-wrap:wrap; }
+    .bm { flex:1; padding:10px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; border:none; display:flex; align-items:center; justify-content:center; gap:6px; transition:all .2s; }
+    .bm-g { background:linear-gradient(135deg,#2ed8a8,#4f8ef7); color:#060b14; }
+    .bm-w { background:#16a34a; color:white; }
+    .bm-x { background:rgba(255,255,255,.05); color:var(--tx); border:1px solid var(--bd); }
 
-    .tbl-filter {
-      display: flex; gap: 8px; flex-wrap: wrap;
-    }
-    .filter-btn {
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      border: 1px solid var(--border);
-      background: transparent;
-      color: var(--muted);
-      font-family: 'Cairo', sans-serif;
-      transition: all 0.18s;
-    }
-    .filter-btn.active { background: var(--purple-d); border-color: rgba(168,85,247,0.3); color: var(--purple); }
-    .filter-btn:hover { color: var(--white); }
-
-    table { width: 100%; border-collapse: collapse; font-size: 12px; }
-    thead tr { background: rgba(255,255,255,0.02); }
-    th { padding: 10px 16px; color: var(--muted); font-weight: 700; text-align: right; font-size: 11px; white-space: nowrap; border-bottom: 1px solid var(--border); }
-    td { padding: 12px 16px; border-bottom: 1px solid rgba(255,255,255,0.03); vertical-align: middle; }
-    tbody tr { transition: background 0.15s; }
-    tbody tr:hover { background: rgba(255,255,255,0.02); }
-    tbody tr:last-child td { border-bottom: none; }
-
-    .badge {
-      display: inline-flex; align-items: center; gap: 4px;
-      padding: 3px 9px;
-      border-radius: 100px;
-      font-size: 10px;
-      font-weight: 700;
-      white-space: nowrap;
-    }
-    .badge-pending  { background: var(--amber-d);   color: var(--amber);   border: 1px solid rgba(245,158,11,0.2); }
-    .badge-approved { background: var(--emerald-d); color: var(--emerald); border: 1px solid rgba(46,216,168,0.2); }
-    .badge-trial    { background: var(--blue-d);    color: var(--blue);    border: 1px solid rgba(79,142,247,0.2); }
-    .badge-paid     { background: var(--purple-d);  color: var(--purple);  border: 1px solid rgba(168,85,247,0.2); }
-    .badge-rejected { background: var(--red-d);     color: var(--red);     border: 1px solid rgba(248,113,113,0.2); }
-
-    .mono { font-family: 'JetBrains Mono', monospace; font-size: 11px; color: var(--emerald); letter-spacing: 0.04em; }
-    .email-txt { color: var(--blue); font-size: 11px; }
-
-    /* ══════════ ACTION BUTTONS ══════════ */
-    .act-btn {
-      padding: 6px 12px;
-      border-radius: 8px;
-      font-size: 11px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      font-family: 'Cairo', sans-serif;
-      transition: all 0.18s;
-      white-space: nowrap;
-    }
-    .act-approve { background: var(--emerald-d); color: var(--emerald); border: 1px solid rgba(46,216,168,0.25); }
-    .act-approve:hover { background: rgba(46,216,168,0.2); }
-    .act-reject  { background: var(--red-d);     color: var(--red);     border: 1px solid rgba(248,113,113,0.2); }
-    .act-reject:hover  { background: rgba(248,113,113,0.18); }
-    .act-send    { background: var(--blue-d);    color: var(--blue);    border: 1px solid rgba(79,142,247,0.2); }
-    .act-send:hover    { background: rgba(79,142,247,0.18); }
-
-    /* ══════════ MODAL ══════════ */
-    .modal-ov {
-      display: none; position: fixed; inset: 0;
-      background: rgba(6,11,20,0.8);
-      backdrop-filter: blur(6px);
-      z-index: 500;
-      align-items: center; justify-content: center;
-      padding: 20px;
-    }
-    .modal-ov.show { display: flex; }
-    .modal-box {
-      background: var(--card);
-      border: 1px solid rgba(168,85,247,0.2);
-      border-radius: 18px;
-      padding: 30px;
-      max-width: 440px;
-      width: 100%;
-      animation: su 0.25s ease;
-    }
-    @keyframes su { from { opacity:0; transform: translateY(20px); } }
-    .modal-box h3 { color: var(--white); font-size: 16px; font-weight: 800; margin-bottom: 6px; }
-    .modal-box p  { color: var(--muted); font-size: 12px; margin-bottom: 20px; line-height: 1.7; }
-    .key-display {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(46,216,168,0.25);
-      border-radius: 12px;
-      padding: 14px 16px;
-      font-family: 'JetBrains Mono', monospace;
-      font-size: 16px;
-      color: var(--emerald);
-      font-weight: 600;
-      text-align: center;
-      margin-bottom: 16px;
-      letter-spacing: 0.08em;
-      cursor: pointer;
-      user-select: all;
-    }
-    .key-display:hover { background: rgba(46,216,168,0.06); }
-    .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
-
-    .btn-m {
-      flex: 1;
-      padding: 10px;
-      border-radius: 10px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      border: none;
-      font-family: 'Cairo', sans-serif;
-      transition: all 0.18s;
-      display: flex; align-items: center; justify-content: center; gap: 6px;
-    }
-    .btn-m-green  { background: linear-gradient(135deg, #2ed8a8, #4f8ef7); color: #060b14; }
-    .btn-m-wa     { background: #16a34a; color: white; }
-    .btn-m-close  { background: rgba(255,255,255,0.05); color: var(--text); border: 1px solid var(--border); }
-
-    /* ══════════ EMPTY STATE ══════════ */
-    .empty {
-      text-align: center;
-      padding: 50px 20px;
-      color: var(--muted);
-    }
-    .empty-icon { font-size: 36px; margin-bottom: 12px; }
-    .empty h3 { color: var(--text); font-size: 14px; font-weight: 700; margin-bottom: 6px; }
-    .empty p { font-size: 12px; line-height: 1.6; }
-
-    /* ══════════ ADD REQUEST FORM ══════════ */
-    .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    .fg { margin-bottom: 0; }
-    .fg label { display: block; color: var(--text); font-size: 12px; font-weight: 600; margin-bottom: 6px; }
+    /* edit modal */
+    #editModal .mb { max-width:540px; }
+    .fg { margin-bottom:12px; }
+    .fg label { display:block; color:var(--tx); font-size:12px; font-weight:600; margin-bottom:6px; }
     .fg input, .fg select, .fg textarea {
-      width: 100%;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      padding: 10px 14px;
-      color: white;
-      font-family: 'Cairo', sans-serif;
-      font-size: 12px;
-      outline: none;
-      transition: border-color 0.2s;
+      width:100%; background:rgba(255,255,255,.03); border:1px solid var(--bd);
+      border-radius:9px; padding:9px 13px; color:white; font-size:12px; outline:none;
+      transition:border-color .2s;
     }
-    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--purple); }
-    .fg select option { background: #0d1b2e; }
-    .fg textarea { resize: vertical; min-height: 72px; }
-    .fg.full { grid-column: 1 / -1; }
+    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color:var(--pur); }
+    .fg select option { background:#0d1b2e; }
+    .fg textarea { resize:vertical; min-height:65px; }
+    .frow { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
 
-    .btn-add {
-      padding: 10px 20px;
-      background: linear-gradient(135deg, #a855f7, #6366f1);
-      border: none;
-      border-radius: 10px;
-      color: white;
-      font-family: 'Cairo', sans-serif;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.2s;
-      display: flex; align-items: center; gap: 7px;
-    }
-    .btn-add:hover { transform: translateY(-1px); box-shadow: 0 6px 20px rgba(168,85,247,0.35); }
-    .btn-add-ghost {
-      padding: 10px 16px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      border-radius: 10px;
-      color: var(--text);
-      font-family: 'Cairo', sans-serif;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-    }
-    .btn-add-ghost:hover { background: rgba(255,255,255,0.07); }
+    /* receipt view modal */
+    #receiptModal .mb { max-width:500px; text-align:center; }
+    #receiptModal img { max-width:100%; border-radius:12px; border:1px solid var(--bd); margin-bottom:14px; max-height:400px; object-fit:contain; }
 
-    .toast {
-      position: fixed;
-      bottom: 24px; left: 50%; transform: translateX(-50%);
-      background: #1a2d1a;
-      border: 1px solid rgba(46,216,168,0.3);
-      border-radius: 12px;
-      padding: 12px 22px;
-      color: var(--emerald);
-      font-size: 13px;
-      font-weight: 700;
-      z-index: 900;
-      display: none;
-      animation: fadeUp 0.3s ease;
-    }
-    @keyframes fadeUp { from { opacity:0; transform: translateX(-50%) translateY(10px); } }
+    /* ═══ EMPTY STATE ═══ */
+    .ep { text-align:center; padding:44px 20px; color:var(--mu); }
+    .ep-i { font-size:34px; margin-bottom:10px; }
+    .ep h3 { color:var(--tx); font-size:13px; font-weight:700; margin-bottom:5px; }
+    .ep p  { font-size:11px; line-height:1.6; }
 
-    @media (max-width: 700px) {
-      .sb { display: none; }
-      .main { margin-right: 0; max-width: 100%; padding: 20px 14px; }
-      .form-grid { grid-template-columns: 1fr; }
-      .stats { grid-template-columns: repeat(2, 1fr); }
+    /* ═══ BUTTONS ═══ */
+    .btn { padding:9px 16px; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer; border:none; transition:all .2s; display:inline-flex; align-items:center; gap:7px; }
+    .btn-pur { background:linear-gradient(135deg,#a855f7,#6366f1); color:white; box-shadow:0 5px 18px rgba(168,85,247,.3); }
+    .btn-pur:hover { transform:translateY(-1px); }
+    .btn-ghost { background:rgba(255,255,255,.04); border:1px solid var(--bd); color:var(--tx); }
+    .btn-ghost:hover { background:rgba(255,255,255,.08); }
+    .btn-grn { background:linear-gradient(135deg,#2ed8a8,#4f8ef7); color:#060b14; font-weight:800; }
+    .btn-danger { background:var(--red-d); color:var(--red); border:1px solid rgba(248,113,113,.2); }
+    .btn-danger:hover { background:rgba(248,113,113,.18); }
+
+    /* ═══ FORM (Add) ═══ */
+    .form-box { background:var(--card); border:1px solid var(--bd); border-radius:15px; padding:24px; max-width:580px; }
+    .form-box h2 { color:var(--wh); font-size:14px; font-weight:800; margin-bottom:18px; }
+
+    /* ═══ INFO BOX ═══ */
+    .info-b { background:var(--blu-d); border:1px solid rgba(79,142,247,.18); border-radius:12px; padding:12px 16px; font-size:12px; line-height:1.7; margin-bottom:18px; }
+    .info-b strong { color:var(--wh); }
+
+    /* ═══ DATA FILE INFO ═══ */
+    .data-file {
+      background:rgba(46,216,168,.06);
+      border:1px solid rgba(46,216,168,.18);
+      border-radius:12px;
+      padding:14px 18px;
+      margin-bottom:18px;
+      font-size:12px;
+    }
+    .data-file strong { color:var(--grn); }
+    .data-file .file-name {
+      font-family:'JetBrains Mono',monospace;
+      background:rgba(0,0,0,.3);
+      padding:4px 10px;
+      border-radius:6px;
+      font-size:12px;
+      color:var(--wh);
+      display:inline-block;
+      margin-top:5px;
     }
 
-    ::-webkit-scrollbar { width: 4px; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.07); border-radius: 10px; }
+    /* ═══ TOAST ═══ */
+    .toast { position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:#1a2d1a; border:1px solid rgba(46,216,168,.3); border-radius:11px; padding:11px 20px; color:var(--grn); font-size:13px; font-weight:700; z-index:900; display:none; animation:fadeUp .3s ease; }
+    @keyframes fadeUp { from { opacity:0; transform:translateX(-50%) translateY(10px); } }
+
+    /* ═══ RECEIPT UPLOAD ═══ */
+    .upload-zone { border:2px dashed var(--bd); border-radius:12px; padding:20px; text-align:center; cursor:pointer; transition:all .2s; }
+    .upload-zone:hover, .upload-zone.drag { border-color:var(--pur); background:var(--pur-d); }
+    .upload-zone input { display:none; }
+    .upload-zone p { color:var(--mu); font-size:12px; margin-top:6px; }
+    .upload-zone .up-ico { font-size:28px; }
+    .upload-prev { margin-top:10px; }
+    .upload-prev img { max-width:100%; max-height:160px; border-radius:10px; border:1px solid var(--bd); object-fit:contain; }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width:4px; }
+    ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.07); border-radius:10px; }
+
+    @media(max-width:700px) {
+      .sb { display:none; }
+      .mn { margin-right:0; max-width:100%; padding:16px; }
+      .frow { grid-template-columns:1fr; }
+      .stats { grid-template-columns:repeat(2,1fr); }
+    }
   </style>
 </head>
 <body>
 
-<!-- ══════════ LOGIN ══════════ -->
+<!-- ═══════════════ LOGIN ═══════════════ -->
 <div id="loginScreen">
-  <div class="login-card">
-    <div class="login-logo">
-      <div class="login-logo-icon">🔐</div>
+  <div class="lc">
+    <div class="lc-logo">
+      <div class="lc-ico">🔐</div>
       <h1>لوحة تحكم الأدمن</h1>
-      <p>JudoManager Pro – وصول خاص فقط</p>
+      <p>JudoManager Pro — وصول خاص فقط</p>
     </div>
-    <div class="login-err" id="loginErr">❌ كلمة المرور أو اسم المستخدم غير صحيح</div>
-    <div class="login-fg">
+    <div class="l-err" id="loginErr">❌ بيانات الدخول غير صحيحة</div>
+    <div class="l-fg">
       <label>اسم المستخدم</label>
-      <input type="text" id="loginUser" placeholder="admin" autocomplete="off">
+      <input type="text" id="lu" placeholder="admin" autocomplete="off">
     </div>
-    <div class="login-fg">
-      <label>كلمة المرور السرية</label>
-      <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <div class="l-fg">
+      <label>كلمة المرور</label>
+      <input type="password" id="lp" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
     </div>
-    <button class="btn-login" onclick="doLogin()">🔓 دخول إلى لوحة التحكم</button>
+    <button class="btn-login" onclick="doLogin()">🔓 دخول</button>
   </div>
 </div>
 
-<!-- ══════════ APP SHELL ══════════ -->
-<div id="appShell">
+<!-- ═══════════════ APP ═══════════════ -->
+<div id="app">
 
   <!-- SIDEBAR -->
   <aside class="sb">
     <div class="sb-logo">
-      <div class="sb-logo-icon">🔐</div>
+      <div class="sb-ico">🔐</div>
       <div>
-        <div class="sb-logo-name">Admin Panel</div>
-        <div class="sb-logo-sub">JudoManager Pro</div>
+        <div class="sb-name">Admin Panel</div>
+        <div class="sb-sub">JudoManager Pro v2.1</div>
       </div>
     </div>
-
     <nav class="sb-nav">
-      <div class="nav-lbl">الرئيسية</div>
-      <button class="nav-btn active" onclick="showPage('dashboard',this)">
-        <span>📊</span> لوحة البيانات
-      </button>
+      <div class="nl">عام</div>
+      <button class="nb on" onclick="showPage('dashboard',this)">📊 لوحة البيانات</button>
 
-      <div class="nav-lbl" style="margin-top:8px;">الطلبات</div>
-      <button class="nav-btn" onclick="showPage('requests',this)">
-        <span>📋</span> طلبات التفعيل
-        <span class="nav-badge" id="pendingBadge">0</span>
-      </button>
-      <button class="nav-btn" onclick="showPage('add',this)">
-        <span>➕</span> إضافة طلب يدوي
-      </button>
-      <button class="nav-btn" onclick="showPage('approved',this)">
-        <span>✅</span> تم تفعيلها
-      </button>
+      <div class="nl" style="margin-top:6px;">الطلبات</div>
+      <button class="nb" onclick="showPage('requests',this)">📋 كل الطلبات <span class="nbadge" id="pendBadge">0</span></button>
+      <button class="nb" onclick="showPage('add',this)">➕ إضافة طلب يدوي</button>
+      <button class="nb" onclick="showPage('approved',this)">✅ المفعّلة</button>
 
-      <div class="nav-lbl" style="margin-top:8px;">الإعدادات</div>
-      <button class="nav-btn" onclick="showPage('settings',this)">
-        <span>⚙️</span> الإعدادات
-      </button>
+      <div class="nl" style="margin-top:6px;">النظام</div>
+      <button class="nb" onclick="showPage('data',this)">💾 إدارة البيانات</button>
+      <button class="nb" onclick="showPage('settings',this)">⚙️ الإعدادات</button>
     </nav>
-
-    <div class="sb-footer">
+    <div class="sb-ft">
       <div class="sb-user" onclick="doLogout()">
-        <div class="sb-avatar">👤</div>
+        <div class="sb-av">👤</div>
         <div>
-          <div class="sb-user-name">المبرمج</div>
-          <div class="sb-user-role">Super Admin</div>
+          <div class="sb-uname">المبرمج</div>
+          <div class="sb-role">Super Admin</div>
         </div>
-        <div class="sb-logout" title="تسجيل الخروج">⏻</div>
+        <div class="sb-out" title="خروج">⏻</div>
       </div>
     </div>
   </aside>
 
   <!-- MAIN -->
-  <main class="main">
+  <main class="mn">
 
-    <!-- ── DASHBOARD ── -->
-    <div class="page-sec active" id="page-dashboard">
+    <!-- ══ DASHBOARD ══ -->
+    <div class="ps on" id="page-dashboard">
       <div class="ph">
-        <div>
-          <h1>📊 لوحة البيانات</h1>
-          <p>نظرة عامة على طلبات التفعيل والتراخيص</p>
+        <div><h1>📊 لوحة البيانات</h1><p>نظرة عامة شاملة على الطلبات والتراخيص</p></div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost" onclick="exportData()">📤 تصدير JSON</button>
+          <button class="btn btn-pur" onclick="refreshAll()">🔄 تحديث</button>
         </div>
-        <button class="btn-add" onclick="refreshAll()" style="padding:9px 16px; font-size:12px;">
-          🔄 تحديث
-        </button>
+      </div>
+
+      <div class="data-file">
+        📁 البيانات محفوظة على جهازك في: <br>
+        <span class="file-name">judo-requests-data.json</span>
+        <span style="color:var(--mu);font-size:11px;display:block;margin-top:5px;">
+          استخدم زر "تصدير JSON" لحفظ نسخة على جهازك دائماً. البيانات تُحفظ أيضاً في المتصفح تلقائياً.
+        </span>
       </div>
 
       <div class="stats">
-        <div class="stat">
-          <div class="stat-val" id="st-total" style="color:var(--white);">0</div>
-          <div class="stat-lbl">إجمالي الطلبات</div>
-        </div>
-        <div class="stat">
-          <div class="stat-val" id="st-pending" style="color:var(--amber);">0</div>
-          <div class="stat-lbl">قيد التحقق</div>
-        </div>
-        <div class="stat">
-          <div class="stat-val" id="st-approved" style="color:var(--emerald);">0</div>
-          <div class="stat-lbl">تم التفعيل</div>
-        </div>
-        <div class="stat">
-          <div class="stat-val" id="st-paid" style="color:var(--purple);">0</div>
-          <div class="stat-lbl">مدفوع (مدى الحياة)</div>
-        </div>
-        <div class="stat">
-          <div class="stat-val" id="st-trial" style="color:var(--blue);">0</div>
-          <div class="stat-lbl">نسخة تجريبية</div>
-        </div>
+        <div class="st"><div class="st-v" id="s-total" style="color:var(--wh)">0</div><div class="st-l">إجمالي الطلبات</div></div>
+        <div class="st"><div class="st-v" id="s-pend" style="color:var(--amb)">0</div><div class="st-l">قيد التحقق</div></div>
+        <div class="st"><div class="st-v" id="s-appv" style="color:var(--grn)">0</div><div class="st-l">تم التفعيل</div></div>
+        <div class="st"><div class="st-v" id="s-paid" style="color:var(--pur)">0</div><div class="st-l">مدفوع (15,000 دج)</div></div>
+        <div class="st"><div class="st-v" id="s-trial" style="color:var(--blu)">0</div><div class="st-l">تجريبي</div></div>
       </div>
 
-      <!-- Recent requests preview -->
-      <div class="tbl-wrap">
-        <div class="tbl-head">
-          <div>
-            <h2>📋 أحدث الطلبات</h2>
-            <p>الطلبات الأخيرة التي تحتاج مراجعة</p>
-          </div>
-          <button class="filter-btn active" onclick="showPage('requests', document.querySelectorAll('.nav-btn')[1])">عرض الكل →</button>
-        </div>
-        <div id="dashRecentTable">
-          <div class="empty"><div class="empty-icon">📭</div><h3>لا توجد طلبات حتى الآن</h3><p>عند إرسال مستخدم طلباً سيظهر هنا</p></div>
-        </div>
+      <div class="tw">
+        <div class="th"><div><h2>📋 آخر الطلبات</h2></div></div>
+        <div id="dashRecent"><div class="ep"><div class="ep-i">📭</div><h3>لا طلبات بعد</h3></div></div>
       </div>
     </div>
 
-    <!-- ── REQUESTS ── -->
-    <div class="page-sec" id="page-requests">
+    <!-- ══ REQUESTS ══ -->
+    <div class="ps" id="page-requests">
       <div class="ph">
-        <div>
-          <h1>📋 طلبات التفعيل</h1>
-          <p>فحص الطلبات وتأكيد الدفع وإرسال مفتاح التفعيل</p>
-        </div>
+        <div><h1>📋 طلبات التفعيل</h1><p>فحص الطلبات، التحقق من وصل الدفع، وإصدار مفاتيح التفعيل</p></div>
       </div>
-      <div class="tbl-wrap">
-        <div class="tbl-head">
-          <div>
-            <h2>كل الطلبات</h2>
-          </div>
-          <div class="tbl-filter">
-            <button class="filter-btn active" onclick="filterReqs('all',this)">الكل</button>
-            <button class="filter-btn" onclick="filterReqs('PENDING',this)">⏳ قيد التحقق</button>
-            <button class="filter-btn" onclick="filterReqs('APPROVED',this)">✅ مفعّل</button>
+      <div class="tw">
+        <div class="th">
+          <div><h2>كل الطلبات</h2></div>
+          <div class="tf">
+            <button class="fb on" onclick="setFilter('all',this)">الكل</button>
+            <button class="fb" onclick="setFilter('PENDING',this)">⏳ قيد التحقق</button>
+            <button class="fb" onclick="setFilter('APPROVED',this)">✅ مفعّل</button>
+            <button class="fb" onclick="setFilter('REJECTED',this)">✕ مرفوض</button>
           </div>
         </div>
         <div style="overflow-x:auto;">
           <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>النادي</th>
-                <th>البريد الإلكتروني</th>
-                <th>الهاتف</th>
-                <th>النوع</th>
-                <th>وصل الدفع</th>
-                <th>الحالة</th>
-                <th>المفتاح</th>
-                <th>إجراء</th>
-              </tr>
-            </thead>
+            <thead><tr>
+              <th>#</th><th>النادي / المسؤول</th><th>البريد / الهاتف</th>
+              <th>النوع</th><th>وصل الدفع (صورة)</th><th>الحالة</th><th>المفتاح</th><th>الإجراءات</th>
+            </tr></thead>
             <tbody id="reqsTbody"></tbody>
           </table>
         </div>
-        <div id="reqsEmpty" class="empty" style="display:none;">
-          <div class="empty-icon">📭</div>
-          <h3>لا توجد طلبات</h3>
-          <p>لا يوجد طلبات تطابق هذا الفلتر</p>
-        </div>
+        <div class="ep" id="reqsEp" style="display:none"><div class="ep-i">📭</div><h3>لا توجد طلبات</h3><p>لا نتائج لهذا الفلتر</p></div>
       </div>
     </div>
 
-    <!-- ── ADD MANUAL ── -->
-    <div class="page-sec" id="page-add">
-      <div class="ph">
-        <div>
-          <h1>➕ إضافة طلب يدوي</h1>
-          <p>أضف طلب تفعيل يدوياً لنادٍ تواصل معك مباشرة</p>
+    <!-- ══ ADD ══ -->
+    <div class="ps" id="page-add">
+      <div class="ph"><div><h1>➕ إضافة طلب يدوي</h1><p>أضف طلب تفعيل لنادٍ تواصل معك مباشرة</p></div></div>
+      <div class="form-box">
+        <div class="info-b">
+          💰 <strong>سعر النظام: 15,000 دج</strong> — ترخيص مدى الحياة مع ضمان شهر كامل.<br>
+          التجربة المجانية: 14 يوم بدون دفع.
         </div>
-      </div>
-      <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:26px; max-width:580px;">
-        <div class="form-grid">
-          <div class="fg">
-            <label>اسم النادي *</label>
-            <input type="text" id="add-club" placeholder="نادي الرياضي للجودو">
-          </div>
-          <div class="fg">
-            <label>مسؤول النادي</label>
-            <input type="text" id="add-manager" placeholder="الاسم الكامل">
-          </div>
-          <div class="fg">
-            <label>البريد الإلكتروني *</label>
-            <input type="email" id="add-email" placeholder="example@gmail.com">
-          </div>
-          <div class="fg">
-            <label>رقم الهاتف</label>
-            <input type="tel" id="add-phone" placeholder="0551234567">
-          </div>
-          <div class="fg">
-            <label>نوع الاشتراك *</label>
-            <select id="add-type">
+        <div class="frow">
+          <div class="fg"><label>اسم النادي *</label><input type="text" id="a-club" placeholder="نادي الرياضي للجودو"></div>
+          <div class="fg"><label>المسؤول</label><input type="text" id="a-mgr" placeholder="الاسم الكامل"></div>
+          <div class="fg"><label>البريد الإلكتروني *</label><input type="email" id="a-email" placeholder="example@gmail.com"></div>
+          <div class="fg"><label>رقم الهاتف</label><input type="tel" id="a-phone" placeholder="0551234567"></div>
+          <div class="fg"><label>نوع الاشتراك *</label>
+            <select id="a-type">
               <option value="TRIAL">تجربة مجانية 14 يوم</option>
-              <option value="LIFETIME">ترخيص مدى الحياة (مدفوع)</option>
+              <option value="LIFETIME">ترخيص مدى الحياة – 15,000 دج</option>
             </select>
           </div>
-          <div class="fg">
-            <label>وصل الدفع (BaridiMob)</label>
-            <input type="text" id="add-receipt" placeholder="رقم العملية أو وصف الوصل">
-          </div>
-          <div class="fg full">
-            <label>ملاحظات إضافية</label>
-            <textarea id="add-notes" placeholder="أي معلومات إضافية..."></textarea>
-          </div>
+          <div class="fg"><label>رقم وصل الدفع (BaridiMob)</label><input type="text" id="a-receipt-num" placeholder="مثال: #00982415"></div>
         </div>
-        <div style="display:flex; gap:10px; margin-top:16px;">
-          <button class="btn-add" onclick="addRequest()">➕ إضافة الطلب</button>
-          <button class="btn-add-ghost" onclick="clearAddForm()">مسح الحقول</button>
+        <div class="fg">
+          <label>صورة وصل الدفع (اختياري)</label>
+          <div class="upload-zone" onclick="document.getElementById('a-img').click()" id="uploadZone">
+            <input type="file" id="a-img" accept="image/*" onchange="previewImage(this)">
+            <div class="up-ico">🧾</div>
+            <p>اضغط هنا لرفع صورة وصل الدفع</p>
+            <p style="font-size:10px;color:var(--mu);margin-top:4px;">JPG / PNG / WEBP</p>
+          </div>
+          <div class="upload-prev" id="uploadPrev" style="display:none;"></div>
+        </div>
+        <div class="fg"><label>ملاحظات</label><textarea id="a-notes" placeholder="أي معلومات إضافية..."></textarea></div>
+        <div style="display:flex;gap:9px;margin-top:14px;">
+          <button class="btn btn-pur" onclick="addRequest()">➕ إضافة الطلب</button>
+          <button class="btn btn-ghost" onclick="clearForm()">مسح</button>
         </div>
       </div>
     </div>
 
-    <!-- ── APPROVED ── -->
-    <div class="page-sec" id="page-approved">
-      <div class="ph">
-        <div>
-          <h1>✅ الطلبات المفعّلة</h1>
-          <p>سجل كامل للمفاتيح التي تم إصدارها</p>
-        </div>
-      </div>
-      <div class="tbl-wrap">
+    <!-- ══ APPROVED ══ -->
+    <div class="ps" id="page-approved">
+      <div class="ph"><div><h1>✅ الطلبات المفعّلة</h1><p>سجل المفاتيح الصادرة</p></div></div>
+      <div class="tw">
         <div style="overflow-x:auto;">
           <table>
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>النادي</th>
-                <th>البريد</th>
-                <th>النوع</th>
-                <th>المفتاح الصادر</th>
-                <th>إرسال مجدداً</th>
-              </tr>
-            </thead>
-            <tbody id="approvedTbody"></tbody>
+            <thead><tr><th>#</th><th>النادي</th><th>البريد</th><th>النوع</th><th>المفتاح الصادر</th><th>إعادة الإرسال</th></tr></thead>
+            <tbody id="appvTbody"></tbody>
           </table>
         </div>
-        <div id="approvedEmpty" class="empty" style="display:none;">
-          <div class="empty-icon">🔑</div>
-          <h3>لا يوجد تفعيلات بعد</h3>
-          <p>المفاتيح المصدرة ستظهر هنا</p>
-        </div>
+        <div class="ep" id="appvEp" style="display:none"><div class="ep-i">🔑</div><h3>لا يوجد تفعيلات بعد</h3></div>
       </div>
     </div>
 
-    <!-- ── SETTINGS ── -->
-    <div class="page-sec" id="page-settings">
-      <div class="ph">
-        <div><h1>⚙️ الإعدادات</h1><p>إعدادات لوحة التحكم</p></div>
-      </div>
-      <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:26px; max-width:480px;">
-        <h3 style="color:var(--white); font-size:14px; font-weight:800; margin-bottom:18px;">🔑 تغيير كلمة المرور</h3>
-        <div class="fg" style="margin-bottom:12px;">
-          <label>كلمة المرور الجديدة</label>
-          <input type="password" id="newPass" placeholder="••••••••">
-        </div>
-        <div class="fg" style="margin-bottom:16px;">
-          <label>تأكيد كلمة المرور</label>
-          <input type="password" id="confPass" placeholder="••••••••">
-        </div>
-        <button class="btn-add" style="font-size:12px;" onclick="changePassword()">💾 حفظ كلمة المرور</button>
+    <!-- ══ DATA MANAGEMENT ══ -->
+    <div class="ps" id="page-data">
+      <div class="ph"><div><h1>💾 إدارة البيانات</h1><p>حفظ واستعادة بيانات الطلبات على جهازك</p></div></div>
 
-        <hr style="border-color:var(--border); margin:24px 0;">
+      <div style="background:var(--card);border:1px solid var(--bd);border-radius:15px;padding:24px;max-width:500px;">
 
-        <h3 style="color:var(--white); font-size:14px; font-weight:800; margin-bottom:14px;">🗑️ إدارة البيانات</h3>
-        <button class="btn-add-ghost" onclick="if(confirm('هل أنت متأكد؟ سيتم حذف جميع البيانات!')) clearAllData()" style="border-color:rgba(248,113,113,0.2); color:var(--red);">
-          🗑️ حذف جميع البيانات
+        <div class="data-file" style="margin-bottom:22px;">
+          📁 اسم ملف البيانات على جهازك:<br>
+          <span class="file-name">judo-requests-data.json</span>
+          <div style="color:var(--mu);font-size:11px;margin-top:6px;line-height:1.7;">
+            هذا الملف يحتوي على جميع بيانات الطلبات والمفاتيح الصادرة.<br>
+            احتفظ بنسخة منه دائماً كنسخة احتياطية.
+          </div>
+        </div>
+
+        <h3 style="color:var(--wh);font-size:14px;font-weight:800;margin-bottom:14px;">📤 تصدير البيانات</h3>
+        <p style="font-size:12px;color:var(--mu);margin-bottom:12px;">اضغط لتحميل جميع بيانات الطلبات كملف JSON على جهازك.</p>
+        <button class="btn btn-grn" onclick="exportData()" style="margin-bottom:22px;">
+          📥 تحميل ملف judo-requests-data.json
         </button>
 
-        <hr style="border-color:var(--border); margin:24px 0;">
+        <hr style="border-color:var(--bd);margin-bottom:22px;">
 
-        <h3 style="color:var(--white); font-size:14px; font-weight:800; margin-bottom:14px;">📞 معلومات التواصل</h3>
-        <div style="background:rgba(255,255,255,0.03); border:1px solid var(--border); border-radius:12px; padding:14px; font-size:12px; line-height:2;">
-          <div>📱 واتساب: <span style="color:var(--emerald);">0553823611</span></div>
-          <div>✈️ تلغرام: <span style="color:var(--blue);">@nisoo09</span></div>
+        <h3 style="color:var(--wh);font-size:14px;font-weight:800;margin-bottom:14px;">📂 استيراد البيانات</h3>
+        <p style="font-size:12px;color:var(--mu);margin-bottom:12px;">لاستعادة البيانات من ملف JSON محفوظ مسبقاً.</p>
+        <div style="display:flex;gap:9px;flex-wrap:wrap;">
+          <label class="btn btn-pur" style="cursor:pointer;">
+            📂 استيراد من ملف JSON
+            <input type="file" accept=".json" style="display:none" onchange="importData(this)">
+          </label>
+        </div>
+
+        <hr style="border-color:var(--bd);margin:22px 0;">
+
+        <h3 style="color:var(--red);font-size:14px;font-weight:800;margin-bottom:12px;">⚠️ خطر: حذف البيانات</h3>
+        <button class="btn btn-danger" onclick="if(confirm('سيتم حذف جميع البيانات نهائياً! هل أنت متأكد؟'))clearAll()">
+          🗑️ حذف جميع البيانات
+        </button>
+      </div>
+    </div>
+
+    <!-- ══ SETTINGS ══ -->
+    <div class="ps" id="page-settings">
+      <div class="ph"><div><h1>⚙️ الإعدادات</h1><p>إعدادات لوحة التحكم</p></div></div>
+      <div style="background:var(--card);border:1px solid var(--bd);border-radius:15px;padding:24px;max-width:440px;">
+        <h3 style="color:var(--wh);font-size:13px;font-weight:800;margin-bottom:16px;">🔑 تغيير كلمة المرور</h3>
+        <div class="fg"><label>كلمة المرور الجديدة</label><input type="password" id="np" placeholder="••••••••"></div>
+        <div class="fg" style="margin-bottom:16px;"><label>تأكيد كلمة المرور</label><input type="password" id="cp" placeholder="••••••••"></div>
+        <button class="btn btn-pur" onclick="changePass()" style="margin-bottom:22px;">💾 حفظ</button>
+
+        <hr style="border-color:var(--bd);margin-bottom:22px;">
+
+        <h3 style="color:var(--wh);font-size:13px;font-weight:800;margin-bottom:14px;">📞 معلومات التواصل</h3>
+        <div style="background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:11px;padding:13px;font-size:12px;line-height:2;">
+          <div>📱 واتساب: <span style="color:var(--grn);">0553823611</span></div>
+          <div>✈️ تلغرام: <span style="color:var(--blu);">@nisoo09</span></div>
+          <div>💰 سعر الترخيص: <span style="color:var(--pur);">15,000 دج</span></div>
+          <div>🛡️ ضمان: <span style="color:var(--amb);">شهر كامل</span></div>
         </div>
       </div>
     </div>
 
   </main>
+</div><!-- /app -->
+
+<!-- ═══════════════ MODALS ═══════════════ -->
+
+<!-- Key Modal -->
+<div class="mo" id="keyModal">
+  <div class="mb" style="max-width:430px;">
+    <button class="mb-close" onclick="closeModal('keyModal')">✕</button>
+    <h3>🎉 تم توليد مفتاح التفعيل</h3>
+    <p id="keyModalDesc">أرسل المفتاح للعميل عبر واتساب أو بريد إلكتروني</p>
+    <div class="key-box" id="keyDisplay" onclick="copyKey()" title="اضغط للنسخ">JUDO-XXXX-XXXX</div>
+    <p style="font-size:11px;text-align:center;margin:-10px 0 14px;color:var(--mu);">اضغط على المفتاح لنسخه 📋</p>
+    <div class="ma">
+      <button class="bm bm-g" onclick="sendEmail()">📧 إرسال بالإيميل</button>
+      <button class="bm bm-w" onclick="sendWA()">💬 إرسال واتساب</button>
+      <button class="bm bm-x" onclick="closeModal('keyModal')">إغلاق</button>
+    </div>
+  </div>
 </div>
 
-<!-- ══════════ MODAL: KEY GENERATED ══════════ -->
-<div class="modal-ov" id="keyModal">
-  <div class="modal-box">
-    <h3>🎉 تم توليد مفتاح التفعيل</h3>
-    <p id="keyModalDesc">تم قبول الطلب وتوليد المفتاح. أرسله للعميل عبر واتساب أو بريد إلكتروني.</p>
-    <div class="key-display" id="keyDisplay" onclick="copyKey()">JUDO-XXXX-XXXX-XXXX</div>
-    <p style="font-size:11px; text-align:center; margin-top:-10px; margin-bottom:14px;">اضغط على المفتاح لنسخه</p>
-    <div class="modal-actions">
-      <button class="btn-m btn-m-green" onclick="sendViaEmail()">📧 إرسال بالإيميل</button>
-      <button class="btn-m btn-m-wa" onclick="sendViaWhatsApp()">💬 إرسال واتساب</button>
-      <button class="btn-m btn-m-close" onclick="closeModal()">إغلاق</button>
+<!-- Edit Modal -->
+<div class="mo" id="editModal">
+  <div class="mb" style="max-width:520px;">
+    <button class="mb-close" onclick="closeModal('editModal')">✕</button>
+    <h3>✏️ تعديل الطلب</h3>
+    <p>تعديل بيانات هذا الطلب</p>
+    <input type="hidden" id="e-id">
+    <div class="frow">
+      <div class="fg"><label>اسم النادي *</label><input type="text" id="e-club"></div>
+      <div class="fg"><label>المسؤول</label><input type="text" id="e-mgr"></div>
+      <div class="fg"><label>البريد الإلكتروني *</label><input type="email" id="e-email"></div>
+      <div class="fg"><label>رقم الهاتف</label><input type="tel" id="e-phone"></div>
+      <div class="fg"><label>نوع الاشتراك</label>
+        <select id="e-type">
+          <option value="TRIAL">تجربة مجانية 14 يوم</option>
+          <option value="LIFETIME">ترخيص مدى الحياة – 15,000 دج</option>
+        </select>
+      </div>
+      <div class="fg"><label>الحالة</label>
+        <select id="e-status">
+          <option value="PENDING">⏳ قيد التحقق</option>
+          <option value="APPROVED">✅ مفعّل</option>
+          <option value="REJECTED">✕ مرفوض</option>
+        </select>
+      </div>
     </div>
+    <div class="fg"><label>ملاحظات</label><textarea id="e-notes"></textarea></div>
+    <div style="display:flex;gap:9px;margin-top:4px;">
+      <button class="btn btn-pur" onclick="saveEdit()">💾 حفظ التعديلات</button>
+      <button class="btn btn-ghost" onclick="closeModal('editModal')">إلغاء</button>
+    </div>
+  </div>
+</div>
+
+<!-- Receipt View Modal -->
+<div class="mo" id="receiptModal">
+  <div class="mb" style="max-width:480px;text-align:center;">
+    <button class="mb-close" onclick="closeModal('receiptModal')">✕</button>
+    <h3>🧾 وصل الدفع</h3>
+    <p id="receiptInfo"></p>
+    <div id="receiptContent" style="margin:16px 0;"></div>
+    <button class="btn btn-ghost" onclick="closeModal('receiptModal')" style="margin:0 auto;">إغلاق</button>
   </div>
 </div>
 
@@ -772,330 +556,430 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  // ══════════ CONFIG ══════════
-  const ADMIN_USER = 'admin';
-  let ADMIN_PASS = localStorage.getItem('adminPass') || 'judo2025secret';
-  let currentRequest = null;
-  let filterState = 'all';
+/* ═══════ CONFIG & STORAGE ═══════ */
+let ADMIN_PASS = localStorage.getItem('judo_adminPass') || 'judo2025secret';
+const DATA_KEY = 'judo_requests_v2';
+let filterState = 'all';
+let currentReq = null;
+let uploadedImageBase64 = null;
 
-  // ══════════ DATA ══════════
-  function getData() {
-    return JSON.parse(localStorage.getItem('judoRequests') || '[]');
-  }
-  function saveData(d) {
-    localStorage.setItem('judoRequests', JSON.stringify(d));
+function getData() {
+  try { return JSON.parse(localStorage.getItem(DATA_KEY) || '[]'); } catch { return []; }
+}
+function saveData(d) {
+  localStorage.setItem(DATA_KEY, JSON.stringify(d));
+  refreshAll();
+}
+
+/* ═══════ LOGIN ═══════ */
+function doLogin() {
+  const u = document.getElementById('lu').value.trim();
+  const p = document.getElementById('lp').value;
+  if (u === 'admin' && p === ADMIN_PASS) {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('app').classList.add('on');
     refreshAll();
+  } else {
+    document.getElementById('loginErr').style.display = 'block';
+    document.getElementById('lp').value = '';
+    setTimeout(() => document.getElementById('loginErr').style.display = 'none', 3000);
   }
+}
+function doLogout() {
+  if (!confirm('هل تريد تسجيل الخروج؟')) return;
+  document.getElementById('loginScreen').style.display = 'flex';
+  document.getElementById('app').classList.remove('on');
+  document.getElementById('lp').value = '';
+}
 
-  // ══════════ LOGIN ══════════
-  function doLogin() {
-    const u = document.getElementById('loginUser').value.trim();
-    const p = document.getElementById('loginPass').value;
-    if (u === ADMIN_USER && p === ADMIN_PASS) {
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('appShell').classList.add('visible');
-      refreshAll();
-    } else {
-      document.getElementById('loginErr').style.display = 'block';
-      document.getElementById('loginPass').value = '';
+/* ═══════ NAVIGATION ═══════ */
+function showPage(id, btn) {
+  document.querySelectorAll('.ps').forEach(s => s.classList.remove('on'));
+  document.getElementById('page-' + id).classList.add('on');
+  document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+  if (btn) btn.classList.add('on');
+}
+
+/* ═══════ REFRESH ALL ═══════ */
+function refreshAll() {
+  const data = getData();
+  const pend = data.filter(r => r.status === 'PENDING');
+  const appv = data.filter(r => r.status === 'APPROVED');
+  const paid = data.filter(r => r.type === 'LIFETIME');
+  const trial = data.filter(r => r.type === 'TRIAL');
+
+  document.getElementById('s-total').textContent = data.length;
+  document.getElementById('s-pend').textContent  = pend.length;
+  document.getElementById('s-appv').textContent  = appv.length;
+  document.getElementById('s-paid').textContent  = paid.length;
+  document.getElementById('s-trial').textContent = trial.length;
+  document.getElementById('pendBadge').textContent = pend.length;
+
+  renderDashRecent(data.slice(-6).reverse());
+  renderReqs(data);
+  renderApproved(appv);
+}
+
+/* ═══════ DASHBOARD RECENT ═══════ */
+function renderDashRecent(items) {
+  const el = document.getElementById('dashRecent');
+  if (!items.length) {
+    el.innerHTML = `<div class="ep"><div class="ep-i">📭</div><h3>لا طلبات بعد</h3><p>ستظهر هنا عند وصول أول طلب</p></div>`;
+    return;
+  }
+  el.innerHTML = `
+    <table>
+      <thead><tr><th>النادي</th><th>البريد</th><th>النوع</th><th>الوصل</th><th>الحالة</th><th>إجراء سريع</th></tr></thead>
+      <tbody>
+        ${items.map(r => `
+          <tr>
+            <td style="color:var(--wh);font-weight:700;">${r.clubName}</td>
+            <td class="email-c">${r.email}</td>
+            <td>${typeBadge(r.type)}</td>
+            <td>${receiptCell(r)}</td>
+            <td>${statusBadge(r.status)}</td>
+            <td>${r.status==='PENDING'
+              ? `<button class="ab ab-grn" onclick="approveReq('${r.id}')">⚡ تفعيل</button>`
+              : `<span style="color:var(--mu);font-size:11px;">–</span>`}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+/* ═══════ REQUESTS TABLE ═══════ */
+function renderReqs(data) {
+  const filtered = filterState === 'all' ? data : data.filter(r => r.status === filterState);
+  const tbody = document.getElementById('reqsTbody');
+  const ep    = document.getElementById('reqsEp');
+  if (!filtered.length) { tbody.innerHTML = ''; ep.style.display = 'block'; return; }
+  ep.style.display = 'none';
+  tbody.innerHTML = filtered.map((r, i) => `
+    <tr>
+      <td style="color:var(--mu);font-size:11px;">${i+1}</td>
+      <td>
+        <div style="color:var(--wh);font-weight:700;font-size:12px;">${r.clubName}</div>
+        <div style="color:var(--mu);font-size:10px;">${r.manager || ''}</div>
+      </td>
+      <td>
+        <div class="email-c">${r.email}</div>
+        <div style="font-size:11px;color:var(--mu);">${r.phone || ''}</div>
+      </td>
+      <td>${typeBadge(r.type)}</td>
+      <td>${receiptCell(r)}</td>
+      <td>${statusBadge(r.status)}</td>
+      <td>${r.key ? `<span class="mono">${r.key}</span>` : '<span style="color:var(--mu)">–</span>'}</td>
+      <td>
+        <div class="acts">
+          ${r.status==='PENDING' ? `
+            <button class="ab ab-grn" onclick="approveReq('${r.id}')">⚡ تفعيل</button>
+            <button class="ab ab-red" onclick="rejectReq('${r.id}')">✕ رفض</button>
+          ` : r.status==='APPROVED' ? `
+            <button class="ab ab-blu" onclick="resendKey('${r.id}')">📤 إعادة إرسال</button>
+          ` : ''}
+          <button class="ab ab-pur" onclick="openEdit('${r.id}')">✏️ تعديل</button>
+          <button class="ab ab-red" onclick="deleteReq('${r.id}')">🗑️ حذف</button>
+        </div>
+      </td>
+    </tr>
+  `).join('');
+}
+
+function setFilter(f, btn) {
+  filterState = f;
+  document.querySelectorAll('.fb').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  renderReqs(getData());
+}
+
+/* ═══════ APPROVED TABLE ═══════ */
+function renderApproved(items) {
+  const tbody = document.getElementById('appvTbody');
+  const ep    = document.getElementById('appvEp');
+  if (!items.length) { tbody.innerHTML = ''; ep.style.display = 'block'; return; }
+  ep.style.display = 'none';
+  tbody.innerHTML = items.map((r, i) => `
+    <tr>
+      <td style="color:var(--mu);">${i+1}</td>
+      <td style="color:var(--wh);font-weight:700;">${r.clubName}</td>
+      <td class="email-c">${r.email}</td>
+      <td>${typeBadge(r.type)}</td>
+      <td><span class="mono">${r.key}</span></td>
+      <td><button class="ab ab-blu" onclick="resendKey('${r.id}')">📤 إرسال مجدداً</button></td>
+    </tr>
+  `).join('');
+}
+
+/* ═══════ RECEIPT CELL ═══════ */
+function receiptCell(r) {
+  if (r.receiptImg) {
+    return `<img src="${r.receiptImg}" class="receipt-thumb" onclick="viewReceipt('${r.id}')" title="عرض الوصل">`;
+  }
+  if (r.receiptNum) {
+    return `<span class="ab ab-amb" onclick="viewReceipt('${r.id}')" style="cursor:pointer;">🧾 ${r.receiptNum}</span>`;
+  }
+  return `<span class="receipt-no">لا يوجد وصل</span>`;
+}
+
+/* ═══════ BADGES ═══════ */
+function typeBadge(t) {
+  return t === 'LIFETIME'
+    ? `<span class="bx bl">♾️ 15,000 دج</span>`
+    : `<span class="bx bt">⏱️ تجريبي 14 يوم</span>`;
+}
+function statusBadge(s) {
+  if (s === 'APPROVED') return `<span class="bx ba">✅ مفعّل</span>`;
+  if (s === 'REJECTED') return `<span class="bx br">✕ مرفوض</span>`;
+  return `<span class="bx bp">⏳ قيد التحقق</span>`;
+}
+
+/* ═══════ APPROVE / REJECT / DELETE ═══════ */
+function genKey(type) {
+  const p = type === 'LIFETIME' ? 'JUDO-PRO' : 'JUDO-TRL';
+  const r = () => Math.floor(1000 + Math.random() * 9000);
+  return `${p}-${r()}-${r()}`;
+}
+
+function approveReq(id) {
+  const data = getData();
+  const req = data.find(r => r.id === id);
+  if (!req) return;
+  req.key = genKey(req.type);
+  req.status = 'APPROVED';
+  req.approvedAt = new Date().toLocaleString('ar-DZ');
+  saveData(data);
+  currentReq = req;
+  showKeyModal(req);
+}
+
+function rejectReq(id) {
+  if (!confirm('هل أنت متأكد من رفض هذا الطلب؟')) return;
+  const data = getData();
+  const req = data.find(r => r.id === id);
+  if (req) { req.status = 'REJECTED'; saveData(data); }
+  toast('تم رفض الطلب');
+}
+
+function deleteReq(id) {
+  if (!confirm('هل أنت متأكد من حذف هذا الطلب نهائياً؟')) return;
+  const data = getData().filter(r => r.id !== id);
+  saveData(data);
+  toast('🗑️ تم حذف الطلب');
+}
+
+function resendKey(id) {
+  const req = getData().find(r => r.id === id);
+  if (!req) return;
+  currentReq = req;
+  showKeyModal(req);
+}
+
+/* ═══════ KEY MODAL ═══════ */
+function showKeyModal(req) {
+  document.getElementById('keyDisplay').textContent = req.key;
+  document.getElementById('keyModalDesc').textContent =
+    `نادي "${req.clubName}" — أرسل المفتاح إلى: ${req.email}`;
+  document.getElementById('keyModal').classList.add('on');
+}
+function closeModal(id) { document.getElementById(id).classList.remove('on'); }
+function copyKey() {
+  navigator.clipboard.writeText(document.getElementById('keyDisplay').textContent);
+  toast('✅ تم نسخ المفتاح!');
+}
+function sendEmail() {
+  if (!currentReq) return;
+  const sub = encodeURIComponent(`مفتاح تفعيل نظام JudoManager – ${currentReq.clubName}`);
+  const body = encodeURIComponent(
+    `السلام عليكم،\n\nتم قبول طلبكم بنجاح!\n\nمفتاح التفعيل الخاص بناديكم:\n${currentReq.key}\n\nسعر الترخيص المدفوع: 15,000 دج — ضمان شهر كامل.\nللدعم الفني: واتساب 0553823611\n\nشكراً لاختياركم JudoManager Pro 🥋`
+  );
+  window.open(`mailto:${currentReq.email}?subject=${sub}&body=${body}`, '_blank');
+}
+function sendWA() {
+  if (!currentReq) return;
+  const msg = encodeURIComponent(
+    `السلام عليكم ${currentReq.manager || currentReq.clubName}،\n\nتم قبول طلبكم! مفتاح تفعيل نظام JudoManager Pro:\n\n${currentReq.key}\n\nضمان شهر كامل - للدعم الفني: 0553823611 🥋`
+  );
+  window.open(`https://wa.me/?text=${msg}`, '_blank');
+}
+
+/* ═══════ EDIT MODAL ═══════ */
+function openEdit(id) {
+  const req = getData().find(r => r.id === id);
+  if (!req) return;
+  document.getElementById('e-id').value    = req.id;
+  document.getElementById('e-club').value  = req.clubName;
+  document.getElementById('e-mgr').value   = req.manager || '';
+  document.getElementById('e-email').value = req.email;
+  document.getElementById('e-phone').value = req.phone || '';
+  document.getElementById('e-type').value  = req.type;
+  document.getElementById('e-status').value = req.status;
+  document.getElementById('e-notes').value = req.notes || '';
+  document.getElementById('editModal').classList.add('on');
+}
+function saveEdit() {
+  const id   = document.getElementById('e-id').value;
+  const data = getData();
+  const req  = data.find(r => r.id === id);
+  if (!req) return;
+  req.clubName = document.getElementById('e-club').value.trim();
+  req.manager  = document.getElementById('e-mgr').value.trim();
+  req.email    = document.getElementById('e-email').value.trim();
+  req.phone    = document.getElementById('e-phone').value.trim();
+  req.type     = document.getElementById('e-type').value;
+  req.status   = document.getElementById('e-status').value;
+  req.notes    = document.getElementById('e-notes').value.trim();
+  if (req.status === 'APPROVED' && !req.key) req.key = genKey(req.type);
+  saveData(data);
+  closeModal('editModal');
+  toast('✅ تم حفظ التعديلات');
+}
+
+/* ═══════ RECEIPT VIEW ═══════ */
+function viewReceipt(id) {
+  const req = getData().find(r => r.id === id);
+  if (!req) return;
+  document.getElementById('receiptInfo').textContent = `نادي: ${req.clubName} — ${req.receiptNum || ''}`;
+  const cont = document.getElementById('receiptContent');
+  if (req.receiptImg) {
+    cont.innerHTML = `<img src="${req.receiptImg}" alt="وصل الدفع" style="max-width:100%;max-height:380px;border-radius:12px;border:1px solid var(--bd);">`;
+  } else if (req.receiptNum) {
+    cont.innerHTML = `<div style="background:var(--grn-d);border:1px solid rgba(46,216,168,.2);border-radius:12px;padding:20px;font-size:14px;color:var(--grn);">🧾 رقم الوصل: <strong>${req.receiptNum}</strong></div>`;
+  } else {
+    cont.innerHTML = `<p style="color:var(--mu)">لا يوجد وصل مرفق</p>`;
+  }
+  document.getElementById('receiptModal').classList.add('on');
+}
+
+/* ═══════ ADD MANUAL REQUEST ═══════ */
+function previewImage(input) {
+  if (!input.files || !input.files[0]) return;
+  const file = input.files[0];
+  const reader = new FileReader();
+  reader.onload = e => {
+    uploadedImageBase64 = e.target.result;
+    const prev = document.getElementById('uploadPrev');
+    prev.style.display = 'block';
+    prev.innerHTML = `<img src="${uploadedImageBase64}" alt="وصل الدفع"><br>
+      <button class="ab ab-red" style="margin-top:6px;" onclick="clearUpload()">✕ إزالة الصورة</button>`;
+  };
+  reader.readAsDataURL(file);
+}
+function clearUpload() {
+  uploadedImageBase64 = null;
+  document.getElementById('a-img').value = '';
+  document.getElementById('uploadPrev').style.display = 'none';
+  document.getElementById('uploadPrev').innerHTML = '';
+}
+
+function addRequest() {
+  const club  = document.getElementById('a-club').value.trim();
+  const email = document.getElementById('a-email').value.trim();
+  if (!club || !email) { alert('الرجاء إدخال اسم النادي والبريد الإلكتروني'); return; }
+  const data = getData();
+  data.push({
+    id:         'REQ-' + Date.now(),
+    clubName:   club,
+    manager:    document.getElementById('a-mgr').value.trim(),
+    email,
+    phone:      document.getElementById('a-phone').value.trim(),
+    type:       document.getElementById('a-type').value,
+    receiptNum: document.getElementById('a-receipt-num').value.trim(),
+    receiptImg: uploadedImageBase64 || null,
+    notes:      document.getElementById('a-notes').value.trim(),
+    status:     'PENDING',
+    createdAt:  new Date().toLocaleString('ar-DZ'),
+    key:        null
+  });
+  saveData(data);
+  clearForm();
+  toast('✅ تم إضافة الطلب بنجاح');
+  showPage('requests', document.querySelectorAll('.nb')[1]);
+}
+function clearForm() {
+  ['a-club','a-mgr','a-email','a-phone','a-receipt-num','a-notes'].forEach(id => document.getElementById(id).value = '');
+  document.getElementById('a-type').value = 'TRIAL';
+  clearUpload();
+}
+
+/* ═══════ DATA EXPORT / IMPORT ═══════ */
+function exportData() {
+  const data = getData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'judo-requests-data.json';
+  a.click();
+  toast('📥 تم تحميل ملف judo-requests-data.json');
+}
+function importData(input) {
+  if (!input.files || !input.files[0]) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const parsed = JSON.parse(e.target.result);
+      if (!Array.isArray(parsed)) throw new Error('صيغة غير صحيحة');
+      if (!confirm(`سيتم استيراد ${parsed.length} طلب. هل تريد دمجهم مع البيانات الحالية؟`)) return;
+      const existing = getData();
+      const existingIds = new Set(existing.map(r => r.id));
+      const merged = [...existing, ...parsed.filter(r => !existingIds.has(r.id))];
+      saveData(merged);
+      toast(`✅ تم استيراد ${parsed.length} طلب بنجاح`);
+    } catch { alert('❌ خطأ: الملف غير صالح أو تالف'); }
+  };
+  reader.readAsText(input.files[0]);
+}
+function clearAll() {
+  localStorage.removeItem(DATA_KEY);
+  refreshAll();
+  toast('🗑️ تم حذف جميع البيانات');
+}
+
+/* ═══════ SETTINGS ═══════ */
+function changePass() {
+  const np = document.getElementById('np').value;
+  const cp = document.getElementById('cp').value;
+  if (!np) { alert('أدخل كلمة مرور جديدة'); return; }
+  if (np !== cp) { alert('كلمتا المرور غير متطابقتين'); return; }
+  if (np.length < 6) { alert('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
+  ADMIN_PASS = np;
+  localStorage.setItem('judo_adminPass', np);
+  document.getElementById('np').value = '';
+  document.getElementById('cp').value = '';
+  toast('✅ تم تغيير كلمة المرور');
+}
+
+/* ═══════ TOAST ═══════ */
+function toast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.style.display = 'block';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => t.style.display = 'none', 2800);
+}
+
+/* ═══════ CLOSE MODAL ON OVERLAY CLICK ═══════ */
+document.querySelectorAll('.mo').forEach(m => {
+  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('on'); });
+});
+
+/* ═══════ SAMPLE DATA (first run) ═══════ */
+if (!localStorage.getItem(DATA_KEY)) {
+  const now = new Date().toLocaleString('ar-DZ');
+  localStorage.setItem(DATA_KEY, JSON.stringify([
+    {
+      id: 'REQ-1001', clubName: 'نادي الأمل الرياضي للجودو',
+      manager: 'عبد القادر بلحاج', email: 'elamal.judo@gmail.com',
+      phone: '0550123456', type: 'TRIAL', receiptNum: null, receiptImg: null,
+      notes: 'طلب تجربة مجانية', status: 'PENDING', createdAt: now, key: null
+    },
+    {
+      id: 'REQ-1002', clubName: 'جمعية الأبطال للجودو والقتال',
+      manager: 'ياسين زروقي', email: 'champions.judo@gmail.com',
+      phone: '0661987654', type: 'LIFETIME',
+      receiptNum: '#00982415 – 15,000 دج BaridiMob', receiptImg: null,
+      notes: 'تم الدفع – ينتظر التفعيل', status: 'PENDING', createdAt: now, key: null
     }
-  }
-  function doLogout() {
-    if (confirm('هل تريد تسجيل الخروج؟')) {
-      document.getElementById('loginScreen').style.display = 'flex';
-      document.getElementById('appShell').classList.remove('visible');
-      document.getElementById('loginPass').value = '';
-      document.getElementById('loginErr').style.display = 'none';
-    }
-  }
-
-  // ══════════ NAVIGATION ══════════
-  function showPage(id, btn) {
-    document.querySelectorAll('.page-sec').forEach(s => s.classList.remove('active'));
-    document.getElementById('page-' + id).classList.add('active');
-    document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('active'));
-    if (btn) btn.classList.add('active');
-  }
-
-  // ══════════ STATS ══════════
-  function refreshAll() {
-    const data = getData();
-    const pending  = data.filter(r => r.status === 'PENDING');
-    const approved = data.filter(r => r.status === 'APPROVED');
-    const paid     = data.filter(r => r.type === 'LIFETIME');
-    const trial    = data.filter(r => r.type === 'TRIAL');
-
-    document.getElementById('st-total').textContent    = data.length;
-    document.getElementById('st-pending').textContent  = pending.length;
-    document.getElementById('st-approved').textContent = approved.length;
-    document.getElementById('st-paid').textContent     = paid.length;
-    document.getElementById('st-trial').textContent    = trial.length;
-    document.getElementById('pendingBadge').textContent = pending.length;
-
-    renderRecentDash(data.slice(-5).reverse());
-    renderReqs(data);
-    renderApproved(approved);
-  }
-
-  // ══════════ RECENT DASH ══════════
-  function renderRecentDash(items) {
-    const el = document.getElementById('dashRecentTable');
-    if (!items.length) {
-      el.innerHTML = `<div class="empty"><div class="empty-icon">📭</div><h3>لا توجد طلبات حتى الآن</h3><p>عند إرسال مستخدم طلباً سيظهر هنا</p></div>`;
-      return;
-    }
-    el.innerHTML = `
-      <table>
-        <thead><tr>
-          <th>النادي</th><th>البريد</th><th>النوع</th><th>الحالة</th>
-        </tr></thead>
-        <tbody>
-          ${items.map(r => `
-            <tr>
-              <td style="color:var(--white); font-weight:700;">${r.clubName}</td>
-              <td class="email-txt">${r.email}</td>
-              <td>${typeBadge(r.type)}</td>
-              <td>${statusBadge(r.status)}</td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>`;
-  }
-
-  // ══════════ REQUESTS TABLE ══════════
-  function renderReqs(data) {
-    const filtered = filterState === 'all' ? data : data.filter(r => r.status === filterState);
-    const tbody = document.getElementById('reqsTbody');
-    const empty = document.getElementById('reqsEmpty');
-    if (!filtered.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
-    empty.style.display = 'none';
-    tbody.innerHTML = filtered.map((r, i) => `
-      <tr>
-        <td style="color:var(--muted); font-size:11px;">${i + 1}</td>
-        <td style="color:var(--white); font-weight:700; max-width:140px;">${r.clubName}</td>
-        <td class="email-txt">${r.email}</td>
-        <td style="font-size:11px;">${r.phone || '–'}</td>
-        <td>${typeBadge(r.type)}</td>
-        <td style="font-size:11px; color:var(--amber); max-width:130px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${r.receipt || '–'}</td>
-        <td>${statusBadge(r.status)}</td>
-        <td>${r.key ? `<span class="mono">${r.key}</span>` : '–'}</td>
-        <td>
-          ${r.status === 'PENDING' ? `
-            <div style="display:flex; gap:6px; flex-wrap:wrap;">
-              <button class="act-btn act-approve" onclick="approveReq('${r.id}')">⚡ تفعيل وإرسال المفتاح</button>
-              <button class="act-btn act-reject" onclick="rejectReq('${r.id}')">✕ رفض</button>
-            </div>
-          ` : r.status === 'APPROVED' ? `
-            <button class="act-btn act-send" onclick="resendKey('${r.id}')">📤 إعادة إرسال</button>
-          ` : `<span style="color:var(--red); font-size:11px;">مرفوض</span>`}
-        </td>
-      </tr>
-    `).join('');
-  }
-
-  function filterReqs(f, btn) {
-    filterState = f;
-    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    renderReqs(getData());
-  }
-
-  // ══════════ APPROVED TABLE ══════════
-  function renderApproved(items) {
-    const tbody = document.getElementById('approvedTbody');
-    const empty = document.getElementById('approvedEmpty');
-    if (!items.length) { tbody.innerHTML = ''; empty.style.display = 'block'; return; }
-    empty.style.display = 'none';
-    tbody.innerHTML = items.map((r, i) => `
-      <tr>
-        <td style="color:var(--muted);">${i + 1}</td>
-        <td style="color:var(--white); font-weight:700;">${r.clubName}</td>
-        <td class="email-txt">${r.email}</td>
-        <td>${typeBadge(r.type)}</td>
-        <td><span class="mono">${r.key}</span></td>
-        <td>
-          <button class="act-btn act-send" onclick="resendKey('${r.id}')">📤 إرسال مجدداً</button>
-        </td>
-      </tr>
-    `).join('');
-  }
-
-  // ══════════ HELPERS ══════════
-  function typeBadge(t) {
-    return t === 'LIFETIME'
-      ? `<span class="badge badge-paid">♾️ مدى الحياة</span>`
-      : `<span class="badge badge-trial">⏱️ تجريبي 14 يوم</span>`;
-  }
-  function statusBadge(s) {
-    if (s === 'APPROVED') return `<span class="badge badge-approved">✅ مفعّل</span>`;
-    if (s === 'REJECTED') return `<span class="badge badge-rejected">✕ مرفوض</span>`;
-    return `<span class="badge badge-pending">⏳ قيد التحقق</span>`;
-  }
-
-  function genKey(type) {
-    const prefix = type === 'LIFETIME' ? 'JUDO-PRO' : 'JUDO-TRL';
-    const rnd = () => Math.floor(1000 + Math.random() * 9000);
-    return `${prefix}-${rnd()}-${rnd()}`;
-  }
-
-  // ══════════ ACTIONS ══════════
-  function approveReq(id) {
-    const data = getData();
-    const req = data.find(r => r.id === id);
-    if (!req) return;
-    req.key = genKey(req.type);
-    req.status = 'APPROVED';
-    saveData(data);
-    currentRequest = req;
-    showKeyModal(req);
-  }
-
-  function rejectReq(id) {
-    if (!confirm('هل أنت متأكد من رفض هذا الطلب؟')) return;
-    const data = getData();
-    const req = data.find(r => r.id === id);
-    if (req) { req.status = 'REJECTED'; saveData(data); }
-    showToast('تم رفض الطلب');
-  }
-
-  function resendKey(id) {
-    const data = getData();
-    const req = data.find(r => r.id === id);
-    if (!req) return;
-    currentRequest = req;
-    showKeyModal(req);
-  }
-
-  // ══════════ KEY MODAL ══════════
-  function showKeyModal(req) {
-    document.getElementById('keyDisplay').textContent = req.key;
-    document.getElementById('keyModalDesc').textContent =
-      `تم قبول طلب نادي "${req.clubName}" - أرسل المفتاح إلى: ${req.email}`;
-    document.getElementById('keyModal').classList.add('show');
-  }
-  function closeModal() {
-    document.getElementById('keyModal').classList.remove('show');
-    currentRequest = null;
-  }
-  function copyKey() {
-    navigator.clipboard.writeText(document.getElementById('keyDisplay').textContent);
-    showToast('✅ تم نسخ المفتاح!');
-  }
-  function sendViaEmail() {
-    if (!currentRequest) return;
-    const sub = encodeURIComponent(`مفتاح تفعيل نظام JudoManager - ${currentRequest.clubName}`);
-    const body = encodeURIComponent(
-      `السلام عليكم،\n\nتم قبول طلبكم بنجاح!\nمفتاح التفعيل الخاص بناديكم:\n\n${currentRequest.key}\n\nشكراً لاختياركم JudoManager Pro.\n\nللتواصل: 0553823611`
-    );
-    window.open(`mailto:${currentRequest.email}?subject=${sub}&body=${body}`, '_blank');
-  }
-  function sendViaWhatsApp() {
-    if (!currentRequest) return;
-    const msg = encodeURIComponent(
-      `السلام عليكم ${currentRequest.clubName}،\n\nتم قبول طلبكم! مفتاح التفعيل هو:\n${currentRequest.key}\n\nشكراً لاختياركم JudoManager Pro 🥋`
-    );
-    window.open(`https://wa.me/+?text=${msg}`, '_blank');
-  }
-
-  // ══════════ ADD MANUAL REQUEST ══════════
-  function addRequest() {
-    const club    = document.getElementById('add-club').value.trim();
-    const email   = document.getElementById('add-email').value.trim();
-    const manager = document.getElementById('add-manager').value.trim();
-    const phone   = document.getElementById('add-phone').value.trim();
-    const type    = document.getElementById('add-type').value;
-    const receipt = document.getElementById('add-receipt').value.trim();
-    const notes   = document.getElementById('add-notes').value.trim();
-
-    if (!club || !email) { alert('الرجاء إدخال اسم النادي والبريد الإلكتروني'); return; }
-
-    const data = getData();
-    data.push({
-      id: 'REQ-' + Date.now(),
-      clubName: club,
-      manager,
-      email,
-      phone,
-      type,
-      receipt,
-      notes,
-      status: 'PENDING',
-      createdAt: new Date().toLocaleDateString('ar-DZ'),
-      key: null
-    });
-    saveData(data);
-    clearAddForm();
-    showToast('✅ تم إضافة الطلب بنجاح');
-    showPage('requests', document.querySelectorAll('.nav-btn')[1]);
-  }
-
-  function clearAddForm() {
-    ['add-club','add-manager','add-email','add-phone','add-receipt','add-notes'].forEach(id => {
-      document.getElementById(id).value = '';
-    });
-  }
-
-  // ══════════ SETTINGS ══════════
-  function changePassword() {
-    const np = document.getElementById('newPass').value;
-    const cp = document.getElementById('confPass').value;
-    if (!np) { alert('أدخل كلمة مرور جديدة'); return; }
-    if (np !== cp) { alert('كلمتا المرور غير متطابقتين'); return; }
-    if (np.length < 6) { alert('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
-    ADMIN_PASS = np;
-    localStorage.setItem('adminPass', np);
-    document.getElementById('newPass').value = '';
-    document.getElementById('confPass').value = '';
-    showToast('✅ تم تغيير كلمة المرور');
-  }
-
-  function clearAllData() {
-    localStorage.removeItem('judoRequests');
-    refreshAll();
-    showToast('🗑️ تم حذف جميع البيانات');
-  }
-
-  // ══════════ TOAST ══════════
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.style.display = 'block';
-    setTimeout(() => { t.style.display = 'none'; }, 2800);
-  }
-
-  // ══════════ SAMPLE DATA (first run) ══════════
-  if (!localStorage.getItem('judoRequests')) {
-    const sample = [
-      {
-        id: 'REQ-1001',
-        clubName: 'نادي الأمل الرياضي للجودو',
-        manager: 'عبد القادر بلحاج',
-        email: 'elamal.judo@gmail.com',
-        phone: '0550123456',
-        type: 'TRIAL',
-        receipt: null,
-        notes: '',
-        status: 'PENDING',
-        createdAt: new Date().toLocaleDateString('ar-DZ'),
-        key: null
-      },
-      {
-        id: 'REQ-1002',
-        clubName: 'جمعية الأبطال للجودو والقتال',
-        manager: 'ياسين زروقي',
-        email: 'champions.judo.dz@gmail.com',
-        phone: '0661987654',
-        type: 'LIFETIME',
-        receipt: '#00982415 بريدي موب - 15,000 دج',
-        notes: 'تم التحويل',
-        status: 'PENDING',
-        createdAt: new Date().toLocaleDateString('ar-DZ'),
-        key: null
-      }
-    ];
-    localStorage.setItem('judoRequests', JSON.stringify(sample));
-  }
+  ]));
+}
 </script>
-
 </body>
 </html>
