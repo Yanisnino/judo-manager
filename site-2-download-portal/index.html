@@ -11,20 +11,20 @@
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg: #060b14;
-      --sidebar-bg: #0a1120;
-      --card-bg: #0d1526;
+      --bg:        #060b14;
+      --sidebar-bg:#0a1120;
+      --card-bg:   #0d1526;
       --card-border: rgba(255,255,255,0.06);
-      --blue: #4f8ef7;
-      --blue-dim: rgba(79,142,247,0.12);
-      --indigo: #7c6ff7;
-      --indigo-dim: rgba(124,111,247,0.12);
-      --emerald: #2ed8a8;
-      --emerald-dim: rgba(46,216,168,0.1);
-      --amber: #f59e0b;
-      --white: #f0f4ff;
-      --muted: #5a6a82;
-      --text: #c8d4e8;
+      --blue:      #4f8ef7;
+      --blue-dim:  rgba(79,142,247,0.12);
+      --indigo:    #7c6ff7;
+      --indigo-dim:rgba(124,111,247,0.12);
+      --emerald:   #2ed8a8;
+      --emerald-dim:rgba(46,216,168,0.1);
+      --amber:     #f59e0b;
+      --white:     #f0f4ff;
+      --muted:     #5a6a82;
+      --text:      #c8d4e8;
       --sidebar-w: 220px;
     }
 
@@ -127,9 +127,6 @@
       color: var(--blue);
       border-color: rgba(79,142,247,0.2);
     }
-    .nav-item.active .nav-icon { filter: none; }
-
-    .nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
 
     .sidebar-contacts {
       padding: 14px 10px;
@@ -223,14 +220,6 @@
       margin-bottom: 24px;
       position: relative;
       overflow: hidden;
-    }
-    .hero-banner::before {
-      content: '';
-      position: absolute;
-      top: -60px; left: -60px;
-      width: 200px; height: 200px;
-      background: radial-gradient(circle, rgba(79,142,247,0.15) 0%, transparent 70%);
-      pointer-events: none;
     }
     .hero-badge {
       display: inline-flex; align-items: center; gap: 6px;
@@ -326,7 +315,6 @@
     .btn-emerald { background: linear-gradient(135deg, #2ed8a8, #4f8ef7); color: #060b14; font-weight: 800; box-shadow: 0 6px 20px rgba(46,216,168,0.25); }
     .btn-emerald:hover { box-shadow: 0 8px 28px rgba(46,216,168,0.4); transform: translateY(-1px); }
     .btn-ghost { background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); color: var(--text); }
-    .btn-ghost:hover { background: rgba(255,255,255,0.08); }
 
     /* ─────────── INFO BOX ─────────── */
     .info-box {
@@ -337,42 +325,6 @@
       margin-bottom: 16px;
     }
     .info-box h3 { color: var(--white); font-size: 14px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
-
-    .steps-list { display: flex; flex-direction: column; gap: 10px; }
-    .step-row {
-      display: flex; align-items: flex-start; gap: 12px;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.03);
-    }
-    .step-row:last-child { border-bottom: none; }
-    .step-num {
-      width: 28px; height: 28px; flex-shrink: 0;
-      border-radius: 9px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 800; color: white;
-    }
-    .step-row h4 { color: var(--white); font-size: 12px; font-weight: 700; margin-bottom: 3px; }
-    .step-row p { color: var(--muted); font-size: 11px; line-height: 1.6; }
-
-    /* ─────────── FEATURES GRID ─────────── */
-    .feat-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-      gap: 10px;
-      margin-top: 16px;
-    }
-    .feat-item {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 12px;
-      padding: 14px;
-      display: flex; gap: 10px; align-items: flex-start;
-      transition: border-color 0.2s;
-    }
-    .feat-item:hover { border-color: rgba(79,142,247,0.25); }
-    .feat-icon { font-size: 18px; flex-shrink: 0; }
-    .feat-title { color: var(--white); font-size: 12px; font-weight: 700; margin-bottom: 3px; }
-    .feat-desc { color: var(--muted); font-size: 10.5px; line-height: 1.5; }
 
     /* ─────────── FORM PANEL ─────────── */
     .form-panel {
@@ -386,8 +338,8 @@
     .form-panel .form-desc { color: var(--muted); font-size: 12px; margin-bottom: 22px; line-height: 1.7; }
 
     .alert-box {
-      background: rgba(79,142,247,0.08);
-      border: 1px solid rgba(79,142,247,0.18);
+      background: rgba(46,216,168,0.08);
+      border: 1px solid rgba(46,216,168,0.18);
       border-radius: 11px;
       padding: 12px 14px;
       font-size: 12px;
@@ -413,8 +365,6 @@
       transition: border-color 0.2s;
     }
     .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--blue); }
-    .fg input::placeholder, .fg textarea::placeholder { color: var(--muted); }
-    .fg select { appearance: none; cursor: pointer; }
     .fg select option { background: #0d1526; }
     .fg textarea { resize: vertical; min-height: 72px; }
 
@@ -528,7 +478,6 @@
     }
     .sidebar-overlay.show { display: block; }
 
-    /* ─────────── RESPONSIVE ─────────── */
     @media (max-width: 720px) {
       .topbar { display: flex; }
       .sidebar {
@@ -545,11 +494,6 @@
       .price-table { grid-template-columns: 1fr; }
       .stats-row { grid-template-columns: repeat(2, 1fr); }
     }
-
-    /* Scrollbar */
-    ::-webkit-scrollbar { width: 5px; }
-    ::-webkit-scrollbar-track { background: transparent; }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
   </style>
 </head>
 <body>
@@ -568,13 +512,12 @@
 
 <!-- ══════════ SIDEBAR ══════════ -->
 <aside class="sidebar" id="sidebar">
-
   <div class="sidebar-logo">
     <div class="sidebar-logo-row">
       <div class="sidebar-logo-icon">🥋</div>
       <div>
         <div class="sidebar-logo-name">JudoManager Pro</div>
-        <div class="sidebar-logo-sub">v2.0 – بوابة التحميل</div>
+        <div class="sidebar-logo-sub">بوابة التحميل والتثبيت</div>
       </div>
     </div>
   </div>
@@ -582,24 +525,16 @@
   <nav class="sidebar-nav">
     <div class="nav-label">القائمة</div>
     <button class="nav-item active" onclick="showPage('home', this)">
-      <span class="nav-icon">🏠</span> الرئيسية
+      <span>🏠</span> الرئيسية
     </button>
     <button class="nav-item" onclick="showPage('download', this)">
-      <span class="nav-icon">📥</span> تحميل النظام
+      <span>📥</span> تحميل للكمبيوتر
     </button>
     <button class="nav-item" onclick="showPage('mobile', this)">
-      <span class="nav-icon">📱</span> تثبيت على الهاتف
+      <span>📱</span> تثبيت على الهاتف
     </button>
     <button class="nav-item" onclick="showPage('trial', this)">
-      <span class="nav-icon">🔑</span> طلب مفتاح تفعيل
-    </button>
-
-    <div class="nav-label" style="margin-top:8px;">النظام</div>
-    <button class="nav-item" onclick="showPage('features', this)">
-      <span class="nav-icon">✨</span> المميزات
-    </button>
-    <button class="nav-item" onclick="showPage('pricing', this)">
-      <span class="nav-icon">💰</span> الأسعار
+      <span>🔑</span> طلب مفتاح تفعيل
     </button>
   </nav>
 
@@ -619,9 +554,9 @@
   <!-- ── HOME ── -->
   <div class="page-section active" id="page-home">
     <div class="hero-banner">
-      <div class="hero-badge">✨ النظام الأول لإدارة أندية الجودو في الجزائر</div>
+      <div class="hero-badge">✨ النظام المتكامل لإدارة أندية الجودو</div>
       <h2>مرحباً بك في بوابة<br><span>JudoManager Pro</span></h2>
-      <p>حل متكامل لإدارة أندية الجودو والرياضات القتالية. يعمل على الحاسوب والهاتف مع مزامنة فورية.</p>
+      <p>تثبيت النظام كتطبيق حقيقي أصلي على هاتفك أو حاسوبك يعمل من أي مكان عبر الإنترنت وبكل سلاسة.</p>
     </div>
 
     <div class="stats-row">
@@ -630,12 +565,12 @@
         <div class="stat-label">يوم تجريبي مجاني</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" style="color:var(--emerald);">∞</div>
-        <div class="stat-label">ترخيص مدى الحياة</div>
+        <div class="stat-value" style="color:var(--emerald);">15,000</div>
+        <div class="stat-label">دج (ترخيص دائم)</div>
       </div>
       <div class="stat-card">
-        <div class="stat-value" style="color:var(--indigo);">2</div>
-        <div class="stat-label">منصة (PC + هاتف)</div>
+        <div class="stat-value" style="color:var(--indigo);">1</div>
+        <div class="stat-label">شهر ضمان كامل</div>
       </div>
       <div class="stat-card">
         <div class="stat-value" style="color:var(--amber);">24h</div>
@@ -646,29 +581,29 @@
     <div class="cards-row">
       <div class="card">
         <div class="card-head">
-          <div class="card-ico ico-blue">🖥️</div>
+          <div class="card-ico ico-indigo">📱</div>
           <div>
-            <div class="card-title">نظام الكمبيوتر</div>
-            <div class="card-sub">Windows PC – أوفلاين كامل</div>
+            <div class="card-title">تطبيق الهاتف الأصلي (PWA)</div>
+            <div class="card-sub">Android & iPhone</div>
           </div>
         </div>
-        <div class="card-body">النسخة الكاملة لأجهزة الحاسوب. تعمل بدون إنترنت مع دعم الطابعات والكاميرا.</div>
-        <button class="btn btn-blue" onclick="showPage('download', document.querySelector('.nav-item:nth-child(2)'))">
-          📥 تحميل النظام
+        <div class="card-body">تثبيت نظام النادي كاملاً كتطبيق أصلي على شاشة الهاتف يعمل من أي مكان دون الحاجة لشبكة واي فاي مشتركة.</div>
+        <button class="btn btn-indigo" onclick="showPage('mobile', document.querySelectorAll('.nav-item')[2])">
+          📲 طريقة التثبيت على الهاتف
         </button>
       </div>
 
       <div class="card">
         <div class="card-head">
-          <div class="card-ico ico-indigo">📱</div>
+          <div class="card-ico ico-blue">🖥️</div>
           <div>
-            <div class="card-title">تطبيق الهاتف</div>
-            <div class="card-sub">Android & iPhone</div>
+            <div class="card-title">نظام الكمبيوتر (Windows)</div>
+            <div class="card-sub">أوفلاين كامل للحواسيب</div>
           </div>
         </div>
-        <div class="card-body">ثبّت النظام كتطبيق أصلي على هاتفك. يعمل بشكل مستقل كاملاً.</div>
-        <button class="btn btn-indigo" onclick="showPage('mobile', document.querySelectorAll('.nav-item')[2])">
-          📲 دليل التثبيت
+        <div class="card-body">النسخة التنفيذية لأجهزة حواسيب النادي. تعمل بدون إنترنت ودعم كامل للطابعات والكودبار.</div>
+        <button class="btn btn-blue" onclick="showPage('download', document.querySelectorAll('.nav-item')[1])">
+          📥 تحميل حزمة الويندوز
         </button>
       </div>
 
@@ -676,86 +611,35 @@
         <div class="card-head">
           <div class="card-ico ico-emerald">🔑</div>
           <div>
-            <div class="card-title">مفتاح التفعيل</div>
-            <div class="card-sub">تجريبي أو مدى الحياة</div>
+            <div class="card-title">طلب مفتاح التفعيل</div>
+            <div class="card-sub">تجريبي أو 15,000 دج دائم</div>
           </div>
         </div>
-        <div class="card-body">احصل على مفتاح تفعيل للتجربة المجانية أو اشترِ ترخيصاً دائماً لناديك.</div>
+        <div class="card-body">احصل على نسخة تجريبية 14 يوماً مجاناً أو اطلب المفتاح الدائم مع ضمان لمدة شهر كامل.</div>
         <button class="btn btn-emerald" onclick="showPage('trial', document.querySelectorAll('.nav-item')[3])">
-          🎯 طلب المفتاح
+          🎯 طلب المفتاح الآن
         </button>
       </div>
     </div>
   </div>
 
-  <!-- ── DOWNLOAD ── -->
-  <div class="page-section" id="page-download">
-    <div class="page-header">
-      <h1>📥 تحميل نظام الكمبيوتر</h1>
-      <p>نسخة Windows الكاملة تعمل أوفلاين مع جميع المميزات</p>
-    </div>
-
-    <div class="info-box" style="margin-bottom:16px;">
-      <h3>⚠️ متطلبات التشغيل قبل البدء</h3>
-      <div class="steps-list">
-        <div class="step-row">
-          <div class="step-num" style="background:rgba(79,142,247,0.15); color:var(--blue);">1</div>
-          <div>
-            <h4>Node.js (مطلوب)</h4>
-            <p>قم بتنزيل وتثبيت Node.js من الموقع الرسمي أولاً</p>
-          </div>
-          <a href="https://nodejs.org/en/download" target="_blank" class="btn btn-ghost" style="width:auto; padding:7px 14px; font-size:11px; margin-right:auto;">تنزيل →</a>
-        </div>
-        <div class="step-row">
-          <div class="step-num" style="background:rgba(124,111,247,0.15); color:var(--indigo);">2</div>
-          <div>
-            <h4>Git (مطلوب)</h4>
-            <p>تطبيق لتحميل الكود من الإنترنت – ضروري للتثبيت</p>
-          </div>
-          <a href="https://git-scm.com/download/win" target="_blank" class="btn btn-ghost" style="width:auto; padding:7px 14px; font-size:11px; margin-right:auto;">تنزيل →</a>
-        </div>
-      </div>
-    </div>
-
-    <div class="cards-row" style="grid-template-columns: 1fr;">
-      <div class="card">
-        <div class="card-head">
-          <div class="card-ico ico-blue" style="width:50px;height:50px;font-size:24px;">🖥️</div>
-          <div>
-            <div class="card-title" style="font-size:16px;">حزمة تثبيت نظام الكمبيوتر</div>
-            <div class="card-sub">Windows 10/11 – يعمل بدون إنترنت بعد التثبيت</div>
-          </div>
-        </div>
-        <ul class="card-list">
-          <li>تثبيت تلقائي على أي جهاز ويندوز</li>
-          <li>يفحص Node.js و Git ويعلمك إذا غير موجودين</li>
-          <li>يحمّل النظام مباشرة من GitHub</li>
-          <li>يشغّل النظام تلقائياً في المتصفح</li>
-        </ul>
-        <a href="./JudoManager-Installer.bat" download="JudoManager-Installer.bat" class="btn btn-blue" style="max-width:280px;">
-          📥 تحميل ملف التثبيت (.bat)
-        </a>
-        <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.15); border-radius:10px; padding:10px 14px; font-size:11.5px; color:#fbbf24; margin-top:4px;">
-          💡 بعد التحميل: انقر بالزر الأيمن على الملف ← "تشغيل كمسؤول" (Run as Administrator)
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── MOBILE ── -->
+  <!-- ── MOBILE (PWA) ── -->
   <div class="page-section" id="page-mobile">
     <div class="page-header">
-      <h1>📱 تثبيت النظام على الهاتف</h1>
-      <p>ثبّت نظام النادي كتطبيق حقيقي على شاشتك الرئيسية</p>
+      <h1>📱 تثبيت النظام كتطبيق أصلي على الهاتف</h1>
+      <p>يعمل التطبيق عبر أي اتصال إنترنت (4G / 5G / ADSL) من أي مكان وبكل سرعة وسلاسة.</p>
     </div>
 
-    <div class="alert-box" style="margin-bottom:20px; border-color:rgba(46,216,168,0.2); background:rgba(46,216,168,0.06);">
-      <span class="alert-icon-big">📌</span>
-      <p><strong>قبل البدء:</strong> يجب أن يكون نظام الكمبيوتر يعمل على نفس شبكة الواي فاي. ثم افتح عنوان النظام على هاتفك.</p>
+    <div class="alert-box">
+      <span class="alert-icon-big">🚀</span>
+      <div>
+        <strong>لا حاجة لنفس شبكة الواي فاي!</strong><br>
+        تم تحديث النظام ليعمل مباشرة كـ تطبيق حقيقي مثبت على شاشة الهاتف للوصول الحقيقي والسريع من أي مكان.
+      </div>
     </div>
 
     <div class="info-box" style="max-width:540px;">
-      <h3>📱 اختر نوع هاتفك</h3>
+      <h3>📱 اختر نوع هاتفك لتطبيق الخطوات</h3>
       <div class="pwa-tabs">
         <button class="pwa-tab active" onclick="switchTab('android', this)">🤖 Android</button>
         <button class="pwa-tab" onclick="switchTab('iphone', this)">🍎 iPhone</button>
@@ -764,15 +648,15 @@
       <div class="pwa-content active" id="tab-android">
         <div class="pwa-step-row">
           <div class="pwa-num">1</div>
-          <p>افتح متصفح <strong>Chrome</strong> على هاتفك Android</p>
+          <p>افتح متصفح <strong>Chrome</strong> على هاتفك الاندرويد</p>
         </div>
         <div class="pwa-step-row">
           <div class="pwa-num">2</div>
-          <p>اكتب عنوان النظام: <strong>http://192.168.1.X:3000</strong> (العنوان يظهر في نافذة الكمبيوتر)</p>
+          <p>ادخل على رابط النظام الخاص بك (مثال: <strong>judo-manager.vercel.app</strong>)</p>
         </div>
         <div class="pwa-step-row">
           <div class="pwa-num">3</div>
-          <p>اضغط على النقاط الثلاث <strong>⋮</strong> في أعلى يسار المتصفح</p>
+          <p>سيظهر لك شريط <strong>"تثبيت التطبيق"</strong> تلقائياً أسفل الشاشة، أو اضغط زر القائمة <strong>⋮</strong></p>
         </div>
         <div class="pwa-step-row">
           <div class="pwa-num">4</div>
@@ -780,18 +664,18 @@
         </div>
         <div class="pwa-step-row">
           <div class="pwa-num">5</div>
-          <p>اضغط <strong>"تثبيت"</strong> – سيظهر أيقونة النظام على شاشتك مباشرة ✅</p>
+          <p>مبروك! ظهرت أيقونة التطبيق 🥋 على شاشتك الرئيسية ويعمل بشكل حقيقي كاملاً ✅</p>
         </div>
       </div>
 
       <div class="pwa-content" id="tab-iphone">
         <div class="pwa-step-row">
           <div class="pwa-num">1</div>
-          <p>افتح متصفح <strong>Safari</strong> على هاتفك (مهم! ليس Chrome)</p>
+          <p>افتح متصفح <strong>Safari</strong> على جهاز الآيفون (ضروري استخدام Safari)</p>
         </div>
         <div class="pwa-step-row">
           <div class="pwa-num">2</div>
-          <p>اكتب عنوان النظام في شريط العنوان العلوي</p>
+          <p>اكتب رابط النظام الخاص بناديك في شريط العنوان</p>
         </div>
         <div class="pwa-step-row">
           <div class="pwa-num">3</div>
@@ -799,61 +683,89 @@
         </div>
         <div class="pwa-step-row">
           <div class="pwa-num">4</div>
-          <p>مرر للأسفل واضغط <strong>"إضافة إلى الشاشة الرئيسية"</strong></p>
+          <p>اختر من القائمة <strong>"إضافة إلى الشاشة الرئيسية" (Add to Home Screen)</strong></p>
         </div>
         <div class="pwa-step-row">
           <div class="pwa-num">5</div>
-          <p>اضغط <strong>"إضافة"</strong> في الأعلى – سيظهر التطبيق على شاشتك ✅</p>
+          <p>اضغط <strong>"إضافة"</strong> وسيتم تثبيت التطبيق على الشاشة الرئيسية فوراً ✅</p>
         </div>
       </div>
     </div>
 
     <div style="margin-top:20px;">
-      <a href="https://wa.me/213553823611?text=السلام عليكم، أحتاج مساعدة في تثبيت نظام النادي على الهاتف" target="_blank" class="btn btn-emerald" style="max-width:280px;">
-        💬 تواصل معي للمساعدة المباشرة
+      <a href="https://wa.me/213553823611?text=السلام عليكم، أحتاج مساعدة في تثبيت تطبيق الهاتف لنظام الجودو" target="_blank" class="btn btn-emerald" style="max-width:280px;">
+        💬 تواصل معي للمساعدة الفورية
       </a>
     </div>
   </div>
 
-  <!-- ── TRIAL ── -->
-  <div class="page-section" id="page-trial">
+  <!-- ── DOWNLOAD PC ── -->
+  <div class="page-section" id="page-download">
     <div class="page-header">
-      <h1>🔑 طلب مفتاح التفعيل</h1>
-      <p>احصل على نسخة تجريبية مجانية أو اشترِ ترخيصاً دائماً</p>
+      <h1>📥 تحميل نظام الكمبيوتر (Windows)</h1>
+      <p>نسخة أوفلاين كاملة تعمل بدون إنترنت لحواسيب النادي</p>
     </div>
 
-    <!-- Pricing Cards -->
+    <div class="cards-row" style="grid-template-columns: 1fr; max-width:600px;">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-ico ico-blue" style="width:48px;height:48px;font-size:22px;">🖥️</div>
+          <div>
+            <div class="card-title" style="font-size:15px;">حزمة تثبيت نظام الويندوز (.bat)</div>
+            <div class="card-sub">تشغيل وتثبيت أوفلاين على الحواسيب</div>
+          </div>
+        </div>
+        <ul class="card-list">
+          <li>تثبيت تلقائي وسهل بنقرة واحدة</li>
+          <li>فحص فوري لـ Node.js و Git تلقائياً</li>
+          <li>تشغيل النظام مباشرة في المتصفح المحلي</li>
+          <li>دعم كامل لطابعات بطاقات الكودبار والكاميرا</li>
+        </ul>
+        <a href="./JudoManager-Installer.bat" download="JudoManager-Installer.bat" class="btn btn-blue" style="max-width:280px;">
+          📥 تحميل ملف التثبيت (.bat)
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TRIAL & LICENSE ── -->
+  <div class="page-section" id="page-trial">
+    <div class="page-header">
+      <h1>🔑 طلب مفتاح التفعيل والتراخيص</h1>
+      <p>طلب نسخة تجريبية 14 يوماً مجاناً أو شراء الترخيص الدائم مع ضمان لمدة شهر كامل</p>
+    </div>
+
     <div class="price-table" style="max-width:500px; margin-bottom:20px;">
       <div class="price-card selected" id="pc-trial" onclick="selectPlan('trial')">
         <div class="price-badge badge-free">مجاني</div>
-        <div class="price-name">تجربة مجانية</div>
+        <div class="price-name">نسخة تجريبية</div>
         <div class="price-amount">14 <span>يوم</span></div>
-        <div class="price-desc">بدون دفع – جرّب النظام كاملاً</div>
+        <div class="price-desc">تجربة كاملة مجانية 100%</div>
       </div>
       <div class="price-card" id="pc-paid" onclick="selectPlan('paid')">
-        <div class="price-badge badge-paid">مدفوع</div>
+        <div class="price-badge badge-paid">مدفوع (ضمان شهر)</div>
         <div class="price-name">ترخيص مدى الحياة</div>
-        <div class="price-amount">تواصل <span>معي</span></div>
-        <div class="price-desc">ترخيص دائم لناديك بسعر رمزي</div>
+        <div class="price-amount">15,000 <span>دج</span></div>
+        <div class="price-desc">دفعة واحدة + ضمان شهر كامل</div>
       </div>
     </div>
 
     <div class="form-panel">
       <div id="trialFormContent">
-        <h2>📋 بيانات ناديك</h2>
-        <p class="form-desc">أدخل معلوماتك وسيتم التواصل معك خلال 24 ساعة لإرسال المفتاح.</p>
+        <h2>📋 طلب تفعيل جديد</h2>
+        <p class="form-desc">أدخل بيانات النادي وسيصلك مفتاح التفعيل مباشرة.</p>
 
         <div class="alert-box">
-          <span class="alert-icon-big">💰</span>
+          <span class="alert-icon-big">💳</span>
           <div>
-            <strong>الدفع عبر BaridiMob</strong><br>
-            للترخيص المدفوع: حوّل المبلغ وأرسل صورة الوصل عبر واتساب
+            <strong>تحويل BaridiMob:</strong><br>
+            للترخيص المدفوع (15,000 دج) حوّل المبلغ وأرفق صورة أو رقم الوصل عبر الواتساب.
           </div>
         </div>
 
         <div class="fg">
           <label>اسم النادي / الجمعية *</label>
-          <input type="text" id="clubName" placeholder="مثال: نادي الرياضي للجودو">
+          <input type="text" id="clubName" placeholder="مثال: نادي الأبطال للجودو">
         </div>
 
         <div class="form-row">
@@ -868,151 +780,22 @@
         </div>
 
         <div class="fg">
-          <label>ملاحظات إضافية (اختياري)</label>
-          <textarea id="notes" placeholder="أي معلومات إضافية حول ناديك..."></textarea>
+          <label>ملاحظات إضافية</label>
+          <textarea id="notes" placeholder="أي استفسار أو ملاحظة..."></textarea>
         </div>
 
         <button class="btn btn-emerald" onclick="submitRequest()">
-          📤 إرسال الطلب عبر واتساب
+          📤 إرسال الطلب عبر الواتساب
         </button>
       </div>
 
       <div class="success-state" id="trialSuccess">
         <div class="success-icon">✅</div>
-        <h3>تم إرسال طلبك!</h3>
-        <p>سيتم التواصل معك خلال 24 ساعة وإرسال مفتاح التفعيل إلى بريدك الإلكتروني.</p>
+        <h3>تم إرسال الطلب بنجاح!</h3>
+        <p>سيتم فحص الطلب وإرسال المفتاح الخاص بناديك فوراً عبر الإيميل أو الواتساب.</p>
         <button class="btn btn-ghost" style="max-width:200px; margin:0 auto;" onclick="resetForm()">
           إرسال طلب آخر
         </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── FEATURES ── -->
-  <div class="page-section" id="page-features">
-    <div class="page-header">
-      <h1>✨ مميزات النظام</h1>
-      <p>كل ما يحتاجه ناديك في مكان واحد</p>
-    </div>
-
-    <div class="feat-grid">
-      <div class="feat-item">
-        <div class="feat-icon">👥</div>
-        <div>
-          <div class="feat-title">تسجيل الرياضيين</div>
-          <div class="feat-desc">بيانات كاملة مع صور ووثائق ومعلومات الأسرة</div>
-        </div>
-      </div>
-      <div class="feat-item">
-        <div class="feat-icon">💳</div>
-        <div>
-          <div class="feat-title">بطاقات الكودبار</div>
-          <div class="feat-desc">طباعة بطاقات هوية رياضية للتعريف السريع</div>
-        </div>
-      </div>
-      <div class="feat-item">
-        <div class="feat-icon">📊</div>
-        <div>
-          <div class="feat-title">الاشتراكات المالية</div>
-          <div class="feat-desc">متابعة دفعات الاشتراك والمديونيات والتقارير</div>
-        </div>
-      </div>
-      <div class="feat-item">
-        <div class="feat-icon">✅</div>
-        <div>
-          <div class="feat-title">الحضور التلقائي</div>
-          <div class="feat-desc">تسجيل حضور الرياضيين بالكودبار في ثوانٍ</div>
-        </div>
-      </div>
-      <div class="feat-item">
-        <div class="feat-icon">🔔</div>
-        <div>
-          <div class="feat-title">إشعارات أولياء الأمور</div>
-          <div class="feat-desc">إشعارات الحضور والغياب للأولياء مباشرة</div>
-        </div>
-      </div>
-      <div class="feat-item">
-        <div class="feat-icon">🥋</div>
-        <div>
-          <div class="feat-title">إدارة الأحزمة</div>
-          <div class="feat-desc">تتبع مستويات وشهادات الأحزمة لكل رياضي</div>
-        </div>
-      </div>
-      <div class="feat-item">
-        <div class="feat-icon">📱</div>
-        <div>
-          <div class="feat-title">نسخة الهاتف الكاملة</div>
-          <div class="feat-desc">جميع الميزات على الهاتف مع مزامنة فورية</div>
-        </div>
-      </div>
-      <div class="feat-item">
-        <div class="feat-icon">🔐</div>
-        <div>
-          <div class="feat-title">صلاحيات متقدمة</div>
-          <div class="feat-desc">تحكم بصلاحيات المدربين والإدارة بدقة</div>
-        </div>
-      </div>
-      <div class="feat-item">
-        <div class="feat-icon">📈</div>
-        <div>
-          <div class="feat-title">تقارير شاملة</div>
-          <div class="feat-desc">إحصاءات الأداء والمالية والحضور بشكل مرئي</div>
-        </div>
-      </div>
-      <div class="feat-item">
-        <div class="feat-icon">💾</div>
-        <div>
-          <div class="feat-title">نسخ احتياطي</div>
-          <div class="feat-desc">حماية بيانات ناديك بنسخ احتياطية تلقائية</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- ── PRICING ── -->
-  <div class="page-section" id="page-pricing">
-    <div class="page-header">
-      <h1>💰 الأسعار والتراخيص</h1>
-      <p>اختر الخيار المناسب لناديك</p>
-    </div>
-
-    <div class="cards-row" style="max-width:560px;">
-      <div class="card" style="border-color:rgba(46,216,168,0.2);">
-        <div class="card-head">
-          <div class="card-ico ico-emerald">🎁</div>
-          <div>
-            <div class="card-title">التجربة المجانية</div>
-            <div class="card-sub">14 يوم كامل بدون دفع</div>
-          </div>
-        </div>
-        <ul class="card-list">
-          <li>جميع مميزات النظام متاحة</li>
-          <li>دعم فني مجاني خلال التجربة</li>
-          <li>لا بطاقة ائتمانية مطلوبة</li>
-          <li>مفتاح تفعيل يُرسل عبر الإيميل</li>
-        </ul>
-        <button class="btn btn-emerald" onclick="showPage('trial', document.querySelectorAll('.nav-item')[3])">
-          🎯 ابدأ التجربة مجاناً
-        </button>
-      </div>
-
-      <div class="card" style="border-color:rgba(79,142,247,0.2);">
-        <div class="card-head">
-          <div class="card-ico ico-blue">♾️</div>
-          <div>
-            <div class="card-title">ترخيص مدى الحياة</div>
-            <div class="card-sub">دفعة واحدة – للأبد</div>
-          </div>
-        </div>
-        <ul class="card-list">
-          <li>ترخيص دائم لناديك</li>
-          <li>تحديثات مستقبلية مجانية</li>
-          <li>دعم فني مستمر</li>
-          <li>الدفع عبر BaridiMob</li>
-        </ul>
-        <a href="https://wa.me/213553823611?text=أريد معرفة سعر ترخيص مدى الحياة لنظام JudoManager" target="_blank" class="btn btn-blue">
-          💬 استفسر عن السعر
-        </a>
       </div>
     </div>
   </div>
@@ -1022,7 +805,6 @@
 <script>
   let currentPlan = 'trial';
 
-  // ── Navigation ──
   function showPage(id, navEl) {
     document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
     document.getElementById('page-' + id).classList.add('active');
@@ -1032,7 +814,6 @@
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
 
-  // ── Sidebar (mobile) ──
   function toggleSidebar() {
     document.getElementById('sidebar').classList.toggle('open');
     document.getElementById('sidebarOverlay').classList.toggle('show');
@@ -1042,7 +823,6 @@
     document.getElementById('sidebarOverlay').classList.remove('show');
   }
 
-  // ── PWA Tabs ──
   function switchTab(id, btn) {
     document.querySelectorAll('.pwa-tab').forEach(t => t.classList.remove('active'));
     document.querySelectorAll('.pwa-content').forEach(c => c.classList.remove('active'));
@@ -1050,14 +830,12 @@
     document.getElementById('tab-' + id).classList.add('active');
   }
 
-  // ── Plan Selection ──
   function selectPlan(plan) {
     currentPlan = plan;
     document.querySelectorAll('.price-card').forEach(c => c.classList.remove('selected'));
     document.getElementById('pc-' + plan).classList.add('selected');
   }
 
-  // ── Submit Request ──
   function submitRequest() {
     const club = document.getElementById('clubName').value.trim();
     const email = document.getElementById('email').value.trim();
@@ -1070,10 +848,10 @@
     }
 
     const planText = currentPlan === 'trial'
-      ? 'نسخة تجريبية مجانية 14 يوم'
-      : 'شراء ترخيص مدى الحياة';
+      ? 'نسخة تجريبية مجانية (14 يوم)'
+      : 'ترخيص مدى الحياة (15,000 دج مع ضمان شهر)';
 
-    let msg = `السلام عليكم،\n\nأريد ${planText} لنظام JudoManager.\n\n`;
+    let msg = `السلام عليكم،\n\nأريد ${planText} لنظام JudoManager Pro.\n\n`;
     msg += `🏟️ اسم النادي: ${club}\n`;
     msg += `📧 البريد الإلكتروني: ${email}\n`;
     if (phone) msg += `📞 رقم الهاتف: ${phone}\n`;
