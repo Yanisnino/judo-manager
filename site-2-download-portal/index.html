@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>JudoManager Pro – نظام إدارة أندية الجودو والرياضات القتالية</title>
-  <meta name="description" content="نظام متكامل لإدارة أندية الجودو والرياضات القتالية. تحميل برنامج سيت أب EXE حقيقي مخصص للويندوز يعمل أوفلاين.">
+  <meta name="description" content="نظام متكامل لإدارة أندية الجودو والرياضات القتالية. تسجيل اللاعبين، متابعة الاشتراكات، الكودبار، وتطبيق الأولياء. تجربة مجانية 14 يوم.">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
   <style>
@@ -13,6 +13,7 @@
     :root {
       --bg:          #060b14;
       --card:        #0d1826;
+      --card2:       #0a1420;
       --border:      rgba(255,255,255,0.07);
       --blue:        #4f8ef7;
       --blue-d:      rgba(79,142,247,0.12);
@@ -22,6 +23,7 @@
       --emerald-d:   rgba(46,216,168,0.1);
       --amber:       #f59e0b;
       --amber-d:     rgba(245,158,11,0.1);
+      --purple:      #a855f7;
       --white:       #edf2ff;
       --muted:       #4a5e78;
       --text:        #b8c8e0;
@@ -30,27 +32,45 @@
     }
 
     html { scroll-behavior: smooth; }
-    body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+    }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
 
     /* ══ SIDEBAR ══ */
     .sidebar {
       position: fixed; top: 0; right: 0;
       width: var(--sbw); min-height: 100vh;
-      background: var(--sb); border-left: 1px solid var(--border);
-      display: flex; flex-direction: column; z-index: 200;
+      background: var(--sb);
+      border-left: 1px solid var(--border);
+      display: flex; flex-direction: column;
+      z-index: 200;
+      transition: transform .3s;
     }
-    .sb-logo { padding: 22px 18px; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 11px; }
+    .sb-logo {
+      padding: 22px 18px;
+      border-bottom: 1px solid var(--border);
+      display: flex; align-items: center; gap: 11px;
+    }
     .sb-icon {
       width: 40px; height: 40px;
       background: linear-gradient(135deg, var(--blue), var(--indigo));
-      border-radius: 12px; display: flex; align-items: center; justify-content: center;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
       font-size: 20px; flex-shrink: 0;
+      box-shadow: 0 4px 18px rgba(79,142,247,.35);
     }
-    .sb-name { color: var(--white); font-weight: 900; font-size: 14px; }
+    .sb-name { color: var(--white); font-weight: 900; font-size: 14px; line-height: 1.2; }
     .sb-sub  { color: var(--muted); font-size: 10px; }
 
-    .sb-nav { flex: 1; padding: 12px 10px; display: flex; flex-direction: column; gap: 3px; }
-    .nav-lbl { font-size: 9.5px; font-weight: 700; color: var(--muted); padding: 10px 8px 4px; letter-spacing: .1em; }
+    .sb-nav { flex: 1; padding: 12px 10px; display: flex; flex-direction: column; gap: 3px; overflow-y: auto; }
+    .nav-lbl { font-size: 9.5px; font-weight: 700; color: var(--muted); padding: 10px 8px 4px; letter-spacing: .1em; text-transform: uppercase; }
     .nav-btn {
       display: flex; align-items: center; gap: 10px;
       padding: 9px 12px; border-radius: 11px;
@@ -58,151 +78,790 @@
       border: 1px solid transparent; background: none;
       width: 100%; text-align: right; cursor: pointer;
       font-family: 'Cairo', sans-serif;
+      transition: all .18s;
     }
+    .nav-btn:hover { background: rgba(255,255,255,.04); color: var(--white); }
     .nav-btn.on { background: var(--blue-d); color: var(--blue); border-color: rgba(79,142,247,.2); }
 
     .sb-contacts { padding: 14px 10px; border-top: 1px solid var(--border); display: flex; flex-direction: column; gap: 7px; }
     .cb {
       display: flex; align-items: center; gap: 8px;
       padding: 9px 12px; border-radius: 11px;
-      font-size: 12px; font-weight: 700; text-decoration: none;
+      font-size: 12px; font-weight: 700;
+      text-decoration: none; cursor: pointer;
       font-family: 'Cairo', sans-serif;
+      transition: all .18s;
     }
-    .cb-wa { background: rgba(22,163,74,.1); color: #4ade80; border: 1px solid rgba(74,222,128,.15); }
-    .cb-tg { background: rgba(37,99,235,.1); color: #60a5fa; border: 1px solid rgba(96,165,250,.15); }
+    .cb-wa  { background: rgba(22,163,74,.1);  color: #4ade80; border: 1px solid rgba(74,222,128,.15); }
+    .cb-tg  { background: rgba(37,99,235,.1);  color: #60a5fa; border: 1px solid rgba(96,165,250,.15); }
+    .cb-wa:hover  { background: rgba(22,163,74,.2);  }
+    .cb-tg:hover  { background: rgba(37,99,235,.2);  }
+
+    /* ══ TOPBAR (mobile) ══ */
+    .topbar {
+      display: none;
+      position: fixed; top: 0; left: 0; right: 0; height: 58px;
+      background: var(--sb); border-bottom: 1px solid var(--border);
+      align-items: center; justify-content: space-between;
+      padding: 0 16px; z-index: 300;
+    }
+    .topbar-logo { display: flex; align-items: center; gap: 10px; }
+    .tb-name { color: var(--white); font-weight: 900; font-size: 14px; }
+    .menu-btn {
+      background: rgba(255,255,255,.06); border: 1px solid var(--border);
+      color: var(--white); width: 36px; height: 36px; border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer; font-size: 18px;
+    }
+    .overlay {
+      display: none; position: fixed; inset: 0;
+      background: rgba(0,0,0,.6); z-index: 190;
+    }
+    .overlay.on { display: block; }
 
     /* ══ MAIN ══ */
     .main {
-      margin-right: var(--sbw); min-height: 100vh;
-      padding: 40px 36px; max-width: calc(100vw - var(--sbw));
+      margin-right: var(--sbw);
+      min-height: 100vh;
+      padding: 40px 36px;
+      max-width: calc(100vw - var(--sbw));
     }
+
+    /* ══ PAGES ══ */
     .pg { display: none; }
     .pg.on { display: block; }
 
-    /* ══ HERO & CARDS ══ */
+    /* ══ PAGE HEADER ══ */
+    .ph { margin-bottom: 28px; }
+    .ph h1 { color: var(--white); font-size: 24px; font-weight: 900; margin-bottom: 5px; }
+    .ph p  { color: var(--muted); font-size: 13px; line-height: 1.7; }
+
+    /* ══ HERO ══ */
     .hero {
       background: linear-gradient(135deg, #0a1930 0%, #120d2e 100%);
-      border: 1px solid rgba(79,142,247,.14); border-radius: 20px;
-      padding: 36px 36px 32px; margin-bottom: 26px;
+      border: 1px solid rgba(79,142,247,.14);
+      border-radius: 20px;
+      padding: 36px 36px 32px;
+      margin-bottom: 26px;
+      position: relative; overflow: hidden;
     }
-    .hero h2 { color: var(--white); font-size: 28px; font-weight: 900; margin-bottom: 12px; }
+    .hero::before {
+      content: '';
+      position: absolute; top: -60px; left: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(79,142,247,.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(79,142,247,.12); border: 1px solid rgba(79,142,247,.25);
+      color: #93c5fd; padding: 5px 14px; border-radius: 100px;
+      font-size: 11px; font-weight: 700; margin-bottom: 16px;
+    }
+    .hero h2 { color: var(--white); font-size: clamp(20px,3vw,32px); font-weight: 900; line-height: 1.3; margin-bottom: 12px; }
+    .hero h2 span { color: var(--blue); }
     .hero p { color: var(--muted); font-size: 13px; line-height: 1.8; max-width: 600px; margin-bottom: 22px; }
+    .hero-btns { display: flex; gap: 12px; flex-wrap: wrap; }
 
+    /* ══ STATS ══ */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px; margin-bottom: 26px;
+    }
+    .stat {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 16px 18px;
+    }
+    .stat-v { font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 4px; }
+    .stat-l { color: var(--muted); font-size: 11px; }
+
+    /* ══ FEATURES GRID ══ */
+    .features {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px,1fr));
+      gap: 14px; margin-bottom: 26px;
+    }
+    .feature {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 15px; padding: 20px;
+      transition: all .2s;
+    }
+    .feature:hover { border-color: rgba(79,142,247,.25); transform: translateY(-2px); }
+    .feat-ico {
+      width: 42px; height: 42px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; margin-bottom: 12px;
+    }
+    .fi-b { background: var(--blue-d);    border: 1px solid rgba(79,142,247,.18); }
+    .fi-i { background: var(--indigo-d);  border: 1px solid rgba(124,111,247,.18); }
+    .fi-e { background: var(--emerald-d); border: 1px solid rgba(46,216,168,.18); }
+    .fi-a { background: var(--amber-d);   border: 1px solid rgba(245,158,11,.18); }
+    .feat-title { color: var(--white); font-size: 13px; font-weight: 800; margin-bottom: 6px; }
+    .feat-desc  { color: var(--muted); font-size: 11.5px; line-height: 1.7; }
+
+    /* ══ PRICING ══ */
+    .pricing {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px; margin-bottom: 26px;
+    }
+    .price-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 26px;
+      display: flex; flex-direction: column; gap: 16px;
+      position: relative; overflow: hidden;
+    }
+    .price-card.best {
+      border-color: rgba(79,142,247,.35);
+      background: linear-gradient(135deg, #0d1f3d, #110e2a);
+    }
+    .price-card.best::before {
+      content: '⭐ الأكثر طلباً';
+      position: absolute; top: 14px; left: 14px;
+      background: linear-gradient(135deg, var(--blue), var(--indigo));
+      color: white; font-size: 10px; font-weight: 800;
+      padding: 3px 10px; border-radius: 100px;
+    }
+    .price-badge {
+      display: inline-block; padding: 4px 12px; border-radius: 100px;
+      font-size: 10px; font-weight: 700;
+    }
+    .pb-free { background: var(--emerald-d); color: var(--emerald); border: 1px solid rgba(46,216,168,.2); }
+    .pb-paid { background: var(--blue-d);    color: var(--blue);    border: 1px solid rgba(79,142,247,.2); }
+    .price-name   { color: var(--white); font-size: 16px; font-weight: 800; }
+    .price-amount { font-size: 32px; font-weight: 900; color: var(--white); line-height: 1; }
+    .price-amount span { font-size: 14px; color: var(--muted); font-weight: 500; }
+    .price-guarantee { font-size: 11px; color: var(--amber); font-weight: 600; }
+    .price-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+    .price-list li { font-size: 12px; color: var(--muted); display: flex; align-items: flex-start; gap: 7px; }
+    .price-list li::before { content: '✓'; color: var(--emerald); font-weight: 700; flex-shrink: 0; }
+
+    /* ══ HOW-TO STEPS ══ */
+    .steps { display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px; }
+    .step {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 14px; padding: 18px 20px;
+      display: flex; align-items: flex-start; gap: 14px;
+    }
+    .step-num {
+      width: 34px; height: 34px; flex-shrink: 0;
+      border-radius: 10px; background: var(--blue-d);
+      border: 1px solid rgba(79,142,247,.2);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; font-weight: 900; color: var(--blue);
+    }
+    .step-title { color: var(--white); font-size: 13px; font-weight: 800; margin-bottom: 4px; }
+    .step-desc  { color: var(--muted); font-size: 12px; line-height: 1.7; }
+
+    /* ══ PAYMENT BOX ══ */
+    .pay-box {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 26px; max-width: 560px;
+    }
+    .pay-box h3 { color: var(--white); font-size: 16px; font-weight: 800; margin-bottom: 6px; }
+    .pay-box p  { color: var(--muted); font-size: 12px; line-height: 1.7; margin-bottom: 18px; }
+
+    .info-row {
+      background: rgba(255,255,255,.03); border: 1px solid var(--border);
+      border-radius: 12px; padding: 14px 16px; margin-bottom: 14px;
+      font-size: 13px; line-height: 2;
+    }
+    .ir-label { color: var(--muted); font-size: 11px; margin-bottom: 4px; }
+    .ir-val   { color: var(--white); font-weight: 800; font-size: 15px; }
+    .ir-val.mono { font-family: 'JetBrains Mono', monospace; letter-spacing: .05em; font-size: 16px; color: var(--emerald); }
+
+    .alert-info {
+      background: var(--blue-d); border: 1px solid rgba(79,142,247,.18);
+      border-radius: 12px; padding: 12px 16px;
+      font-size: 12px; color: var(--text); line-height: 1.7;
+      margin-bottom: 14px; display: flex; gap: 10px; align-items: flex-start;
+    }
+    .alert-warn {
+      background: var(--amber-d); border: 1px solid rgba(245,158,11,.2);
+      border-radius: 12px; padding: 12px 16px;
+      font-size: 12px; color: var(--text); line-height: 1.7;
+      margin-bottom: 14px;
+    }
+
+    /* ══ FORM ══ */
+    .fg { margin-bottom: 14px; }
+    .fg label { display: block; color: var(--text); font-size: 12px; font-weight: 700; margin-bottom: 7px; }
+    .fg input, .fg select, .fg textarea {
+      width: 100%;
+      background: rgba(255,255,255,.03); border: 1px solid var(--border);
+      border-radius: 10px; padding: 10px 14px; color: var(--white);
+      font-family: 'Cairo', sans-serif; font-size: 13px; outline: none;
+      transition: border-color .2s;
+    }
+    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--blue); }
+    .fg select option { background: var(--card); }
+    .fg textarea { resize: vertical; min-height: 72px; }
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ══ BUTTONS ══ */
     .btn {
       display: inline-flex; align-items: center; justify-content: center; gap: 8px;
       padding: 12px 22px; border-radius: 12px;
-      font-family: 'Cairo', sans-serif; font-weight: 800; font-size: 13px;
+      font-family: 'Cairo', sans-serif; font-weight: 700; font-size: 13px;
       text-decoration: none; border: none; cursor: pointer;
+      transition: all .2s; white-space: nowrap;
     }
     .btn-full { width: 100%; }
     .btn-blue { background: linear-gradient(135deg, var(--blue), var(--indigo)); color: white; box-shadow: 0 6px 20px rgba(79,142,247,.3); }
-    .btn-emerald { background: linear-gradient(135deg, var(--emerald), var(--blue)); color: #060b14; }
-    .btn-amber { background: linear-gradient(135deg, #f59e0b, #f97316); color: #060b14; }
+    .btn-blue:hover { transform: translateY(-1px); box-shadow: 0 10px 28px rgba(79,142,247,.4); }
+    .btn-emerald { background: linear-gradient(135deg, var(--emerald), var(--blue)); color: #060b14; font-weight: 800; }
+    .btn-emerald:hover { transform: translateY(-1px); }
+    .btn-amber { background: linear-gradient(135deg, #f59e0b, #f97316); color: #060b14; font-weight: 800; }
     .btn-ghost { background: rgba(255,255,255,.05); border: 1px solid var(--border); color: var(--text); }
 
-    .download-box {
-      background: var(--card); border: 1px solid rgba(79,142,247,.3);
-      border-radius: 20px; padding: 32px; max-width: 540px;
-      box-shadow: 0 20px 60px rgba(0,0,0,.4);
+    /* ══ KEY SECTION ══ */
+    .key-form {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 18px; padding: 26px; max-width: 480px;
+    }
+    .key-form h3 { color: var(--white); font-size: 15px; font-weight: 800; margin-bottom: 5px; }
+    .key-form p { color: var(--muted); font-size: 12px; margin-bottom: 20px; line-height: 1.7; }
+    .key-input {
+      display: flex; gap: 8px; margin-bottom: 14px;
+    }
+    .key-input input {
+      flex: 1;
+      background: rgba(255,255,255,.03); border: 1px solid var(--border);
+      border-radius: 10px; padding: 11px 14px; color: var(--emerald);
+      font-family: 'JetBrains Mono', monospace; font-size: 14px;
+      outline: none; transition: border-color .2s; letter-spacing: .05em;
     }
 
+    /* ══ SUCCESS STATE ══ */
+    .success {
+      display: none; text-align: center; padding: 36px 20px;
+    }
+    .success-icon { font-size: 52px; margin-bottom: 16px; }
+    .success h3 { color: var(--emerald); font-size: 20px; font-weight: 900; margin-bottom: 8px; }
+    .success p  { color: var(--muted); font-size: 12px; line-height: 1.7; margin-bottom: 18px; }
+
+    /* ══ CONTACT CARDS ══ */
+    .contact-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px,1fr)); gap: 14px; }
+    .contact-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: 16px; padding: 22px;
+      display: flex; flex-direction: column; gap: 12px;
+      text-decoration: none; transition: all .2s;
+    }
+    .contact-card:hover { transform: translateY(-2px); }
+    .cc-icon { font-size: 28px; }
+    .cc-name { color: var(--white); font-weight: 800; font-size: 14px; }
+    .cc-val  { color: var(--muted); font-size: 12px; font-weight: 600; }
+    .cc-desc { color: var(--muted); font-size: 11px; line-height: 1.6; }
+
+    /* ══ RESPONSIVE ══ */
     @media (max-width: 720px) {
-      .sidebar { display: none; }
-      .main { margin-right: 0; max-width: 100%; padding: 24px 16px; }
+      .topbar { display: flex; }
+      .sidebar { transform: translateX(100%); }
+      .sidebar.open { transform: translateX(0); }
+      .main { margin-right: 0; max-width: 100%; padding: 74px 16px 32px; }
+      .form-row { grid-template-columns: 1fr; }
+      .stats { grid-template-columns: repeat(2,1fr); }
+      .hero-btns { flex-direction: column; }
+      .hero { padding: 24px 20px; }
     }
   </style>
 </head>
 <body>
 
-<aside class="sidebar">
+<!-- Mobile Topbar -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="sb-icon" style="width:34px;height:34px;font-size:16px;">🥋</div>
+    <span class="tb-name">JudoManager Pro</span>
+  </div>
+  <div class="menu-btn" onclick="toggleSb()">☰</div>
+</div>
+<div class="overlay" id="ov" onclick="closeSb()"></div>
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sb">
   <div class="sb-logo">
     <div class="sb-icon">🥋</div>
     <div>
       <div class="sb-name">JudoManager Pro</div>
-      <div class="sb-sub">برنامج تثبيت EXE للويندوز</div>
+      <div class="sb-sub">نظام إدارة أندية الجودو</div>
     </div>
   </div>
 
   <nav class="sb-nav">
     <div class="nav-lbl">التنقل</div>
-    <button class="nav-btn on" onclick="goPage('download',this)"><span>💻</span> تحميل برنامج EXE</button>
-    <button class="nav-btn" onclick="goPage('pricing',this)"><span>💰</span> خطط الأسعار</button>
-    <button class="nav-btn" onclick="goPage('payment',this)"><span>💳</span> إثبات الدفع والترخيص</button>
+    <button class="nav-btn on" onclick="goPage('home',this)"><span>🏠</span> الرئيسية</button>
+    <button class="nav-btn"    onclick="goPage('features',this)"><span>✨</span> مزايا النظام</button>
+    <button class="nav-btn"    onclick="goPage('pricing',this)"><span>💰</span> الأسعار والخطط</button>
+    <button class="nav-btn"    onclick="goPage('download',this)"><span>💻</span> تحميل برنامج EXE</button>
+    <button class="nav-btn"    onclick="goPage('activate',this)"><span>🔑</span> تفعيل الترخيص</button>
+    <button class="nav-btn"    onclick="goPage('payment',this)"><span>💳</span> الدفع والاشتراك</button>
+    <button class="nav-btn"    onclick="goPage('contact',this)"><span>📞</span> تواصل معنا</button>
   </nav>
 
   <div class="sb-contacts">
-    <a href="https://wa.me/213553823611" target="_blank" class="cb cb-wa">💬 واتساب: 0553823611</a>
-    <a href="https://t.me/nisoo09" target="_blank" class="cb cb-tg">✈️ تلغرام: @nisoo09</a>
+    <a href="https://wa.me/213553823611?text=السلام عليكم، أريد الاستفسار عن نظام JudoManager" target="_blank" class="cb cb-wa">
+      <span>💬</span> واتساب: 0553823611
+    </a>
+    <a href="https://t.me/nisoo09" target="_blank" class="cb cb-tg">
+      <span>✈️</span> تلغرام: @nisoo09
+    </a>
   </div>
 </aside>
 
+<!-- MAIN -->
 <main class="main">
 
-  <!-- ═════════════ DOWNLOAD EXE ═════════════ -->
-  <div class="pg on" id="pg-download">
-    <div style="margin-bottom: 24px;">
-      <h1 style="color: var(--white); font-size: 24px; font-weight: 900;">💻 تحميل برنامج تثبيت الويندوز (EXE Setup)</h1>
-      <p style="color: var(--muted); font-size: 13px; margin-top: 4px;">برنامج حقيقي يثبت على سطح المكتب ويضمن لك عدم ظهور أي رابط فارغ إطلاقاً</p>
+  <!-- ═════════════ HOME ═════════════ -->
+  <div class="pg on" id="pg-home">
+
+    <div class="hero">
+      <div class="hero-badge">🥋 النظام الأول لإدارة أندية الجودو في الجزائر</div>
+      <h2>إدارة نادي الجودو بأحدث<br><span>التقنيات وبسلاسة تامة!</span></h2>
+      <p>
+        JudoManager Pro هو النظام الأمثل والشامل لإدارة رياضيي نادي الجودو والرياضات القتالية.
+        من تسجيل اللاعبين وطباعة الكودبار، إلى متابعة الاشتراكات والحضور، وتطبيق مخصص لأولياء الأمور لمتابعة أبنائهم بسهولة وشفافية.
+      </p>
+      <div class="hero-btns">
+        <button class="btn btn-blue" onclick="goPage('download',document.querySelectorAll('.nav-btn')[3])">💻 تحميل برنامج EXE مجاناً</button>
+        <button class="btn btn-emerald" onclick="goPage('pricing',document.querySelectorAll('.nav-btn')[2])">🎁 تجربة مجانية 14 يوم</button>
+        <button class="btn btn-ghost" onclick="goPage('features',document.querySelectorAll('.nav-btn')[1])">✨ عرض كل المزايا</button>
+      </div>
     </div>
 
-    <div class="download-box">
-      <div style="display:flex; align-items:center; gap:14px; margin-bottom: 20px;">
-        <div style="width:52px; height:52px; background:var(--blue-d); border:1px solid rgba(79,142,247,.3); border-radius:16px; display:flex; align-items:center; justify-content:center; font-size:26px;">
-          💻
-        </div>
-        <div>
-          <div style="color: var(--white); font-weight: 900; font-size: 17px;">JudoManager-Pro-Setup.exe</div>
-          <div style="color: var(--emerald); font-size: 12px; font-weight: 700; margin-top: 2px;">✓ برنامج تثبيت مستقل ومباشر (Windows 10 / 11)</div>
-        </div>
+    <div class="stats">
+      <div class="stat">
+        <div class="stat-v" style="color:var(--blue)">14</div>
+        <div class="stat-l">يوم تجريبي مجاني</div>
       </div>
-
-      <div style="background: rgba(255,255,255,.03); border:1px solid var(--border); border-radius:14px; padding:16px; margin-bottom:20px; font-size:12px; line-height:1.8;">
-        • <strong style="color:white">تثبيت فوري ومباشر:</strong> يثبت أيقونة "JudoManager Pro" على سطح المكتب.<br>
-        • <strong style="color:white">أوفلاين 100%:</strong> يعمل بدون متصفح خارجي وبدون الحاجة لخوادم محلية.<br>
-        • <strong style="color:white">حفظ تلقائي للبيانات:</strong> يحفظ بيانات اللاعبين بصفة دائمية.
+      <div class="stat">
+        <div class="stat-v" style="color:var(--emerald)">15,000</div>
+        <div class="stat-l">دج (مدى الحياة)</div>
       </div>
+      <div class="stat">
+        <div class="stat-v" style="color:var(--indigo)">1</div>
+        <div class="stat-l">شهر ضمان كامل</div>
+      </div>
+      <div class="stat">
+        <div class="stat-v" style="color:var(--amber)">24h</div>
+        <div class="stat-l">دعم فني مستمر</div>
+      </div>
+    </div>
 
-      <div style="display:flex; flex-direction:column; gap:10px;">
-        <a href="./JudoManager-Pro-Setup.exe" download="JudoManager-Pro-Setup.exe" class="btn btn-blue btn-full" style="padding: 15px; font-size: 15px;">
-          ⬇️ تحميل برنامج JudoManager-Pro-Setup.exe الآن
-        </a>
+    <div class="features">
+      <div class="feature">
+        <div class="feat-ico fi-b">👥</div>
+        <div class="feat-title">تسجيل وإدارة الرياضيين</div>
+        <div class="feat-desc">تسجيل الرياضيين بالكامل مع توليد كود باركود فردي لكل لاعب</div>
+      </div>
+      <div class="feature">
+        <div class="feat-ico fi-i">💳</div>
+        <div class="feat-title">إدارة الاشتراكات والمدفوعات</div>
+        <div class="feat-desc">متابعة حالة الاشتراك وتاريخ الانتهاء وإشعارات التجديد التلقائية</div>
+      </div>
+      <div class="feature">
+        <div class="feat-ico fi-e">📊</div>
+        <div class="feat-title">تقارير وإحصاءات شاملة</div>
+        <div class="feat-desc">تقارير الحضور والغياب والإيرادات الشهرية والسنوية بشكل بياني</div>
+      </div>
+      <div class="feature">
+        <div class="feat-ico fi-a">👨‍👩‍👦</div>
+        <div class="feat-title">تطبيق أولياء الأمور</div>
+        <div class="feat-desc">تطبيق مخصص لأولياء الأمور لمتابعة حضور أبنائهم وحالة اشتراكاتهم</div>
+      </div>
+      <div class="feature">
+        <div class="feat-ico fi-b">🖨️</div>
+        <div class="feat-title">طباعة بطاقات الكودبار</div>
+        <div class="feat-desc">طباعة بطاقات هوية رسمية لكل رياضي تحتوي على معلوماته وكوده</div>
+      </div>
+      <div class="feature">
+        <div class="feat-ico fi-i">🏆</div>
+        <div class="feat-title">إدارة الفئات والمجموعات</div>
+        <div class="feat-desc">تصنيف الرياضيين حسب الفئة العمرية والحزام ومستوى الأداء</div>
+      </div>
+    </div>
 
-        <a href="https://wa.me/213553823611?text=السلام عليكم، أحتاج مساعدة في تحميل وتثبيت ملف الـ EXE" target="_blank" class="btn btn-emerald btn-full">
-          💬 تواصل عبر الواتساب للمساعدة الفورية (0553823611)
-        </a>
+  </div>
+
+  <!-- ═════════════ FEATURES ═════════════ -->
+  <div class="pg" id="pg-features">
+    <div class="ph">
+      <h1>✨ مزايا وإمكانيات النظام</h1>
+      <p>نظام متكامل يغطي جميع جوانب إدارة نادي الجودو من الألف إلى الياء</p>
+    </div>
+
+    <div class="features" style="grid-template-columns: repeat(auto-fill, minmax(250px,1fr));">
+      <div class="feature">
+        <div class="feat-ico fi-b">🎯</div>
+        <div class="feat-title">تسجيل لاعبين متعدد</div>
+        <div class="feat-desc">إمكانية تسجيل عدد غير محدود من اللاعبين مع تخزين جميع بياناتهم الشخصية والرياضية والطبية.</div>
+      </div>
+      <div class="feature">
+        <div class="feat-ico fi-e">🔖</div>
+        <div class="feat-title">توليد كودبار فوري</div>
+        <div class="feat-desc">توليد كود باركود أو QR code فريد ودائم لكل رياضي في ثوانٍ وطباعته مباشرة.</div>
+      </div>
+      <div class="feature">
+        <div class="feat-ico fi-i">📅</div>
+        <div class="feat-title">جدول التدريبات</div>
+        <div class="feat-desc">إدارة جداول التدريبات والمواعيد لكل مجموعة أو فئة عمرية بسهولة تامة.</div>
+      </div>
+      <div class="feature">
+        <div class="feat-ico fi-a">🔔</div>
+        <div class="feat-title">إشعارات تلقائية</div>
+        <div class="feat-desc">تنبيهات تلقائية لأولياء الأمور بالغياب ولإدارة النادي بانتهاء الاشتراكات.</div>
+      </div>
+      <div class="feature">
+        <div class="feat-ico fi-b">💾</div>
+        <div class="feat-title">حفظ بيانات آمن ودائم</div>
+        <div class="feat-desc">جميع البيانات محفوظة دائمياً في ملف محلي آمن على جهاز النادي لا تختفي مطلقاً.</div>
+      </div>
+      <div class="feature">
+        <div class="feat-ico fi-e">📱</div>
+        <div class="feat-title">واجهة متجاوبة وسهلة</div>
+        <div class="feat-desc">تصميم عصري وبسيط يمكن استخدامه عبر حاسوب سطح المكتب أو الهاتف بكفاءة مساوية.</div>
       </div>
     </div>
   </div>
 
   <!-- ═════════════ PRICING ═════════════ -->
   <div class="pg" id="pg-pricing">
-    <h2 style="color:white; margin-bottom:16px;">💰 خطط الأسعار والترخيص</h2>
-    <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; max-width:480px;">
-      <h3 style="color:var(--emerald);">🎁 تجربة مجانية 14 يوم</h3>
-      <p style="font-size:12px; color:var(--muted); margin: 8px 0 16px;">وصول كامل بدون رسوم.</p>
-      <h3 style="color:var(--blue);">♾️ ترخيص دائم (15,000 دج)</h3>
-      <p style="font-size:12px; color:var(--muted); margin-top:4px;">دفع مرّة واحدة مع ضمان لمدة شهر كامل وتحديثات مستمرة.</p>
+    <div class="ph">
+      <h1>💰 الأسعار والخطط</h1>
+      <p>اختر ما يناسبك — ابدأ بالتجربة المجانية الكاملة 14 يوماً</p>
+    </div>
+
+    <div class="pricing" style="max-width:680px;">
+
+      <!-- Trial -->
+      <div class="price-card">
+        <div class="price-badge pb-free">مجاني 100%</div>
+        <div class="price-name">الخطة التجريبية</div>
+        <div>
+          <div class="price-amount">14 <span>يوم</span></div>
+          <div class="price-guarantee" style="color: var(--emerald); margin-top: 4px;">✓ كل المزايا متاحة بدون قيود</div>
+        </div>
+        <ul class="price-list">
+          <li>وصول كامل لجميع خصائص النظام</li>
+          <li>تسجيل عدد غير محدود من اللاعبين</li>
+          <li>طباعة الكودبار والبطاقات</li>
+          <li>تطبيق أولياء الأمور</li>
+          <li>دعم فني عبر الواتساب</li>
+          <li>لا حاجة لبطاقة ائتمان</li>
+        </ul>
+        <button class="btn btn-emerald btn-full" onclick="goPage('download',document.querySelectorAll('.nav-btn')[3])">
+          🚀 ابدأ التجربة المجانية الآن
+        </button>
+      </div>
+
+      <!-- Lifetime -->
+      <div class="price-card best">
+        <div style="height:24px;"></div>
+        <div class="price-badge pb-paid">ترخيص دائم</div>
+        <div class="price-name">مدى الحياة</div>
+        <div>
+          <div class="price-amount">15,000 <span>دج</span></div>
+          <div class="price-guarantee">🛡️ ضمان شهر كامل + تحديثات مدى الحياة</div>
+        </div>
+        <ul class="price-list">
+          <li>ترخيص دائم بلا رسوم سنوية أبداً</li>
+          <li>جميع التحديثات المستقبلية مجاناً</li>
+          <li>دعم فني ذو أولوية</li>
+          <li>نسخ احتياطي بيانات يومي</li>
+          <li>ضمان استرداد المبلغ خلال شهر</li>
+          <li>تفعيل فوري بعد إثبات الدفع</li>
+        </ul>
+        <button class="btn btn-blue btn-full" onclick="goPage('payment',document.querySelectorAll('.nav-btn')[5])">
+          💳 اشترك الآن – BaridiMob
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═════════════ DOWNLOAD ═════════════ -->
+  <div class="pg" id="pg-download">
+    <div class="ph">
+      <h1>💻 تحميل وتثبيت النظام (برنامج EXE)</h1>
+      <p>تحميل برنامج السيت أب الأصلي للحاسوب — يثبت على جهاز النادي ويعمل أوفلاين</p>
+    </div>
+
+    <div class="steps" style="max-width:600px;">
+      <div class="step">
+        <div class="step-num">1</div>
+        <div>
+          <div class="step-title">تحميل برنامج JudoManager-Pro-Setup.exe</div>
+          <div class="step-desc">اضغط على زر التحميل الأزرق أدناه لتنزيل برنامج السيت أب التنفيذي الأصلي مباشرة على جهازك.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">2</div>
+        <div>
+          <div class="step-title">تثبيت البرنامج بنقرة واحدة</div>
+          <div class="step-desc">انقر مرتين على الملف المحمّل وستظهر لك شاشة التثبيت التلقائي لتطبيق الحاسوب.</div>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">3</div>
+        <div>
+          <div class="step-title">بدء العمل وحفظ البيانات</div>
+          <div class="step-desc">سيتم إنشاء أيقونة التطبيق على سطح المكتب وتعمل اللوحة فوراً وبشكل أوفلاين كامل دائمي.</div>
+        </div>
+      </div>
+    </div>
+
+    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 500px;">
+      <div style="color: var(--white); font-weight: 800; font-size: 15px; margin-bottom: 6px;">📦 برنامج التثبيت الأصلي للحاسوب (EXE Setup)</div>
+      <div style="color: var(--emerald); font-size: 12px; font-weight: 700; margin-bottom: 16px;">
+        ✓ متوافق مع Windows 10 / 11 أوفلاين كامل بدون مشاكل اتصال
+      </div>
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <a href="./JudoManager-Pro-Setup.exe" download="JudoManager-Pro-Setup.exe" class="btn btn-blue btn-full" style="padding: 14px; font-size: 14px;">
+          ⬇️ تحميل برنامج JudoManager-Pro-Setup.exe المباشر
+        </a>
+        <a href="https://wa.me/213553823611?text=السلام عليكم، أريد مساعدة في تثبيت برنامج JudoManager EXE" target="_blank" class="btn btn-emerald btn-full">
+          💬 مساعدة فورية في التثبيت (واتساب: 0553823611)
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ═════════════ ACTIVATE ═════════════ -->
+  <div class="pg" id="pg-activate">
+    <div class="ph">
+      <h1>🔑 تفعيل مفتاح الترخيص</h1>
+      <p>أدخل مفتاح التفعيل الذي أرسلناه لك عبر الإيميل أو الواتساب بعد تأكيد الدفع</p>
+    </div>
+
+    <div class="key-form" id="activateFormBox">
+      <h3>🔓 إدخال مفتاح التفعيل</h3>
+      <p>بعد تأكيد دفعك أو تسجيلك في النسخة التجريبية، ستتلقى مفتاح تفعيل خاصاً بك. أدخله هنا:</p>
+
+      <div class="alert-info">
+        <span>ℹ️</span>
+        <div>المفاتيح تكون على الشكل: <strong style="color:var(--emerald); font-family:'JetBrains Mono',monospace;">JUDO-PRO-XXXX-XXXX</strong> أو <strong style="color:var(--blue); font-family:'JetBrains Mono',monospace;">JUDO-TRL-XXXX-XXXX</strong></div>
+      </div>
+
+      <div class="key-input">
+        <input type="text" id="licenseKey" placeholder="JUDO-PRO-0000-0000" maxlength="20">
+      </div>
+
+      <div class="fg">
+        <label>اسم النادي</label>
+        <input type="text" id="clubNameAct" placeholder="مثال: نادي الأمل للجودو">
+      </div>
+      <div class="fg">
+        <label>البريد الإلكتروني</label>
+        <input type="email" id="emailAct" placeholder="example@gmail.com">
+      </div>
+
+      <button class="btn btn-emerald btn-full" onclick="activateLicense()">⚡ تفعيل الآن</button>
+
+      <div style="text-align:center; margin-top:14px;">
+        <span style="color:var(--muted); font-size:12px;">لم تتلقَ مفتاحاً بعد؟ </span>
+        <button class="btn btn-ghost" style="width:auto; padding:6px 14px; font-size:11px;" onclick="goPage('payment',document.querySelectorAll('.nav-btn')[5])">اطلب مفتاح الآن</button>
+      </div>
+    </div>
+
+    <div class="success" id="activateSuccess">
+      <div class="success-icon">🎉</div>
+      <h3>تم تفعيل النظام بنجاح!</h3>
+      <p>مرحباً بك في JudoManager Pro. يمكنك الآن استخدام النظام بكامل مزاياه.</p>
+      <button class="btn btn-emerald" style="margin: 0 auto;" onclick="window.open('http://localhost:3000/dashboard','_blank')">
+        🚀 فتح النظام الآن
+      </button>
     </div>
   </div>
 
   <!-- ═════════════ PAYMENT ═════════════ -->
   <div class="pg" id="pg-payment">
-    <h2 style="color:white; margin-bottom:16px;">💳 إثبات الدفع والترخيص</h2>
-    <div style="background:var(--card); border:1px solid var(--border); border-radius:16px; padding:24px; max-width:480px;">
-      <p style="font-size:13px; color:var(--text); line-height:1.8;">
-        بعد دفع 15,000 دج عبر بريدي موب، أرسل الوصل إلى الواتساب <strong>0553823611</strong> واستلم مفتاح التفعيل الفوري لتشغيل تطبيق الـ EXE مدى الحياة.
-      </p>
+    <div class="ph">
+      <h1>💳 الدفع والحصول على الترخيص</h1>
+      <p>اشترك بترخيص مدى الحياة عبر بريدي موب ثم أرسل وصل الدفع للتحقق والتفعيل</p>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px,1fr)); gap:16px; max-width:800px;">
+
+      <!-- Payment Info -->
+      <div class="pay-box">
+        <h3>📱 بيانات الدفع عبر بريدي موب</h3>
+        <p>قم بتحويل مبلغ الاشتراك مباشرة عبر تطبيق بريدي موب أو أقرب مكتب بريد إلى الحساب التالي:</p>
+
+        <div class="info-row">
+          <div class="ir-label">💳 رقم حساب بريدي موب (CCP)</div>
+          <div class="ir-val mono">0023 4567 8901</div>
+        </div>
+        <div class="info-row">
+          <div class="ir-label">👤 اسم الحساب</div>
+          <div class="ir-val">صاحب مشروع JudoManager Pro</div>
+        </div>
+        <div class="info-row">
+          <div class="ir-label">💰 مبلغ الاشتراك (مدى الحياة)</div>
+          <div class="ir-val mono" style="color:var(--blue)">15,000 دج</div>
+        </div>
+
+        <div class="alert-warn">
+          ⚠️ <strong>ملاحظة:</strong> احتفظ بصورة وصل الدفع (screenshot) فستحتاجها في الخطوة التالية للتحقق وإرسال مفتاح التفعيل.
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:8px; margin-top:4px;">
+          <a href="https://wa.me/213553823611?text=السلام عليكم، أريد الاشتراك في نظام JudoManager Pro" target="_blank" class="btn btn-emerald btn-full">
+            💬 تواصل قبل الدفع (واتساب)
+          </a>
+        </div>
+      </div>
+
+      <!-- Send Receipt Form -->
+      <div class="pay-box" id="receiptFormBox">
+        <h3>📤 إرسال وصل الدفع</h3>
+        <p>بعد إتمام عملية الدفع، أرسل بياناتك وصورة الوصل عبر الواتساب مباشرة وسيصلك مفتاح التفعيل خلال ساعات.</p>
+
+        <div class="fg">
+          <label>اسم النادي *</label>
+          <input type="text" id="clubNamePay" placeholder="نادي الأمل للجودو">
+        </div>
+        <div class="form-row">
+          <div class="fg">
+            <label>البريد الإلكتروني *</label>
+            <input type="email" id="emailPay" placeholder="example@gmail.com">
+          </div>
+          <div class="fg">
+            <label>رقم الهاتف</label>
+            <input type="tel" id="phonePay" placeholder="0551234567">
+          </div>
+        </div>
+        <div class="fg">
+          <label>نوع الاشتراك</label>
+          <select id="planPay">
+            <option value="trial">🎁 تجربة مجانية 14 يوم</option>
+            <option value="lifetime">♾️ ترخيص مدى الحياة – 15,000 دج</option>
+          </select>
+        </div>
+        <div class="fg">
+          <label>رقم عملية الدفع (من وصل بريدي موب)</label>
+          <input type="text" id="receiptNum" placeholder="مثال: #00987654 أو رقم العملية">
+        </div>
+        <div class="fg">
+          <label>ملاحظات إضافية</label>
+          <textarea id="notesPay" placeholder="أي ملاحظة أو استفسار..."></textarea>
+        </div>
+
+        <div class="alert-info">
+          <span>📎</span>
+          <div>بعد الإرسال، سيُفتح لك واتساب وأرسل صورة وصل الدفع في نفس المحادثة حتى يتم التحقق وإرسال مفتاح التفعيل.</div>
+        </div>
+
+        <button class="btn btn-amber btn-full" onclick="submitPayment()">
+          📤 إرسال الطلب ووصل الدفع عبر واتساب
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ═════════════ CONTACT ═════════════ -->
+  <div class="pg" id="pg-contact">
+    <div class="ph">
+      <h1>📞 تواصل معنا</h1>
+      <p>نحن هنا لمساعدتك في التثبيت، الدفع، وجميع الاستفسارات المتعلقة بنظام JudoManager Pro</p>
+    </div>
+
+    <div class="contact-cards" style="max-width:600px;">
+      <a href="https://wa.me/213553823611?text=السلام عليكم، أريد الاستفسار عن نظام JudoManager" target="_blank" class="contact-card" style="border-color:rgba(74,222,128,.18);">
+        <div class="cc-icon">💬</div>
+        <div>
+          <div class="cc-name" style="color:#4ade80;">واتساب</div>
+          <div class="cc-val">0553823611</div>
+        </div>
+        <div class="cc-desc">للدعم الفني الفوري، إرسال وصولات الدفع، والاستفسارات العامة.</div>
+      </a>
+
+      <a href="https://t.me/nisoo09" target="_blank" class="contact-card" style="border-color:rgba(96,165,250,.18);">
+        <div class="cc-icon">✈️</div>
+        <div>
+          <div class="cc-name" style="color:#60a5fa;">تلغرام</div>
+          <div class="cc-val">@nisoo09</div>
+        </div>
+        <div class="cc-desc">للتواصل عبر تلغرام وإرسال الملفات والوثائق بشكل آمن وسريع.</div>
+      </a>
+    </div>
+
+    <div style="margin-top:20px; background:var(--card); border:1px solid var(--border); border-radius:16px; padding:22px; max-width:480px;">
+      <div style="color:var(--white); font-weight:800; font-size:14px; margin-bottom:12px;">⏰ أوقات الردود</div>
+      <div style="font-size:12px; line-height:2; color:var(--muted);">
+        📅 من الأحد إلى الجمعة: <span style="color:var(--emerald);">8 صباحاً – 10 مساءً</span><br>
+        ⚡ متوسط وقت الرد: <span style="color:var(--blue);">أقل من ساعة عبر واتساب</span><br>
+        🔑 إرسال مفاتيح التفعيل: <span style="color:var(--amber);">خلال 1 إلى 6 ساعات بعد إثبات الدفع</span>
+      </div>
     </div>
   </div>
 
 </main>
 
 <script>
-  function goPage(id, btn) {
+  function goPage(id, navEl) {
     document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
     document.getElementById('pg-' + id).classList.add('on');
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('on'));
-    if (btn) btn.classList.add('on');
+    document.querySelectorAll('.nav-btn').forEach(n => n.classList.remove('on'));
+    if (navEl) navEl.classList.add('on');
+    closeSb();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  function toggleSb() {
+    document.getElementById('sb').classList.toggle('open');
+    document.getElementById('ov').classList.toggle('on');
+  }
+  function closeSb() {
+    document.getElementById('sb').classList.remove('open');
+    document.getElementById('ov').classList.remove('on');
+  }
+
+  function activateLicense() {
+    const key   = document.getElementById('licenseKey').value.trim();
+    const club  = document.getElementById('clubNameAct').value.trim();
+    const email = document.getElementById('emailAct').value.trim();
+    if (!key || !club || !email) {
+      alert('الرجاء إدخال جميع البيانات المطلوبة');
+      return;
+    }
+    if (!key.startsWith('JUDO-')) {
+      alert('❌ مفتاح التفعيل غير صحيح. تأكد من نسخه بشكل صحيح.');
+      return;
+    }
+    document.getElementById('activateFormBox').style.display = 'none';
+    document.getElementById('activateSuccess').style.display = 'block';
+  }
+
+  function submitPayment() {
+    const club    = document.getElementById('clubNamePay').value.trim();
+    const email   = document.getElementById('emailPay').value.trim();
+    const phone   = document.getElementById('phonePay').value.trim();
+    const plan    = document.getElementById('planPay').value;
+    const receipt = document.getElementById('receiptNum').value.trim();
+    const notes   = document.getElementById('notesPay').value.trim();
+
+    if (!club || !email) {
+      alert('الرجاء إدخال اسم النادي والبريد الإلكتروني على الأقل');
+      return;
+    }
+
+    const planText = plan === 'trial'
+      ? 'النسخة التجريبية المجانية (14 يوم)'
+      : 'ترخيص مدى الحياة (15,000 دج)';
+
+    let msg = `السلام عليكم،\n\nأريد الاشتراك في نظام JudoManager Pro:\n\n`;
+    msg += `🏟️ اسم النادي: ${club}\n`;
+    msg += `📧 البريد: ${email}\n`;
+    if (phone) msg += `📞 الهاتف: ${phone}\n`;
+    msg += `📦 نوع الاشتراك: ${planText}\n`;
+    if (receipt) msg += `🧾 رقم وصل الدفع: ${receipt}\n`;
+    if (notes) msg += `📝 ملاحظات: ${notes}\n`;
+    msg += `\n⬆️ أرفق صورة وصل الدفع في المحادثة.`;
+
+    window.open(`https://wa.me/213553823611?text=${encodeURIComponent(msg)}`, '_blank');
   }
 </script>
 
