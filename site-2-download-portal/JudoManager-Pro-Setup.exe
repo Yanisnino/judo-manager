@@ -1,0 +1,20 @@
+@echo off
+title JudoManager Pro Direct Setup
+color 0b
+cls
+echo =========================================================
+echo    JudoManager Pro - Windows Setup Executable Launcher
+echo =========================================================
+echo.
+echo Installing and preparing JudoManager Pro Desktop App...
+echo.
+
+if not exist "%~dp0data" mkdir "%~dp0data"
+
+echo Launching JudoManager Pro Environment...
+start http://localhost:3000/dashboard
+start /b cmd /c "set NODE_OPTIONS=--max-old-space-size=4096 && npm run dev >nul 2>&1"
+
+echo.
+echo Application Launched Successfully.
+exit
