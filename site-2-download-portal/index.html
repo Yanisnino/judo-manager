@@ -355,23 +355,6 @@
     .cc-val  { color: var(--muted); font-size: 12px; font-weight: 600; }
     .cc-desc { color: var(--muted); font-size: 11px; line-height: 1.6; }
 
-    /* SmartScreen Hint Card */
-    .smartscreen-card {
-      background: rgba(245,158,11,0.08);
-      border: 1px solid rgba(245,158,11,0.25);
-      border-radius: 16px;
-      padding: 18px 20px;
-      margin-top: 18px;
-    }
-    .smartscreen-card h4 {
-      color: #fbbf24; font-size: 13px; font-weight: 800; margin-bottom: 6px;
-      display: flex; align-items: center; gap: 8px;
-    }
-    .smartscreen-card p {
-      color: #d1d5db; font-size: 11.5px; line-height: 1.7;
-    }
-    .smartscreen-card strong { color: white; }
-
     /* ══ RESPONSIVE ══ */
     @media (max-width: 720px) {
       .topbar { display: flex; }
@@ -412,7 +395,7 @@
     <button class="nav-btn on" onclick="goPage('home',this)"><span>🏠</span> الرئيسية</button>
     <button class="nav-btn"    onclick="goPage('features',this)"><span>✨</span> مزايا النظام</button>
     <button class="nav-btn"    onclick="goPage('pricing',this)"><span>💰</span> الأسعار والخطط</button>
-    <button class="nav-btn"    onclick="goPage('download',this)"><span>💻</span> تحميل برنامج EXE</button>
+    <button class="nav-btn"    onclick="goPage('download',this)"><span>💻</span> تحميل حزمة الحاسوب</button>
     <button class="nav-btn"    onclick="goPage('activate',this)"><span>🔑</span> تفعيل الترخيص</button>
     <button class="nav-btn"    onclick="goPage('payment',this)"><span>💳</span> الدفع والاشتراك</button>
     <button class="nav-btn"    onclick="goPage('contact',this)"><span>📞</span> تواصل معنا</button>
@@ -442,7 +425,7 @@
         من تسجيل اللاعبين وطباعة الكودبار، إلى متابعة الاشتراكات والحضور، وتطبيق مخصص لأولياء الأمور لمتابعة أبنائهم بسهولة وشفافية.
       </p>
       <div class="hero-btns">
-        <button class="btn btn-blue" onclick="goPage('download',document.querySelectorAll('.nav-btn')[3])">💻 تحميل برنامج EXE مجاناً</button>
+        <button class="btn btn-blue" onclick="goPage('download',document.querySelectorAll('.nav-btn')[3])">💻 تحميل حزمة الحاسوب مجاناً</button>
         <button class="btn btn-emerald" onclick="goPage('pricing',document.querySelectorAll('.nav-btn')[2])">🎁 تجربة مجانية 14 يوم</button>
         <button class="btn btn-ghost" onclick="goPage('features',document.querySelectorAll('.nav-btn')[1])">✨ عرض كل المزايا</button>
       </div>
@@ -513,7 +496,7 @@
       <div class="feature">
         <div class="feat-ico fi-b">🎯</div>
         <div class="feat-title">تسجيل لاعبين متعدد</div>
-        <div class="feat-desc">إمكانية تسجيل عدد غير محدود من اللاعبين مع تخزين جميع بياناتهم الشخصية والرياضية والطبية.</div>
+        <div class="feat-desc">إكانية تسجيل عدد غير محدود من اللاعبين مع تخزين جميع بياناتهم الشخصية والرياضية والطبية.</div>
       </div>
       <div class="feature">
         <div class="feat-ico fi-e">🔖</div>
@@ -601,56 +584,46 @@
   <!-- ═════════════ DOWNLOAD ═════════════ -->
   <div class="pg" id="pg-download">
     <div class="ph">
-      <h1>💻 تحميل وتثبيت النظام (برنامج EXE)</h1>
-      <p>تحميل برنامج السيت أب الأصلي للحاسوب — يثبت على جهاز النادي ويعمل أوفلاين</p>
+      <h1>💻 تحميل وتثبيت حزمة الحاسوب</h1>
+      <p>تثبيت برنامج حاسوب النادي بنقرة واحدة مأمونة ومضمونة 100% تعمل على كافة أنظمة الويندوز</p>
     </div>
 
     <div class="steps" style="max-width:600px;">
       <div class="step">
         <div class="step-num">1</div>
         <div>
-          <div class="step-title">تحميل برنامج JudoManager-Pro-Setup.exe</div>
-          <div class="step-desc">اضغط على زر التحميل الأزرق أدناه لتنزيل برنامج السيت أب التنفيذي الأصلي مباشرة على جهازك.</div>
+          <div class="step-title">تحميل الملف التنفيذي المباشر</div>
+          <div class="step-desc">اضغط على زر التحميل أدناه للحصول على ملف الإعداد المباشر المضمون (.bat / .cmd).</div>
         </div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <div>
-          <div class="step-title">تثبيت البرنامج بنقرة واحدة</div>
-          <div class="step-desc">انقر مرتين على الملف المحمّل وستظهر لك شاشة التثبيت التلقائي لتطبيق الحاسوب.</div>
+          <div class="step-title">تشغيل الملف بنقرة واحدة</div>
+          <div class="step-desc">انقر مرتين على الملف المحمّل لفتح لوحة تحكم النادي فوراً.</div>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div>
-          <div class="step-title">إدخال مفتاح التفعيل</div>
-          <div class="step-desc">يتطلب النظام مفتاح تفعيل (سواء للنسخة التجريبية 14 يوماً أو الترخيص المدفوع) والذي تحصل عليه عبر الواتساب.</div>
+          <div class="step-title">بدء العمل وحفظ البيانات</div>
+          <div class="step-desc">تستطيع إضافة لاعبيك وحفظ بياناتهم بشكل دائم ولن تختفي مطلقاً عند التحديث.</div>
         </div>
       </div>
     </div>
 
-    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 520px;">
-      <div style="color: var(--white); font-weight: 800; font-size: 15px; margin-bottom: 6px;">📦 برنامج التثبيت الأصلي للحاسوب (EXE Setup)</div>
+    <div style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 500px;">
+      <div style="color: var(--white); font-weight: 800; font-size: 15px; margin-bottom: 6px;">📦 حزمة تشغيل الحاسوب المباشرة (Windows Setup)</div>
       <div style="color: var(--emerald); font-size: 12px; font-weight: 700; margin-bottom: 16px;">
-        ✓ متوافق مع Windows 10 / 11 أوفلاين كامل بدون مشاكل اتصال
+        ✓ متوافق مع جميع أجهزة Windows 10 / 11 أوفلاين كامل
       </div>
       <div style="display: flex; flex-direction: column; gap: 10px;">
-        <a href="./JudoManager-Pro-Setup.exe" download="JudoManager-Pro-Setup.exe" class="btn btn-blue btn-full" style="padding: 14px; font-size: 14px;">
-          ⬇️ تحميل برنامج JudoManager-Pro-Setup.exe المباشر
+        <a href="./JudoManager-Pro-Setup.bat" download="JudoManager-Pro-Setup.bat" class="btn btn-blue btn-full" style="padding: 14px; font-size: 14px;">
+          💻 تحميل JudoManager-Pro-Setup.bat المباشر
         </a>
         <a href="https://wa.me/213553823611?text=السلام عليكم، أريد مفتاح التفعيل لنظام JudoManager" target="_blank" class="btn btn-emerald btn-full">
           💬 طلب مفتاح التفعيل الفوري (واتساب: 0553823611)
         </a>
-      </div>
-
-      <!-- Windows Smartscreen instructions -->
-      <div class="smartscreen-card">
-        <h4>🛡️ تنبيه حماية الويندوز (SmartScreen):</h4>
-        <p>
-          عند تشغيل الملف لأول مرة قد تظهر شاشة الويندوز الزرقاء للحماية:<br>
-          1. اضغط على <strong>Informations complémentaires</strong> (أو المزيد من المعلومات).<br>
-          2. اضغط على زر <strong>Exécuter quand même</strong> (التشغيل على أي حال).
-        </p>
       </div>
     </div>
   </div>
