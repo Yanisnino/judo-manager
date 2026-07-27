@@ -1,14 +1,1 @@
-[
-  {
-    "id": "ATH-001",
-    "name": "أحمد بن علي",
-    "code": "JUDO-2026-0001",
-    "belt": "حزام أصفر",
-    "beltColor": "bg-yellow-400 text-gray-900 font-bold",
-    "group": "أشبال (10-12 سنة)",
-    "age": 11,
-    "phone": "0550123456",
-    "subStatus": "paid",
-    "status": "active"
-  }
-]
+[]
