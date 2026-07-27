@@ -1,15 +1,15 @@
 {
   "name": "judo-manager",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "main": "electron/main.js",
   "scripts": {
     "dev": "next dev --webpack",
-    "build": "next build --webpack",
+    "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "desktop:dev": "electron .",
-    "desktop:build": "electron-builder"
+    "electron:dev": "set ELECTRON_DEV=true && electron .",
+    "desktop:build": "electron-builder --win",
+    "build:exe": "next build && electron-builder --win"
   },
   "dependencies": {
     "next": "16.2.11",
@@ -22,9 +22,66 @@
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "electron": "^34.0.0",
+    "electron-builder": "^25.1.8",
     "eslint": "^9",
     "eslint-config-next": "16.2.11",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "build": {
+    "appId": "com.judomanager.pro",
+    "productName": "JudoManager Pro",
+    "copyright": "© 2026 JudoManager Pro",
+    "asar": false,
+    "directories": {
+      "output": "dist-exe"
+    },
+    "files": [
+      "electron/**/*",
+      "package.json"
+    ],
+    "extraResources": [
+      {
+        "from": ".next/standalone",
+        "to": "app",
+        "filter": ["**/*"]
+      },
+      {
+        "from": ".next/static",
+        "to": "app/.next/static",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "public",
+        "to": "app/public",
+        "filter": ["**/*"]
+      },
+      {
+        "from": "data",
+        "to": "app/data",
+        "filter": ["**/*"]
+      }
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "nsis",
+          "arch": ["x64"]
+        }
+      ],
+      "icon": "electron/icon.ico",
+      "requestedExecutionLevel": "asInvoker"
+    },
+    "nsis": {
+      "oneClick": false,
+      "perMachine": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "JudoManager Pro",
+      "installerLanguages": ["ar"],
+      "unicode": true,
+      "deleteAppDataOnUninstall": false
+    }
   }
 }
