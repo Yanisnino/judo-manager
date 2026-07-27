@@ -3,806 +3,1097 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JudoManager Pro - نظام إدارة أندية الجودو والرياضات القتالية</title>
-  <meta name="description" content="نظام متكامل لإدارة أندية الجودو: تسجيل الرياضيين، طباعة بطاقات الكودبار، متابعة الاشتراكات، وإشعار أولياء الأمور. متاح للحاسوب والهاتف.">
+  <title>JudoManager Pro - بوابة التحميل والتفعيل</title>
+  <meta name="description" content="نظام إدارة أندية الجودو - تحميل وتفعيل النظام">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --blue: #3b82f6;
-      --blue-dark: #2563eb;
-      --blue-light: #60a5fa;
-      --indigo: #6366f1;
-      --indigo-dark: #4f46e5;
-      --emerald: #10b981;
-      --emerald-dark: #059669;
-      --slate-950: #020617;
-      --slate-900: #0f172a;
-      --slate-800: #1e293b;
-      --slate-700: #334155;
-      --slate-400: #94a3b8;
-      --slate-300: #cbd5e1;
-      --white: #ffffff;
+      --bg: #060b14;
+      --sidebar-bg: #0a1120;
+      --card-bg: #0d1526;
+      --card-border: rgba(255,255,255,0.06);
+      --blue: #4f8ef7;
+      --blue-dim: rgba(79,142,247,0.12);
+      --indigo: #7c6ff7;
+      --indigo-dim: rgba(124,111,247,0.12);
+      --emerald: #2ed8a8;
+      --emerald-dim: rgba(46,216,168,0.1);
+      --amber: #f59e0b;
+      --white: #f0f4ff;
+      --muted: #5a6a82;
+      --text: #c8d4e8;
+      --sidebar-w: 220px;
     }
 
     html { scroll-behavior: smooth; }
 
     body {
       font-family: 'Cairo', sans-serif;
-      background: var(--slate-950);
-      color: var(--slate-300);
+      background: var(--bg);
+      color: var(--text);
       min-height: 100vh;
-      line-height: 1.6;
+      display: flex;
+      overflow-x: hidden;
     }
 
-    /* ============ HEADER ============ */
-    header {
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      background: rgba(15, 23, 42, 0.92);
-      backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(255,255,255,0.06);
-      padding: 14px 0;
+    /* ─────────── SIDEBAR ─────────── */
+    .sidebar {
+      width: var(--sidebar-w);
+      min-height: 100vh;
+      background: var(--sidebar-bg);
+      border-left: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0; right: 0;
+      z-index: 200;
+      transition: transform 0.3s ease;
     }
-    .header-inner {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 20px;
+
+    .sidebar-logo {
+      padding: 22px 18px 18px;
+      border-bottom: 1px solid var(--card-border);
+    }
+    .sidebar-logo-row {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 16px;
-      flex-wrap: wrap;
+      gap: 10px;
     }
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-      text-decoration: none;
-    }
-    .logo-icon {
-      width: 44px; height: 44px;
-      background: linear-gradient(135deg, #3b82f6, #6366f1);
-      border-radius: 14px;
+    .sidebar-logo-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, #4f8ef7, #7c6ff7);
+      border-radius: 11px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 22px;
-      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+      font-size: 18px;
+      flex-shrink: 0;
+      box-shadow: 0 4px 16px rgba(79,142,247,0.35);
     }
-    .logo-text { color: white; font-weight: 900; font-size: 18px; }
-    .logo-sub { color: #60a5fa; font-size: 11px; font-weight: 600; display: block; margin-top: -2px; }
+    .sidebar-logo-name {
+      color: var(--white);
+      font-weight: 900;
+      font-size: 14px;
+      line-height: 1.2;
+    }
+    .sidebar-logo-sub {
+      font-size: 10px;
+      color: var(--muted);
+      font-weight: 500;
+    }
 
-    .header-contacts { display: flex; gap: 10px; flex-wrap: wrap; }
-    .btn-contact {
-      display: flex; align-items: center; gap: 6px;
-      padding: 8px 14px;
-      border-radius: 12px;
-      font-family: 'Cairo', sans-serif;
+    .sidebar-nav {
+      flex: 1;
+      padding: 14px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .nav-label {
+      font-size: 10px;
       font-weight: 700;
+      color: var(--muted);
+      padding: 10px 8px 4px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 9px 12px;
+      border-radius: 11px;
+      cursor: pointer;
+      transition: all 0.2s;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--muted);
+      border: 1px solid transparent;
+      text-decoration: none;
+      background: none;
+      width: 100%;
+      text-align: right;
+      font-family: 'Cairo', sans-serif;
+    }
+    .nav-item:hover {
+      background: rgba(255,255,255,0.04);
+      color: var(--white);
+    }
+    .nav-item.active {
+      background: var(--blue-dim);
+      color: var(--blue);
+      border-color: rgba(79,142,247,0.2);
+    }
+    .nav-item.active .nav-icon { filter: none; }
+
+    .nav-icon { font-size: 16px; width: 20px; text-align: center; flex-shrink: 0; }
+
+    .sidebar-contacts {
+      padding: 14px 10px;
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .contact-btn {
+      display: flex; align-items: center; gap: 8px;
+      padding: 9px 12px;
+      border-radius: 11px;
       font-size: 12px;
+      font-weight: 700;
       text-decoration: none;
       transition: all 0.2s;
-      border: none;
-      cursor: pointer;
+      font-family: 'Cairo', sans-serif;
     }
-    .btn-wa { background: #16a34a; color: white; }
-    .btn-wa:hover { background: #15803d; transform: translateY(-1px); }
-    .btn-tg { background: #2563eb; color: white; }
-    .btn-tg:hover { background: #1d4ed8; transform: translateY(-1px); }
+    .contact-wa { background: rgba(22,163,74,0.12); color: #4ade80; border: 1px solid rgba(74,222,128,0.15); }
+    .contact-wa:hover { background: rgba(22,163,74,0.2); }
+    .contact-tg { background: rgba(37,99,235,0.12); color: #60a5fa; border: 1px solid rgba(96,165,250,0.15); }
+    .contact-tg:hover { background: rgba(37,99,235,0.2); }
 
-    /* ============ HERO ============ */
-    .hero {
-      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
-      padding: 70px 20px;
-      text-align: center;
+    /* ─────────── TOPBAR (mobile) ─────────── */
+    .topbar {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      height: 58px;
+      background: var(--sidebar-bg);
+      border-bottom: 1px solid var(--card-border);
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 16px;
+      z-index: 300;
+    }
+    .topbar-logo { display: flex; align-items: center; gap: 10px; }
+    .topbar-logo-icon {
+      width: 34px; height: 34px;
+      background: linear-gradient(135deg, #4f8ef7, #7c6ff7);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 16px;
+    }
+    .topbar-logo-name { color: white; font-weight: 900; font-size: 14px; }
+    .menu-btn {
+      background: rgba(255,255,255,0.06);
+      border: 1px solid var(--card-border);
+      color: white;
+      width: 36px; height: 36px;
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    /* ─────────── MAIN ─────────── */
+    .main {
+      margin-right: var(--sidebar-w);
+      flex: 1;
+      min-height: 100vh;
+      padding: 36px 32px;
+      max-width: calc(100vw - var(--sidebar-w));
+    }
+
+    /* ─────────── PAGE SECTIONS ─────────── */
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+
+    /* ─────────── PAGE HEADER ─────────── */
+    .page-header {
+      margin-bottom: 28px;
+    }
+    .page-header h1 {
+      color: var(--white);
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+    .page-header p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    /* ─────────── HERO BANNER ─────────── */
+    .hero-banner {
+      background: linear-gradient(135deg, #0d1e3d 0%, #14103a 100%);
+      border: 1px solid rgba(79,142,247,0.15);
+      border-radius: 18px;
+      padding: 28px 30px;
+      margin-bottom: 24px;
       position: relative;
       overflow: hidden;
     }
-    .hero::before {
+    .hero-banner::before {
       content: '';
       position: absolute;
-      top: -50%; left: 50%;
-      transform: translateX(-50%);
-      width: 600px; height: 600px;
-      background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+      top: -60px; left: -60px;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(79,142,247,0.15) 0%, transparent 70%);
       pointer-events: none;
     }
     .hero-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(99,102,241,0.15);
-      border: 1px solid rgba(99,102,241,0.3);
-      color: #a5b4fc;
-      padding: 6px 18px;
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(79,142,247,0.12);
+      border: 1px solid rgba(79,142,247,0.25);
+      color: #93c5fd;
+      padding: 4px 12px;
       border-radius: 100px;
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 700;
-      margin-bottom: 24px;
+      margin-bottom: 14px;
     }
-    .hero h1 {
-      font-size: clamp(28px, 5vw, 52px);
-      font-weight: 900;
+    .hero-banner h2 {
       color: white;
-      line-height: 1.25;
-      margin-bottom: 20px;
+      font-size: clamp(18px, 3vw, 28px);
+      font-weight: 900;
+      margin-bottom: 10px;
+      line-height: 1.3;
     }
-    .hero h1 span { color: #60a5fa; }
-    .hero p {
-      font-size: 15px;
-      color: var(--slate-400);
-      max-width: 680px;
-      margin: 0 auto 36px;
-      line-height: 1.8;
-    }
+    .hero-banner h2 span { color: var(--blue); }
+    .hero-banner p { color: var(--muted); font-size: 13px; line-height: 1.7; max-width: 580px; }
 
-    /* ============ MAIN ============ */
-    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
-    section { padding: 60px 20px; max-width: 1100px; margin: 0 auto; }
-
-    /* ============ CARDS GRID ============ */
-    .cards-grid {
+    /* ─────────── CARDS ─────────── */
+    .cards-row {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 24px;
-      margin-top: -30px;
-      position: relative;
-      z-index: 2;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
     }
 
     .card {
-      background: var(--slate-900);
-      border: 1px solid rgba(255,255,255,0.07);
-      border-radius: 24px;
-      padding: 32px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 22px;
+      transition: all 0.25s ease;
       display: flex;
       flex-direction: column;
-      gap: 20px;
-      transition: all 0.3s ease;
-      position: relative;
-      overflow: hidden;
+      gap: 14px;
     }
-    .card::before {
-      content: '';
-      position: absolute;
-      top: 0; left: 0; right: 0;
-      height: 2px;
-      border-radius: 24px 24px 0 0;
-    }
-    .card-blue::before { background: linear-gradient(90deg, #3b82f6, #6366f1); }
-    .card-indigo::before { background: linear-gradient(90deg, #6366f1, #a855f7); }
-    .card-emerald::before { background: linear-gradient(90deg, #10b981, #3b82f6); }
-
     .card:hover {
-      border-color: rgba(99,102,241,0.3);
-      transform: translateY(-4px);
-      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+      border-color: rgba(79,142,247,0.25);
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
     }
 
-    .card-icon {
-      width: 56px; height: 56px;
-      border-radius: 18px;
+    .card-head { display: flex; align-items: center; gap: 12px; }
+    .card-ico {
+      width: 42px; height: 42px;
+      border-radius: 13px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 26px;
+      font-size: 20px;
+      flex-shrink: 0;
     }
-    .card-icon-blue { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.2); }
-    .card-icon-indigo { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.2); }
-    .card-icon-emerald { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.2); }
+    .ico-blue { background: var(--blue-dim); border: 1px solid rgba(79,142,247,0.18); }
+    .ico-indigo { background: var(--indigo-dim); border: 1px solid rgba(124,111,247,0.18); }
+    .ico-emerald { background: var(--emerald-dim); border: 1px solid rgba(46,216,168,0.18); }
 
-    .card h3 { color: white; font-size: 18px; font-weight: 800; margin-bottom: 8px; }
-    .card p { color: var(--slate-400); font-size: 13px; line-height: 1.7; flex: 1; }
+    .card-title { color: var(--white); font-weight: 800; font-size: 14px; }
+    .card-sub { color: var(--muted); font-size: 11px; }
 
-    .card-features {
+    .card-body { color: var(--muted); font-size: 12px; line-height: 1.7; flex: 1; }
+
+    .card-list {
       list-style: none;
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
+      display: flex; flex-direction: column; gap: 5px;
     }
-    .card-features li {
-      font-size: 12px;
-      color: var(--slate-400);
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .card-list li {
+      font-size: 11.5px;
+      color: var(--muted);
+      display: flex; align-items: center; gap: 7px;
     }
-    .card-features li::before { content: '✓'; color: #10b981; font-weight: 700; }
+    .card-list li::before { content: '✓'; color: var(--emerald); font-weight: 700; font-size: 11px; }
 
-    /* ============ BUTTONS ============ */
+    /* ─────────── BUTTONS ─────────── */
     .btn {
-      display: flex; align-items: center; justify-content: center; gap: 8px;
-      width: 100%;
-      padding: 14px 24px;
-      border-radius: 14px;
+      display: inline-flex; align-items: center; justify-content: center; gap: 7px;
+      padding: 11px 20px;
+      border-radius: 11px;
       font-family: 'Cairo', sans-serif;
       font-weight: 700;
-      font-size: 14px;
+      font-size: 13px;
       text-decoration: none;
       border: none;
       cursor: pointer;
-      transition: all 0.25s ease;
+      transition: all 0.2s;
+      width: 100%;
     }
-    .btn-blue {
-      background: linear-gradient(135deg, #3b82f6, #6366f1);
-      color: white;
-      box-shadow: 0 8px 25px rgba(99,102,241,0.35);
-    }
-    .btn-blue:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(99,102,241,0.5); }
+    .btn-blue { background: linear-gradient(135deg, #4f8ef7, #7c6ff7); color: white; box-shadow: 0 6px 20px rgba(79,142,247,0.3); }
+    .btn-blue:hover { box-shadow: 0 8px 28px rgba(79,142,247,0.45); transform: translateY(-1px); }
+    .btn-indigo { background: linear-gradient(135deg, #7c6ff7, #a855f7); color: white; box-shadow: 0 6px 20px rgba(124,111,247,0.3); }
+    .btn-indigo:hover { box-shadow: 0 8px 28px rgba(124,111,247,0.45); transform: translateY(-1px); }
+    .btn-emerald { background: linear-gradient(135deg, #2ed8a8, #4f8ef7); color: #060b14; font-weight: 800; box-shadow: 0 6px 20px rgba(46,216,168,0.25); }
+    .btn-emerald:hover { box-shadow: 0 8px 28px rgba(46,216,168,0.4); transform: translateY(-1px); }
+    .btn-ghost { background: rgba(255,255,255,0.04); border: 1px solid var(--card-border); color: var(--text); }
+    .btn-ghost:hover { background: rgba(255,255,255,0.08); }
 
-    .btn-indigo {
-      background: linear-gradient(135deg, #6366f1, #a855f7);
-      color: white;
-      box-shadow: 0 8px 25px rgba(99,102,241,0.35);
+    /* ─────────── INFO BOX ─────────── */
+    .info-box {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 18px 20px;
+      margin-bottom: 16px;
     }
-    .btn-indigo:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(168,85,247,0.5); }
+    .info-box h3 { color: var(--white); font-size: 14px; font-weight: 800; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
 
-    .btn-emerald {
-      background: linear-gradient(135deg, #10b981, #3b82f6);
-      color: white;
-      box-shadow: 0 8px 25px rgba(16,185,129,0.3);
+    .steps-list { display: flex; flex-direction: column; gap: 10px; }
+    .step-row {
+      display: flex; align-items: flex-start; gap: 12px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
     }
-    .btn-emerald:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(16,185,129,0.45); }
-
-    .btn-outline {
-      background: transparent;
-      border: 1px solid rgba(255,255,255,0.12);
-      color: var(--slate-300);
-    }
-    .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
-
-    /* ============ STEPS ============ */
-    .steps-section { background: var(--slate-900); border-radius: 24px; padding: 40px; border: 1px solid rgba(255,255,255,0.06); }
-    .steps-section h2 { color: white; font-size: 22px; font-weight: 800; margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
-    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
-    .step {
-      background: var(--slate-950);
-      border-radius: 16px;
-      padding: 24px;
-      border: 1px solid rgba(255,255,255,0.05);
-    }
+    .step-row:last-child { border-bottom: none; }
     .step-num {
-      width: 36px; height: 36px;
-      border-radius: 12px;
+      width: 28px; height: 28px; flex-shrink: 0;
+      border-radius: 9px;
       display: flex; align-items: center; justify-content: center;
-      font-weight: 900; font-size: 14px; color: white;
-      margin-bottom: 12px;
+      font-size: 12px; font-weight: 800; color: white;
     }
-    .step h4 { color: white; font-weight: 700; font-size: 14px; margin-bottom: 8px; }
-    .step p { color: var(--slate-400); font-size: 12px; line-height: 1.7; }
+    .step-row h4 { color: var(--white); font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+    .step-row p { color: var(--muted); font-size: 11px; line-height: 1.6; }
 
-    /* ============ MODAL ============ */
-    .modal-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(2, 6, 23, 0.85);
-      backdrop-filter: blur(8px);
-      z-index: 1000;
-      align-items: center;
-      justify-content: center;
-      padding: 20px;
+    /* ─────────── FEATURES GRID ─────────── */
+    .feat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 16px;
     }
-    .modal-overlay.active { display: flex; }
-    .modal {
-      background: var(--slate-900);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 24px;
-      padding: 40px;
+    .feat-item {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex; gap: 10px; align-items: flex-start;
+      transition: border-color 0.2s;
+    }
+    .feat-item:hover { border-color: rgba(79,142,247,0.25); }
+    .feat-icon { font-size: 18px; flex-shrink: 0; }
+    .feat-title { color: var(--white); font-size: 12px; font-weight: 700; margin-bottom: 3px; }
+    .feat-desc { color: var(--muted); font-size: 10.5px; line-height: 1.5; }
+
+    /* ─────────── FORM PANEL ─────────── */
+    .form-panel {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 26px;
       max-width: 500px;
-      width: 100%;
-      position: relative;
-      animation: slideUp 0.3s ease;
     }
-    @keyframes slideUp {
-      from { opacity: 0; transform: translateY(30px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .modal-close {
-      position: absolute;
-      top: 16px; left: 16px;
-      background: rgba(255,255,255,0.08);
-      border: none;
-      color: white;
-      width: 32px; height: 32px;
-      border-radius: 10px;
-      font-size: 16px;
-      cursor: pointer;
-      display: flex; align-items: center; justify-content: center;
-      transition: background 0.2s;
-    }
-    .modal-close:hover { background: rgba(255,255,255,0.15); }
-    .modal h3 { color: white; font-size: 20px; font-weight: 800; margin-bottom: 8px; }
-    .modal p { color: var(--slate-400); font-size: 13px; margin-bottom: 24px; line-height: 1.7; }
+    .form-panel h2 { color: var(--white); font-size: 17px; font-weight: 800; margin-bottom: 6px; }
+    .form-panel .form-desc { color: var(--muted); font-size: 12px; margin-bottom: 22px; line-height: 1.7; }
 
-    .form-group { margin-bottom: 16px; }
-    .form-group label { display: block; color: var(--slate-300); font-size: 13px; font-weight: 600; margin-bottom: 8px; }
-    .form-group input, .form-group select, .form-group textarea {
+    .alert-box {
+      background: rgba(79,142,247,0.08);
+      border: 1px solid rgba(79,142,247,0.18);
+      border-radius: 11px;
+      padding: 12px 14px;
+      font-size: 12px;
+      line-height: 1.7;
+      margin-bottom: 18px;
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+    .alert-icon-big { font-size: 16px; flex-shrink: 0; margin-top: 1px; }
+    .alert-box strong { color: var(--white); }
+
+    .fg { margin-bottom: 14px; }
+    .fg label { display: block; color: var(--text); font-size: 12px; font-weight: 600; margin-bottom: 7px; }
+    .fg input, .fg select, .fg textarea {
       width: 100%;
-      background: var(--slate-950);
+      background: rgba(255,255,255,0.03);
       border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 12px 16px;
+      border-radius: 10px;
+      padding: 10px 14px;
       color: white;
       font-family: 'Cairo', sans-serif;
-      font-size: 14px;
-      transition: border-color 0.2s;
+      font-size: 13px;
       outline: none;
-    }
-    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
-      border-color: #6366f1;
-    }
-    .form-group textarea { resize: vertical; min-height: 80px; }
-    .form-group select option { background: var(--slate-900); }
-
-    /* ============ FEATURES ============ */
-    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
-    .feature-item {
-      background: var(--slate-900);
-      border: 1px solid rgba(255,255,255,0.06);
-      border-radius: 16px;
-      padding: 20px;
-      display: flex;
-      gap: 14px;
-      align-items: flex-start;
       transition: border-color 0.2s;
     }
-    .feature-item:hover { border-color: rgba(99,102,241,0.3); }
-    .feature-icon { font-size: 22px; flex-shrink: 0; }
-    .feature-text h4 { color: white; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
-    .feature-text p { color: var(--slate-400); font-size: 11px; line-height: 1.6; }
+    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color: var(--blue); }
+    .fg input::placeholder, .fg textarea::placeholder { color: var(--muted); }
+    .fg select { appearance: none; cursor: pointer; }
+    .fg select option { background: #0d1526; }
+    .fg textarea { resize: vertical; min-height: 72px; }
 
-    /* ============ ALERT ============ */
-    .alert {
-      background: rgba(59,130,246,0.1);
-      border: 1px solid rgba(59,130,246,0.25);
-      border-radius: 14px;
-      padding: 16px 20px;
-      display: flex;
-      align-items: flex-start;
-      gap: 12px;
+    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    /* ─────────── PRICE TABLE ─────────── */
+    .price-table {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
       margin-bottom: 20px;
     }
-    .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
-    .alert-text { font-size: 13px; line-height: 1.7; }
-    .alert-text strong { color: white; }
-
-    /* ============ PWA INSTRUCTIONS ============ */
-    .pwa-steps {
-      background: var(--slate-950);
-      border-radius: 16px;
-      padding: 20px;
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-    .pwa-step {
-      display: flex;
-      gap: 12px;
-      align-items: flex-start;
-      padding: 10px 0;
-      border-bottom: 1px solid rgba(255,255,255,0.04);
-    }
-    .pwa-step:last-child { border-bottom: none; }
-    .pwa-step-num {
-      width: 26px; height: 26px; flex-shrink: 0;
-      background: rgba(99,102,241,0.2);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px; font-weight: 700; color: #a5b4fc;
-    }
-    .pwa-step p { font-size: 13px; color: var(--slate-300); line-height: 1.6; }
-    .pwa-step p strong { color: white; }
-
-    /* ============ FOOTER ============ */
-    footer {
-      border-top: 1px solid rgba(255,255,255,0.06);
-      padding: 40px 20px;
-      text-align: center;
-      color: var(--slate-400);
-      font-size: 13px;
-    }
-    footer .footer-contacts { display: flex; justify-content: center; gap: 16px; margin-top: 16px; flex-wrap: wrap; }
-
-    /* ============ NOTICE ============ */
-    .notice {
-      background: rgba(16,185,129,0.08);
-      border: 1px solid rgba(16,185,129,0.2);
+    .price-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
       border-radius: 14px;
-      padding: 12px 16px;
-      font-size: 12px;
-      color: #6ee7b7;
-      margin-top: 12px;
-      line-height: 1.6;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
     }
-
-    @media (max-width: 600px) {
-      .hero { padding: 50px 16px; }
-      section { padding: 40px 16px; }
-      .steps-section { padding: 24px 20px; }
-      .cards-grid { grid-template-columns: 1fr; }
+    .price-card:hover, .price-card.selected {
+      border-color: var(--blue);
+      background: var(--blue-dim);
     }
+    .price-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 100px;
+      font-size: 10px;
+      font-weight: 700;
+      margin-bottom: 10px;
+    }
+    .badge-free { background: rgba(46,216,168,0.15); color: var(--emerald); }
+    .badge-paid { background: rgba(79,142,247,0.15); color: var(--blue); }
+    .price-name { color: var(--white); font-weight: 800; font-size: 14px; margin-bottom: 6px; }
+    .price-amount { font-size: 22px; font-weight: 900; color: var(--white); margin-bottom: 4px; }
+    .price-amount span { font-size: 12px; color: var(--muted); font-weight: 500; }
+    .price-desc { color: var(--muted); font-size: 11px; }
 
-    /* Success State */
-    .success-msg {
+    /* ─────────── SUCCESS STATE ─────────── */
+    .success-state {
       display: none;
       text-align: center;
-      padding: 30px;
+      padding: 40px 20px;
     }
-    .success-msg h3 { color: #34d399; font-size: 24px; margin-bottom: 12px; }
-    .success-msg p { color: var(--slate-400); font-size: 14px; }
+    .success-icon { font-size: 52px; margin-bottom: 16px; }
+    .success-state h3 { color: var(--emerald); font-size: 20px; font-weight: 900; margin-bottom: 10px; }
+    .success-state p { color: var(--muted); font-size: 13px; line-height: 1.7; margin-bottom: 20px; }
+
+    /* ─────────── PWA GUIDE ─────────── */
+    .pwa-tabs { display: flex; gap: 8px; margin-bottom: 16px; }
+    .pwa-tab {
+      padding: 8px 16px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--card-border);
+      background: transparent;
+      color: var(--muted);
+      font-family: 'Cairo', sans-serif;
+      transition: all 0.2s;
+    }
+    .pwa-tab.active {
+      background: var(--indigo-dim);
+      border-color: rgba(124,111,247,0.3);
+      color: var(--indigo);
+    }
+    .pwa-content { display: none; }
+    .pwa-content.active { display: block; }
+    .pwa-step-row {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+    }
+    .pwa-step-row:last-child { border-bottom: none; }
+    .pwa-num {
+      width: 24px; height: 24px; flex-shrink: 0;
+      background: var(--indigo-dim);
+      border-radius: 7px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 800; color: var(--indigo);
+    }
+    .pwa-step-row p { font-size: 12px; color: var(--text); line-height: 1.6; }
+    .pwa-step-row strong { color: var(--white); }
+
+    /* ─────────── STATS ROW ─────────── */
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .stat-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 14px;
+      padding: 16px 18px;
+      text-align: center;
+    }
+    .stat-value { color: var(--white); font-size: 26px; font-weight: 900; line-height: 1; margin-bottom: 5px; }
+    .stat-label { color: var(--muted); font-size: 11px; }
+
+    /* ─────────── OVERLAY (mobile sidebar) ─────────── */
+    .sidebar-overlay {
+      display: none;
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.6);
+      z-index: 190;
+    }
+    .sidebar-overlay.show { display: block; }
+
+    /* ─────────── RESPONSIVE ─────────── */
+    @media (max-width: 720px) {
+      .topbar { display: flex; }
+      .sidebar {
+        transform: translateX(100%);
+        top: 0;
+      }
+      .sidebar.open { transform: translateX(0); }
+      .main {
+        margin-right: 0;
+        max-width: 100%;
+        padding: 80px 16px 32px;
+      }
+      .form-row { grid-template-columns: 1fr; }
+      .price-table { grid-template-columns: 1fr; }
+      .stats-row { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 10px; }
   </style>
 </head>
 <body>
 
-  <!-- HEADER -->
-  <header>
-    <div class="header-inner">
-      <a href="#" class="logo">
-        <div class="logo-icon">🥋</div>
-        <div>
-          <span class="logo-text">JudoManager Pro</span>
-          <span class="logo-sub">نظام إدارة أندية الجودو والرياضات القتالية</span>
-        </div>
-      </a>
-      <div class="header-contacts">
-        <a href="https://wa.me/213553823611?text=السلام عليكم، أريد الحصول على نظام JudoManager" target="_blank" class="btn-contact btn-wa">
-          💬 واتساب: 0553823611
-        </a>
-        <a href="https://t.me/nisoo09" target="_blank" class="btn-contact btn-tg">
-          ✈️ تلغرام: @nisoo09
-        </a>
+<!-- Mobile Topbar -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="topbar-logo-icon">🥋</div>
+    <span class="topbar-logo-name">JudoManager Pro</span>
+  </div>
+  <button class="menu-btn" onclick="toggleSidebar()">☰</button>
+</div>
+
+<!-- Sidebar Overlay (mobile) -->
+<div class="sidebar-overlay" id="sidebarOverlay" onclick="closeSidebar()"></div>
+
+<!-- ══════════ SIDEBAR ══════════ -->
+<aside class="sidebar" id="sidebar">
+
+  <div class="sidebar-logo">
+    <div class="sidebar-logo-row">
+      <div class="sidebar-logo-icon">🥋</div>
+      <div>
+        <div class="sidebar-logo-name">JudoManager Pro</div>
+        <div class="sidebar-logo-sub">v2.0 – بوابة التحميل</div>
       </div>
     </div>
-  </header>
-
-  <!-- HERO -->
-  <div class="hero">
-    <div class="hero-badge">✨ النظام الأول لإدارة أندية الجودو والرياضات القتالية في الجزائر</div>
-    <h1>نظام <span>JudoManager</span> المتكامل<br>للحواسيب والهواتف</h1>
-    <p>
-      حل احترافي شامل لجميع أندية وجمعيات الجودو والرياضات القتالية. تسجيل الرياضيين، طباعة بطاقات الكودبار، متابعة الاشتراكات المالية، تسجيل الحضور، وإشعار أولياء الأمور تلقائياً.
-    </p>
   </div>
 
-  <!-- DOWNLOAD CARDS -->
-  <div class="container">
-    <div class="cards-grid">
+  <nav class="sidebar-nav">
+    <div class="nav-label">القائمة</div>
+    <button class="nav-item active" onclick="showPage('home', this)">
+      <span class="nav-icon">🏠</span> الرئيسية
+    </button>
+    <button class="nav-item" onclick="showPage('download', this)">
+      <span class="nav-icon">📥</span> تحميل النظام
+    </button>
+    <button class="nav-item" onclick="showPage('mobile', this)">
+      <span class="nav-icon">📱</span> تثبيت على الهاتف
+    </button>
+    <button class="nav-item" onclick="showPage('trial', this)">
+      <span class="nav-icon">🔑</span> طلب مفتاح تفعيل
+    </button>
 
-      <!-- PC Card -->
-      <div class="card card-blue">
-        <div class="card-icon card-icon-blue">🖥️</div>
-        <div>
-          <h3>نظام الكمبيوتر (Windows)</h3>
-          <p>النسخة الكاملة لأجهزة حواسيب النادي. تعمل أوفلاين بالكامل وتدعم طابعات الفواتير وقارئ الكودبار والكاميرا.</p>
+    <div class="nav-label" style="margin-top:8px;">النظام</div>
+    <button class="nav-item" onclick="showPage('features', this)">
+      <span class="nav-icon">✨</span> المميزات
+    </button>
+    <button class="nav-item" onclick="showPage('pricing', this)">
+      <span class="nav-icon">💰</span> الأسعار
+    </button>
+  </nav>
+
+  <div class="sidebar-contacts">
+    <a href="https://wa.me/213553823611?text=السلام عليكم، أريد الحصول على نظام JudoManager" target="_blank" class="contact-btn contact-wa">
+      <span>💬</span> واتساب: 0553823611
+    </a>
+    <a href="https://t.me/nisoo09" target="_blank" class="contact-btn contact-tg">
+      <span>✈️</span> تلغرام: @nisoo09
+    </a>
+  </div>
+</aside>
+
+<!-- ══════════ MAIN CONTENT ══════════ -->
+<main class="main">
+
+  <!-- ── HOME ── -->
+  <div class="page-section active" id="page-home">
+    <div class="hero-banner">
+      <div class="hero-badge">✨ النظام الأول لإدارة أندية الجودو في الجزائر</div>
+      <h2>مرحباً بك في بوابة<br><span>JudoManager Pro</span></h2>
+      <p>حل متكامل لإدارة أندية الجودو والرياضات القتالية. يعمل على الحاسوب والهاتف مع مزامنة فورية.</p>
+    </div>
+
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--blue);">14</div>
+        <div class="stat-label">يوم تجريبي مجاني</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--emerald);">∞</div>
+        <div class="stat-label">ترخيص مدى الحياة</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--indigo);">2</div>
+        <div class="stat-label">منصة (PC + هاتف)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--amber);">24h</div>
+        <div class="stat-label">دعم فني مستمر</div>
+      </div>
+    </div>
+
+    <div class="cards-row">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-ico ico-blue">🖥️</div>
+          <div>
+            <div class="card-title">نظام الكمبيوتر</div>
+            <div class="card-sub">Windows PC – أوفلاين كامل</div>
+          </div>
         </div>
-        <ul class="card-features">
-          <li>يعمل بدون إنترنت (أوفلاين)</li>
-          <li>دعم طابعات بطاقات الكودبار</li>
-          <li>قراءة الحضور بالكاميرا</li>
-          <li>تقارير مالية شاملة</li>
+        <div class="card-body">النسخة الكاملة لأجهزة الحاسوب. تعمل بدون إنترنت مع دعم الطابعات والكاميرا.</div>
+        <button class="btn btn-blue" onclick="showPage('download', document.querySelector('.nav-item:nth-child(2)'))">
+          📥 تحميل النظام
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-ico ico-indigo">📱</div>
+          <div>
+            <div class="card-title">تطبيق الهاتف</div>
+            <div class="card-sub">Android & iPhone</div>
+          </div>
+        </div>
+        <div class="card-body">ثبّت النظام كتطبيق أصلي على هاتفك. يعمل بشكل مستقل كاملاً.</div>
+        <button class="btn btn-indigo" onclick="showPage('mobile', document.querySelectorAll('.nav-item')[2])">
+          📲 دليل التثبيت
+        </button>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div class="card-ico ico-emerald">🔑</div>
+          <div>
+            <div class="card-title">مفتاح التفعيل</div>
+            <div class="card-sub">تجريبي أو مدى الحياة</div>
+          </div>
+        </div>
+        <div class="card-body">احصل على مفتاح تفعيل للتجربة المجانية أو اشترِ ترخيصاً دائماً لناديك.</div>
+        <button class="btn btn-emerald" onclick="showPage('trial', document.querySelectorAll('.nav-item')[3])">
+          🎯 طلب المفتاح
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── DOWNLOAD ── -->
+  <div class="page-section" id="page-download">
+    <div class="page-header">
+      <h1>📥 تحميل نظام الكمبيوتر</h1>
+      <p>نسخة Windows الكاملة تعمل أوفلاين مع جميع المميزات</p>
+    </div>
+
+    <div class="info-box" style="margin-bottom:16px;">
+      <h3>⚠️ متطلبات التشغيل قبل البدء</h3>
+      <div class="steps-list">
+        <div class="step-row">
+          <div class="step-num" style="background:rgba(79,142,247,0.15); color:var(--blue);">1</div>
+          <div>
+            <h4>Node.js (مطلوب)</h4>
+            <p>قم بتنزيل وتثبيت Node.js من الموقع الرسمي أولاً</p>
+          </div>
+          <a href="https://nodejs.org/en/download" target="_blank" class="btn btn-ghost" style="width:auto; padding:7px 14px; font-size:11px; margin-right:auto;">تنزيل →</a>
+        </div>
+        <div class="step-row">
+          <div class="step-num" style="background:rgba(124,111,247,0.15); color:var(--indigo);">2</div>
+          <div>
+            <h4>Git (مطلوب)</h4>
+            <p>تطبيق لتحميل الكود من الإنترنت – ضروري للتثبيت</p>
+          </div>
+          <a href="https://git-scm.com/download/win" target="_blank" class="btn btn-ghost" style="width:auto; padding:7px 14px; font-size:11px; margin-right:auto;">تنزيل →</a>
+        </div>
+      </div>
+    </div>
+
+    <div class="cards-row" style="grid-template-columns: 1fr;">
+      <div class="card">
+        <div class="card-head">
+          <div class="card-ico ico-blue" style="width:50px;height:50px;font-size:24px;">🖥️</div>
+          <div>
+            <div class="card-title" style="font-size:16px;">حزمة تثبيت نظام الكمبيوتر</div>
+            <div class="card-sub">Windows 10/11 – يعمل بدون إنترنت بعد التثبيت</div>
+          </div>
+        </div>
+        <ul class="card-list">
+          <li>تثبيت تلقائي على أي جهاز ويندوز</li>
+          <li>يفحص Node.js و Git ويعلمك إذا غير موجودين</li>
+          <li>يحمّل النظام مباشرة من GitHub</li>
+          <li>يشغّل النظام تلقائياً في المتصفح</li>
         </ul>
-        <a href="./JudoManager-Installer.bat" download="JudoManager-Installer.bat" class="btn btn-blue" id="btn-download-pc">
+        <a href="./JudoManager-Installer.bat" download="JudoManager-Installer.bat" class="btn btn-blue" style="max-width:280px;">
           📥 تحميل ملف التثبيت (.bat)
         </a>
-        <div class="notice">⚠️ تأكد من تثبيت <strong>Node.js</strong> و <strong>Git</strong> أولاً قبل تشغيل الملف. سيتم التحقق التلقائي.</div>
-      </div>
-
-      <!-- Mobile PWA Card -->
-      <div class="card card-indigo">
-        <div class="card-icon card-icon-indigo">📱</div>
-        <div>
-          <h3>تثبيت على الهاتف (تطبيق حقيقي)</h3>
-          <p>ثبّت نظام النادي كاملاً على هاتف المدرب أو الإدارة كتطبيق أصلي على الشاشة يعمل بشكل مستقل.</p>
+        <div style="background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.15); border-radius:10px; padding:10px 14px; font-size:11.5px; color:#fbbf24; margin-top:4px;">
+          💡 بعد التحميل: انقر بالزر الأيمن على الملف ← "تشغيل كمسؤول" (Run as Administrator)
         </div>
-        <ul class="card-features">
-          <li>يُثبَّت كتطبيق أصلي على الشاشة</li>
-          <li>يعمل بدون فتح المتصفح</li>
-          <li>يدعم Android و iPhone</li>
-          <li>مزامنة مع نظام الحاسوب</li>
-        </ul>
-        <button class="btn btn-indigo" id="btn-install-pwa" onclick="showPwaModal()">
-          📲 طريقة تثبيت التطبيق على الهاتف
-        </button>
       </div>
-
-      <!-- Trial/License Card -->
-      <div class="card card-emerald">
-        <div class="card-icon card-icon-emerald">🔑</div>
-        <div>
-          <h3>احصل على مفتاح التفعيل</h3>
-          <p>اطلب نسخة تجريبية 14 يوماً مجاناً أو اشترِ ترخيصاً دائماً مدى الحياة لناديك.</p>
-        </div>
-        <ul class="card-features">
-          <li>14 يوم تجريبي مجاني</li>
-          <li>ترخيص مدى الحياة بسعر رمزي</li>
-          <li>دعم فني مستمر</li>
-          <li>تحديثات مستقبلية مجانية</li>
-        </ul>
-        <button class="btn btn-emerald" onclick="showTrialModal()">
-          🎯 طلب نسخة تجريبية أو شراء الترخيص
-        </button>
-      </div>
-
     </div>
   </div>
 
-  <!-- FEATURES SECTION -->
-  <section>
-    <h2 style="color:white; font-size:22px; font-weight:800; margin-bottom:8px; text-align:center;">
-      ماذا يقدم نظام JudoManager؟
-    </h2>
-    <p style="color:var(--slate-400); text-align:center; font-size:13px; margin-bottom:30px;">كل ما يحتاجه ناديك في مكان واحد</p>
-    <div class="features-grid">
-      <div class="feature-item">
-        <div class="feature-icon">👥</div>
-        <div class="feature-text">
-          <h4>تسجيل الرياضيين</h4>
-          <p>بيانات كاملة لكل رياضي مع صور ووثائق ومعلومات الأسرة</p>
+  <!-- ── MOBILE ── -->
+  <div class="page-section" id="page-mobile">
+    <div class="page-header">
+      <h1>📱 تثبيت النظام على الهاتف</h1>
+      <p>ثبّت نظام النادي كتطبيق حقيقي على شاشتك الرئيسية</p>
+    </div>
+
+    <div class="alert-box" style="margin-bottom:20px; border-color:rgba(46,216,168,0.2); background:rgba(46,216,168,0.06);">
+      <span class="alert-icon-big">📌</span>
+      <p><strong>قبل البدء:</strong> يجب أن يكون نظام الكمبيوتر يعمل على نفس شبكة الواي فاي. ثم افتح عنوان النظام على هاتفك.</p>
+    </div>
+
+    <div class="info-box" style="max-width:540px;">
+      <h3>📱 اختر نوع هاتفك</h3>
+      <div class="pwa-tabs">
+        <button class="pwa-tab active" onclick="switchTab('android', this)">🤖 Android</button>
+        <button class="pwa-tab" onclick="switchTab('iphone', this)">🍎 iPhone</button>
+      </div>
+
+      <div class="pwa-content active" id="tab-android">
+        <div class="pwa-step-row">
+          <div class="pwa-num">1</div>
+          <p>افتح متصفح <strong>Chrome</strong> على هاتفك Android</p>
+        </div>
+        <div class="pwa-step-row">
+          <div class="pwa-num">2</div>
+          <p>اكتب عنوان النظام: <strong>http://192.168.1.X:3000</strong> (العنوان يظهر في نافذة الكمبيوتر)</p>
+        </div>
+        <div class="pwa-step-row">
+          <div class="pwa-num">3</div>
+          <p>اضغط على النقاط الثلاث <strong>⋮</strong> في أعلى يسار المتصفح</p>
+        </div>
+        <div class="pwa-step-row">
+          <div class="pwa-num">4</div>
+          <p>اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong> أو <strong>"تثبيت التطبيق"</strong></p>
+        </div>
+        <div class="pwa-step-row">
+          <div class="pwa-num">5</div>
+          <p>اضغط <strong>"تثبيت"</strong> – سيظهر أيقونة النظام على شاشتك مباشرة ✅</p>
         </div>
       </div>
-      <div class="feature-item">
-        <div class="feature-icon">💳</div>
-        <div class="feature-text">
-          <h4>بطاقات الكودبار</h4>
-          <p>طباعة بطاقات هوية رياضية بكودبار للتعريف السريع</p>
+
+      <div class="pwa-content" id="tab-iphone">
+        <div class="pwa-step-row">
+          <div class="pwa-num">1</div>
+          <p>افتح متصفح <strong>Safari</strong> على هاتفك (مهم! ليس Chrome)</p>
         </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">📊</div>
-        <div class="feature-text">
-          <h4>الاشتراكات المالية</h4>
-          <p>متابعة دفعات الاشتراك والمديونيات وتقارير مالية دورية</p>
+        <div class="pwa-step-row">
+          <div class="pwa-num">2</div>
+          <p>اكتب عنوان النظام في شريط العنوان العلوي</p>
         </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">✅</div>
-        <div class="feature-text">
-          <h4>الحضور التلقائي</h4>
-          <p>تسجيل حضور الرياضيين بالكودبار أو الكاميرا في ثوانٍ</p>
+        <div class="pwa-step-row">
+          <div class="pwa-num">3</div>
+          <p>اضغط أيقونة المشاركة <strong>↑</strong> في الشريط السفلي للمتصفح</p>
         </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">🔔</div>
-        <div class="feature-text">
-          <h4>إشعارات أولياء الأمور</h4>
-          <p>إرسال إشعارات الحضور والغياب لأولياء الأمور مباشرة</p>
+        <div class="pwa-step-row">
+          <div class="pwa-num">4</div>
+          <p>مرر للأسفل واضغط <strong>"إضافة إلى الشاشة الرئيسية"</strong></p>
         </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">🥋</div>
-        <div class="feature-text">
-          <h4>إدارة الأحزمة</h4>
-          <p>تتبع مستويات وشهادات الأحزمة لكل رياضي</p>
-        </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">📱</div>
-        <div class="feature-text">
-          <h4>نسخة الهاتف الكاملة</h4>
-          <p>جميع الميزات متاحة على الهاتف مع مزامنة فورية</p>
-        </div>
-      </div>
-      <div class="feature-item">
-        <div class="feature-icon">🔐</div>
-        <div class="feature-text">
-          <h4>نظام صلاحيات متقدم</h4>
-          <p>تحكم بصلاحيات المدربين والإدارة بدقة عالية</p>
+        <div class="pwa-step-row">
+          <div class="pwa-num">5</div>
+          <p>اضغط <strong>"إضافة"</strong> في الأعلى – سيظهر التطبيق على شاشتك ✅</p>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- STEPS SECTION -->
-  <section>
-    <div class="steps-section">
-      <h2>🚀 خطوات التفعيل والحصول على المفتاح</h2>
-      <div class="steps-grid">
-        <div class="step">
-          <div class="step-num" style="background:rgba(59,130,246,0.2);color:#60a5fa;">1</div>
-          <h4>طلب التجربة</h4>
-          <p>اضغط على "طلب نسخة تجريبية" وأدخل بيانات ناديك والبريد الإلكتروني</p>
-        </div>
-        <div class="step">
-          <div class="step-num" style="background:rgba(99,102,241,0.2);color:#a5b4fc;">2</div>
-          <h4>الدفع (للترخيص الكامل)</h4>
-          <p>عند الرغبة بالشراء، حوّل المبلغ عبر BaridiMob وأرسل الوصل</p>
-        </div>
-        <div class="step">
-          <div class="step-num" style="background:rgba(16,185,129,0.2);color:#6ee7b7;">3</div>
-          <h4>استلام المفتاح</h4>
-          <p>سيصلك مفتاح التفعيل الخاص بناديك عبر البريد الإلكتروني</p>
-        </div>
-        <div class="step">
-          <div class="step-num" style="background:rgba(168,85,247,0.2);color:#d8b4fe;">4</div>
-          <h4>تفعيل وتشغيل</h4>
-          <p>أدخل المفتاح في النظام وابدأ الاستخدام الكامل فوراً</p>
-        </div>
+    <div style="margin-top:20px;">
+      <a href="https://wa.me/213553823611?text=السلام عليكم، أحتاج مساعدة في تثبيت نظام النادي على الهاتف" target="_blank" class="btn btn-emerald" style="max-width:280px;">
+        💬 تواصل معي للمساعدة المباشرة
+      </a>
+    </div>
+  </div>
+
+  <!-- ── TRIAL ── -->
+  <div class="page-section" id="page-trial">
+    <div class="page-header">
+      <h1>🔑 طلب مفتاح التفعيل</h1>
+      <p>احصل على نسخة تجريبية مجانية أو اشترِ ترخيصاً دائماً</p>
+    </div>
+
+    <!-- Pricing Cards -->
+    <div class="price-table" style="max-width:500px; margin-bottom:20px;">
+      <div class="price-card selected" id="pc-trial" onclick="selectPlan('trial')">
+        <div class="price-badge badge-free">مجاني</div>
+        <div class="price-name">تجربة مجانية</div>
+        <div class="price-amount">14 <span>يوم</span></div>
+        <div class="price-desc">بدون دفع – جرّب النظام كاملاً</div>
+      </div>
+      <div class="price-card" id="pc-paid" onclick="selectPlan('paid')">
+        <div class="price-badge badge-paid">مدفوع</div>
+        <div class="price-name">ترخيص مدى الحياة</div>
+        <div class="price-amount">تواصل <span>معي</span></div>
+        <div class="price-desc">ترخيص دائم لناديك بسعر رمزي</div>
       </div>
     </div>
-  </section>
 
-  <!-- FOOTER -->
-  <footer>
-    <p>© 2025 JudoManager Pro - جميع الحقوق محفوظة</p>
-    <div class="footer-contacts">
-      <a href="https://wa.me/213553823611" target="_blank" class="btn-contact btn-wa">💬 0553823611</a>
-      <a href="https://t.me/nisoo09" target="_blank" class="btn-contact btn-tg">✈️ @nisoo09</a>
-    </div>
-  </footer>
+    <div class="form-panel">
+      <div id="trialFormContent">
+        <h2>📋 بيانات ناديك</h2>
+        <p class="form-desc">أدخل معلوماتك وسيتم التواصل معك خلال 24 ساعة لإرسال المفتاح.</p>
 
-  <!-- MODAL: Trial / License Request -->
-  <div class="modal-overlay" id="trialModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal('trialModal')">✕</button>
-      
-      <div id="trialFormSection">
-        <h3>🎯 طلب نسخة تجريبية أو شراء</h3>
-        <p>أدخل بيانات ناديك وسيتم التواصل معك خلال 24 ساعة لتأكيد طلبك وإرسال مفتاح التفعيل.</p>
-
-        <div class="alert">
-          <span class="alert-icon">💰</span>
-          <p class="alert-text">
-            <strong>أسعار الاشتراك:</strong><br>
-            • تجربة مجانية: 14 يوم كاملاً بدون دفع<br>
-            • ترخيص مدى الحياة: تواصل معي عبر واتساب للسعر
-          </p>
+        <div class="alert-box">
+          <span class="alert-icon-big">💰</span>
+          <div>
+            <strong>الدفع عبر BaridiMob</strong><br>
+            للترخيص المدفوع: حوّل المبلغ وأرسل صورة الوصل عبر واتساب
+          </div>
         </div>
 
-        <div class="form-group">
+        <div class="fg">
           <label>اسم النادي / الجمعية *</label>
-          <input type="text" id="clubName" placeholder="مثال: نادي الرياضي للجودو" required>
+          <input type="text" id="clubName" placeholder="مثال: نادي الرياضي للجودو">
         </div>
-        <div class="form-group">
-          <label>البريد الإلكتروني (لاستلام المفتاح) *</label>
-          <input type="email" id="email" placeholder="example@gmail.com" required>
+
+        <div class="form-row">
+          <div class="fg">
+            <label>البريد الإلكتروني *</label>
+            <input type="email" id="email" placeholder="example@gmail.com">
+          </div>
+          <div class="fg">
+            <label>رقم الهاتف</label>
+            <input type="tel" id="phone" placeholder="0551234567">
+          </div>
         </div>
-        <div class="form-group">
-          <label>رقم الهاتف *</label>
-          <input type="tel" id="phone" placeholder="0551234567">
-        </div>
-        <div class="form-group">
-          <label>نوع الطلب *</label>
-          <select id="requestType">
-            <option value="trial">نسخة تجريبية 14 يوم (مجانية)</option>
-            <option value="paid">شراء ترخيص مدى الحياة</option>
-          </select>
-        </div>
-        <div class="form-group">
+
+        <div class="fg">
           <label>ملاحظات إضافية (اختياري)</label>
           <textarea id="notes" placeholder="أي معلومات إضافية حول ناديك..."></textarea>
         </div>
 
-        <button class="btn btn-emerald" onclick="submitTrialRequest()" style="margin-top:8px;">
+        <button class="btn btn-emerald" onclick="submitRequest()">
           📤 إرسال الطلب عبر واتساب
         </button>
       </div>
 
-      <div class="success-msg" id="trialSuccess">
-        <p style="font-size:48px; margin-bottom:16px;">✅</p>
-        <h3>تم إرسال طلبك بنجاح!</h3>
-        <p>سيتم التواصل معك خلال 24 ساعة عبر الواتساب وإرسال مفتاح التفعيل إلى بريدك الإلكتروني.</p>
+      <div class="success-state" id="trialSuccess">
+        <div class="success-icon">✅</div>
+        <h3>تم إرسال طلبك!</h3>
+        <p>سيتم التواصل معك خلال 24 ساعة وإرسال مفتاح التفعيل إلى بريدك الإلكتروني.</p>
+        <button class="btn btn-ghost" style="max-width:200px; margin:0 auto;" onclick="resetForm()">
+          إرسال طلب آخر
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- MODAL: PWA Installation Guide -->
-  <div class="modal-overlay" id="pwaModal">
-    <div class="modal">
-      <button class="modal-close" onclick="closeModal('pwaModal')">✕</button>
-      <h3>📲 تثبيت نظام النادي على الهاتف</h3>
-      <p>اتبع الخطوات التالية لتثبيت النظام كتطبيق حقيقي على هاتفك:</p>
+  <!-- ── FEATURES ── -->
+  <div class="page-section" id="page-features">
+    <div class="page-header">
+      <h1>✨ مميزات النظام</h1>
+      <p>كل ما يحتاجه ناديك في مكان واحد</p>
+    </div>
 
-      <div class="alert" style="margin-bottom:16px;">
-        <span class="alert-icon">📌</span>
-        <p class="alert-text">
-          <strong>قبل البدء:</strong> تأكد من تشغيل نظام الكمبيوتر الخاص بالنادي أولاً، ثم اتبع الخطوات أدناه.
-        </p>
-      </div>
-
-      <div style="margin-bottom:16px;">
-        <p style="color:white; font-weight:700; font-size:14px; margin-bottom:12px;">📱 على Android:</p>
-        <div class="pwa-steps">
-          <div class="pwa-step">
-            <div class="pwa-step-num">1</div>
-            <p>افتح متصفح <strong>Chrome</strong> على هاتفك</p>
-          </div>
-          <div class="pwa-step">
-            <div class="pwa-step-num">2</div>
-            <p>اكتب عنوان النظام الذي يعطيك إياه الكمبيوتر (مثل: <strong>http://192.168.1.X:3000</strong>)</p>
-          </div>
-          <div class="pwa-step">
-            <div class="pwa-step-num">3</div>
-            <p>اضغط على النقاط الثلاث <strong>⋮</strong> في أعلى المتصفح</p>
-          </div>
-          <div class="pwa-step">
-            <div class="pwa-step-num">4</div>
-            <p>اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong> أو <strong>"تثبيت التطبيق"</strong></p>
-          </div>
-          <div class="pwa-step">
-            <div class="pwa-step-num">5</div>
-            <p>اضغط <strong>"تثبيت"</strong> وسيظهر أيقونة النظام على شاشتك الرئيسية</p>
-          </div>
+    <div class="feat-grid">
+      <div class="feat-item">
+        <div class="feat-icon">👥</div>
+        <div>
+          <div class="feat-title">تسجيل الرياضيين</div>
+          <div class="feat-desc">بيانات كاملة مع صور ووثائق ومعلومات الأسرة</div>
         </div>
       </div>
-
-      <div>
-        <p style="color:white; font-weight:700; font-size:14px; margin-bottom:12px;">🍎 على iPhone (Safari):</p>
-        <div class="pwa-steps">
-          <div class="pwa-step">
-            <div class="pwa-step-num">1</div>
-            <p>افتح متصفح <strong>Safari</strong> (مهم! ليس Chrome)</p>
-          </div>
-          <div class="pwa-step">
-            <div class="pwa-step-num">2</div>
-            <p>اكتب عنوان النظام في شريط العنوان</p>
-          </div>
-          <div class="pwa-step">
-            <div class="pwa-step-num">3</div>
-            <p>اضغط أيقونة المشاركة <strong>↑</strong> في الشريط السفلي</p>
-          </div>
-          <div class="pwa-step">
-            <div class="pwa-step-num">4</div>
-            <p>اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong></p>
-          </div>
-          <div class="pwa-step">
-            <div class="pwa-step-num">5</div>
-            <p>اضغط <strong>"إضافة"</strong> وسيظهر التطبيق على شاشتك</p>
-          </div>
+      <div class="feat-item">
+        <div class="feat-icon">💳</div>
+        <div>
+          <div class="feat-title">بطاقات الكودبار</div>
+          <div class="feat-desc">طباعة بطاقات هوية رياضية للتعريف السريع</div>
         </div>
       </div>
+      <div class="feat-item">
+        <div class="feat-icon">📊</div>
+        <div>
+          <div class="feat-title">الاشتراكات المالية</div>
+          <div class="feat-desc">متابعة دفعات الاشتراك والمديونيات والتقارير</div>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">✅</div>
+        <div>
+          <div class="feat-title">الحضور التلقائي</div>
+          <div class="feat-desc">تسجيل حضور الرياضيين بالكودبار في ثوانٍ</div>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">🔔</div>
+        <div>
+          <div class="feat-title">إشعارات أولياء الأمور</div>
+          <div class="feat-desc">إشعارات الحضور والغياب للأولياء مباشرة</div>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">🥋</div>
+        <div>
+          <div class="feat-title">إدارة الأحزمة</div>
+          <div class="feat-desc">تتبع مستويات وشهادات الأحزمة لكل رياضي</div>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">📱</div>
+        <div>
+          <div class="feat-title">نسخة الهاتف الكاملة</div>
+          <div class="feat-desc">جميع الميزات على الهاتف مع مزامنة فورية</div>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">🔐</div>
+        <div>
+          <div class="feat-title">صلاحيات متقدمة</div>
+          <div class="feat-desc">تحكم بصلاحيات المدربين والإدارة بدقة</div>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">📈</div>
+        <div>
+          <div class="feat-title">تقارير شاملة</div>
+          <div class="feat-desc">إحصاءات الأداء والمالية والحضور بشكل مرئي</div>
+        </div>
+      </div>
+      <div class="feat-item">
+        <div class="feat-icon">💾</div>
+        <div>
+          <div class="feat-title">نسخ احتياطي</div>
+          <div class="feat-desc">حماية بيانات ناديك بنسخ احتياطية تلقائية</div>
+        </div>
+      </div>
+    </div>
+  </div>
 
-      <div style="margin-top:20px;">
-        <a href="https://wa.me/213553823611?text=السلام عليكم، أحتاج مساعدة في تثبيت نظام النادي على الهاتف" target="_blank" class="btn btn-emerald">
-          💬 تواصل معي للمساعدة المباشرة
+  <!-- ── PRICING ── -->
+  <div class="page-section" id="page-pricing">
+    <div class="page-header">
+      <h1>💰 الأسعار والتراخيص</h1>
+      <p>اختر الخيار المناسب لناديك</p>
+    </div>
+
+    <div class="cards-row" style="max-width:560px;">
+      <div class="card" style="border-color:rgba(46,216,168,0.2);">
+        <div class="card-head">
+          <div class="card-ico ico-emerald">🎁</div>
+          <div>
+            <div class="card-title">التجربة المجانية</div>
+            <div class="card-sub">14 يوم كامل بدون دفع</div>
+          </div>
+        </div>
+        <ul class="card-list">
+          <li>جميع مميزات النظام متاحة</li>
+          <li>دعم فني مجاني خلال التجربة</li>
+          <li>لا بطاقة ائتمانية مطلوبة</li>
+          <li>مفتاح تفعيل يُرسل عبر الإيميل</li>
+        </ul>
+        <button class="btn btn-emerald" onclick="showPage('trial', document.querySelectorAll('.nav-item')[3])">
+          🎯 ابدأ التجربة مجاناً
+        </button>
+      </div>
+
+      <div class="card" style="border-color:rgba(79,142,247,0.2);">
+        <div class="card-head">
+          <div class="card-ico ico-blue">♾️</div>
+          <div>
+            <div class="card-title">ترخيص مدى الحياة</div>
+            <div class="card-sub">دفعة واحدة – للأبد</div>
+          </div>
+        </div>
+        <ul class="card-list">
+          <li>ترخيص دائم لناديك</li>
+          <li>تحديثات مستقبلية مجانية</li>
+          <li>دعم فني مستمر</li>
+          <li>الدفع عبر BaridiMob</li>
+        </ul>
+        <a href="https://wa.me/213553823611?text=أريد معرفة سعر ترخيص مدى الحياة لنظام JudoManager" target="_blank" class="btn btn-blue">
+          💬 استفسر عن السعر
         </a>
       </div>
     </div>
   </div>
 
-  <script>
-    function showTrialModal() {
-      document.getElementById('trialModal').classList.add('active');
+</main>
+
+<script>
+  let currentPlan = 'trial';
+
+  // ── Navigation ──
+  function showPage(id, navEl) {
+    document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+    document.getElementById('page-' + id).classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    if (navEl) navEl.classList.add('active');
+    closeSidebar();
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // ── Sidebar (mobile) ──
+  function toggleSidebar() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.getElementById('sidebarOverlay').classList.toggle('show');
+  }
+  function closeSidebar() {
+    document.getElementById('sidebar').classList.remove('open');
+    document.getElementById('sidebarOverlay').classList.remove('show');
+  }
+
+  // ── PWA Tabs ──
+  function switchTab(id, btn) {
+    document.querySelectorAll('.pwa-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.pwa-content').forEach(c => c.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-' + id).classList.add('active');
+  }
+
+  // ── Plan Selection ──
+  function selectPlan(plan) {
+    currentPlan = plan;
+    document.querySelectorAll('.price-card').forEach(c => c.classList.remove('selected'));
+    document.getElementById('pc-' + plan).classList.add('selected');
+  }
+
+  // ── Submit Request ──
+  function submitRequest() {
+    const club = document.getElementById('clubName').value.trim();
+    const email = document.getElementById('email').value.trim();
+    const phone = document.getElementById('phone').value.trim();
+    const notes = document.getElementById('notes').value.trim();
+
+    if (!club || !email) {
+      alert('الرجاء إدخال اسم النادي والبريد الإلكتروني على الأقل');
+      return;
     }
-    function showPwaModal() {
-      document.getElementById('pwaModal').classList.add('active');
-    }
-    function closeModal(id) {
-      document.getElementById(id).classList.remove('active');
-    }
 
-    // Close modal on overlay click
-    document.querySelectorAll('.modal-overlay').forEach(overlay => {
-      overlay.addEventListener('click', function(e) {
-        if (e.target === this) this.classList.remove('active');
-      });
-    });
+    const planText = currentPlan === 'trial'
+      ? 'نسخة تجريبية مجانية 14 يوم'
+      : 'شراء ترخيص مدى الحياة';
 
-    function submitTrialRequest() {
-      const clubName = document.getElementById('clubName').value.trim();
-      const email = document.getElementById('email').value.trim();
-      const phone = document.getElementById('phone').value.trim();
-      const type = document.getElementById('requestType').value;
-      const notes = document.getElementById('notes').value.trim();
+    let msg = `السلام عليكم،\n\nأريد ${planText} لنظام JudoManager.\n\n`;
+    msg += `🏟️ اسم النادي: ${club}\n`;
+    msg += `📧 البريد الإلكتروني: ${email}\n`;
+    if (phone) msg += `📞 رقم الهاتف: ${phone}\n`;
+    if (notes) msg += `📝 ملاحظات: ${notes}\n`;
 
-      if (!clubName || !email) {
-        alert('الرجاء إدخال اسم النادي والبريد الإلكتروني على الأقل');
-        return;
-      }
+    window.open(`https://wa.me/213553823611?text=${encodeURIComponent(msg)}`, '_blank');
 
-      const typeText = type === 'trial' ? 'نسخة تجريبية 14 يوم' : 'شراء ترخيص مدى الحياة';
-      let msg = `السلام عليكم،\n\nأريد ${typeText} لنظام JudoManager.\n\n`;
-      msg += `اسم النادي: ${clubName}\n`;
-      msg += `البريد الإلكتروني: ${email}\n`;
-      if (phone) msg += `رقم الهاتف: ${phone}\n`;
-      if (notes) msg += `ملاحظات: ${notes}\n`;
+    document.getElementById('trialFormContent').style.display = 'none';
+    document.getElementById('trialSuccess').style.display = 'block';
+  }
 
-      const waUrl = `https://wa.me/213553823611?text=${encodeURIComponent(msg)}`;
-      window.open(waUrl, '_blank');
-
-      document.getElementById('trialFormSection').style.display = 'none';
-      document.getElementById('trialSuccess').style.display = 'block';
-    }
-  </script>
+  function resetForm() {
+    document.getElementById('clubName').value = '';
+    document.getElementById('email').value = '';
+    document.getElementById('phone').value = '';
+    document.getElementById('notes').value = '';
+    document.getElementById('trialFormContent').style.display = 'block';
+    document.getElementById('trialSuccess').style.display = 'none';
+  }
+</script>
 
 </body>
 </html>
