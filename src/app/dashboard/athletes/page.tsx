@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import PrintableAthleteCard from "@/components/PrintableAthleteCard";
 
@@ -17,10 +17,11 @@ interface Athlete {
   status: "active" | "inactive";
 }
 
-const initialAthletes: Athlete[] = [];
+const STORAGE_KEY = "judo_manager_athletes";
 
 export default function AthletesPage() {
-  const [athletes, setAthletes] = useState<Athlete[]>(initialAthletes);
+  const [athletes, setAthletes] = useState<Athlete[]>([]);
+  const [isLoaded, setIsLoaded] = useState(false);
   const [search, setSearch] = useState("");
   const [filterGroup, setFilterGroup] = useState("all");
   const [filterStatus, setFilterStatus] = useState("all");
@@ -37,6 +38,29 @@ export default function AthletesPage() {
   const [formBelt, setFormBelt] = useState("حزام أبيض");
   const [formSubStatus, setFormSubStatus] = useState<"paid" | "pending" | "expired">("paid");
 
+  // Load persistent athletes on start
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        setAthletes(JSON.parse(saved));
+      }
+    } catch (e) {
+      console.error("Failed to load athletes", e);
+    }
+    setIsLoaded(true);
+  }, []);
+
+  // Save persistent athletes on change
+  const saveAthletesToStorage = (updated: Athlete[]) => {
+    setAthletes(updated);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(updated));
+    } catch (e) {
+      console.error("Failed to save athletes", e);
+    }
+  };
+
   const filteredAthletes = athletes.filter((a) => {
     const matchesSearch =
       a.name.includes(search) ||
@@ -52,6 +76,7 @@ export default function AthletesPage() {
     if (beltName.includes("برتقالي")) return "bg-orange-500 text-white font-bold";
     if (beltName.includes("أخضر")) return "bg-emerald-600 text-white font-bold";
     if (beltName.includes("أزرق")) return "bg-blue-600 text-white font-bold";
+    if (beltName.includes("أحمر") || beltName.includes("بني")) return "bg-amber-700 text-white font-bold";
     if (beltName.includes("أسود")) return "bg-gray-900 text-white font-bold";
     return "bg-gray-100 text-gray-800 border border-gray-300 font-bold";
   };
@@ -71,7 +96,7 @@ export default function AthletesPage() {
       status: "active",
     };
 
-    setAthletes([newAthlete, ...athletes]);
+    saveAthletesToStorage([newAthlete, ...athletes]);
     setShowAddModal(false);
     resetForm();
   };
@@ -90,30 +115,29 @@ export default function AthletesPage() {
     e.preventDefault();
     if (!editingAthlete) return;
 
-    setAthletes((prev) =>
-      prev.map((a) =>
-        a.id === editingAthlete.id
-          ? {
-              ...a,
-              name: formName,
-              age: Number(formAge),
-              phone: formPhone,
-              group: formGroup,
-              belt: formBelt,
-              beltColor: getBeltColor(formBelt),
-              subStatus: formSubStatus,
-            }
-          : a
-      )
+    const updated = athletes.map((a) =>
+      a.id === editingAthlete.id
+        ? {
+            ...a,
+            name: formName,
+            age: Number(formAge),
+            phone: formPhone,
+            group: formGroup,
+            belt: formBelt,
+            beltColor: getBeltColor(formBelt),
+            subStatus: formSubStatus,
+          }
+        : a
     );
 
+    saveAthletesToStorage(updated);
     setEditingAthlete(null);
     resetForm();
   };
 
   const handleDeleteAthlete = (id: string, name: string) => {
     if (window.confirm(`هل أنت تأكد من رغبتك في حذف اللاعب "${name}" نهائياً من النادي؟`)) {
-      setAthletes((prev) => prev.filter((a) => a.id !== id));
+      saveAthletesToStorage(athletes.filter((a) => a.id !== id));
     }
   };
 
@@ -126,14 +150,18 @@ export default function AthletesPage() {
     setFormSubStatus("paid");
   };
 
+  if (!isLoaded) {
+    return <div className="p-12 text-center text-gray-500 font-bold">جاري تحميل بيانات النادي...</div>;
+  }
+
   return (
     <div className="space-y-6">
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-3xl font-black text-gray-900">إدارة اللاعبين، التعديل والحذف</h1>
+          <h1 className="text-3xl font-black text-gray-900">إدارة اللاعبين والتسجيلات</h1>
           <p className="text-gray-500 text-sm mt-1">
-            إضافة لاعبي النادي، تعديل البيانات، طباعة بطاقات الكودبار وحذف الحسابات
+            جميع البيانات مضافة ومحفوظة بصفة دائمية بدون أي ضياع مع تحديث الصفحة
           </p>
         </div>
         <button
@@ -190,9 +218,9 @@ export default function AthletesPage() {
           <div className="w-20 h-20 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-4xl mx-auto font-black shadow-inner">
             🥋
           </div>
-          <h3 className="text-2xl font-black text-gray-900">نظام النادي جديد وفارغ تماماً</h3>
+          <h3 className="text-2xl font-black text-gray-900">لا يوجد لاعبون مضافون بعد</h3>
           <p className="text-sm text-gray-500 max-w-md mx-auto leading-relaxed">
-            المنصة جاهزة 100% لبدء العمل بها بدقة. قم بإضافة أسرار وتسجيلات لاعبي ناديك بالضغط على الزر أدناه لتوليد الكودبار الخاص بكل رياضي.
+            اضغط على الزر أدناه لتسجيل أوّل لاعب، وسيتم حفظ بياناته بشكل دائم ولن تختفي عند تحديث الصفحة!
           </p>
           <button
             onClick={() => {
@@ -201,106 +229,100 @@ export default function AthletesPage() {
             }}
             className="px-6 py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-2xl text-sm shadow-lg shadow-blue-600/20 transition-all inline-flex items-center gap-2"
           >
-            <span>➕</span> إضافة أول لاعب في النادي الان
+            <span>➕</span> إضافة لاعب في النادي
           </button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {filteredAthletes.map((athlete) => (
-          <div
-            key={athlete.id}
-            className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all flex flex-col justify-between"
-          >
-            <div className="p-6">
-              <div className="flex items-start justify-between gap-3 mb-4">
-                <div className="flex items-center gap-3">
-                  <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-700 font-black text-lg flex items-center justify-center border-2 border-blue-200">
-                    {athlete.name.charAt(0)}
+          {filteredAthletes.map((athlete) => (
+            <div
+              key={athlete.id}
+              className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition-all flex flex-col justify-between"
+            >
+              <div className="p-6">
+                <div className="flex items-start justify-between gap-3 mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-12 h-12 rounded-full bg-blue-100 text-blue-700 font-black text-lg flex items-center justify-center border-2 border-blue-200">
+                      {athlete.name.charAt(0)}
+                    </div>
+                    <div>
+                      <h3 className="font-bold text-gray-900 text-lg leading-tight">
+                        {athlete.name}
+                      </h3>
+                      <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded mt-1 inline-block">
+                        {athlete.code}
+                      </span>
+                    </div>
                   </div>
+                  <span className={`text-xs px-2.5 py-1 rounded-full ${athlete.beltColor}`}>
+                    {athlete.belt}
+                  </span>
+                </div>
+
+                <div className="space-y-2 text-sm text-gray-600 mb-4">
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">المجموعة:</span>
+                    <span className="font-semibold text-gray-800">{athlete.group}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">العمر:</span>
+                    <span className="font-semibold text-gray-800">{athlete.age} سنة</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-400">الهاتف:</span>
+                    <span className="font-mono text-gray-800">{athlete.phone}</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Actions & Buttons Footer */}
+              <div className="bg-gray-50 px-6 py-3 border-t border-gray-100 space-y-2">
+                <div className="flex items-center justify-between">
                   <div>
-                    <h3 className="font-bold text-gray-900 text-lg leading-tight">
-                      {athlete.name}
-                    </h3>
-                    <span className="text-xs font-mono text-gray-500 bg-gray-100 px-2 py-0.5 rounded mt-1 inline-block">
-                      {athlete.code}
-                    </span>
+                    {athlete.subStatus === "paid" && (
+                      <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">
+                        اشتراك نشط
+                      </span>
+                    )}
+                    {athlete.subStatus === "pending" && (
+                      <span className="text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full">
+                        ينتهي قريباً
+                      </span>
+                    )}
+                    {athlete.subStatus === "expired" && (
+                      <span className="text-xs font-bold text-rose-700 bg-rose-100 px-2.5 py-1 rounded-full">
+                        منتهي
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Edit & Delete Action Buttons */}
+                  <div className="flex items-center gap-1.5">
+                    <button
+                      onClick={() => handleEditClick(athlete)}
+                      className="p-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-bold transition-all border border-blue-200"
+                      title="تعديل بيانات اللاعب"
+                    >
+                      ✏️ تعديل
+                    </button>
+                    <button
+                      onClick={() => handleDeleteAthlete(athlete.id, athlete.name)}
+                      className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-xs font-bold transition-all border border-rose-200"
+                      title="حذف اللاعب"
+                    >
+                      🗑️ حذف
+                    </button>
                   </div>
                 </div>
-                <span className={`text-xs px-2.5 py-1 rounded-full ${athlete.beltColor}`}>
-                  {athlete.belt}
-                </span>
-              </div>
 
-              <div className="space-y-2 text-sm text-gray-600 mb-4">
-                <div className="flex justify-between">
-                  <span className="text-gray-400">المجموعة:</span>
-                  <span className="font-semibold text-gray-800">{athlete.group}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">العمر:</span>
-                  <span className="font-semibold text-gray-800">{athlete.age} سنة</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-gray-400">الهاتف:</span>
-                  <span className="font-mono text-gray-800">{athlete.phone}</span>
+                {/* Printable Barcode Button */}
+                <div className="pt-2 border-t border-gray-200/60 flex justify-end">
+                  <PrintableAthleteCard athlete={athlete} />
                 </div>
               </div>
             </div>
-
-            {/* Actions & Buttons Footer */}
-            <div className="bg-gray-50 px-6 py-3 border-t border-gray-100 space-y-2">
-              <div className="flex items-center justify-between">
-                <div>
-                  {athlete.subStatus === "paid" && (
-                    <span className="text-xs font-bold text-emerald-700 bg-emerald-100 px-2.5 py-1 rounded-full">
-                      اشتراك نشط
-                    </span>
-                  )}
-                  {athlete.subStatus === "pending" && (
-                    <span className="text-xs font-bold text-amber-700 bg-amber-100 px-2.5 py-1 rounded-full">
-                      ينتهي قريباً
-                    </span>
-                  )}
-                  {athlete.subStatus === "expired" && (
-                    <span className="text-xs font-bold text-rose-700 bg-rose-100 px-2.5 py-1 rounded-full">
-                      منتهي
-                    </span>
-                  )}
-                </div>
-
-                {/* Edit & Delete Action Buttons */}
-                <div className="flex items-center gap-1.5">
-                  <button
-                    onClick={() => handleEditClick(athlete)}
-                    className="p-1.5 bg-blue-50 hover:bg-blue-100 text-blue-700 rounded-lg text-xs font-bold transition-all border border-blue-200"
-                    title="تعديل بيانات اللاعب"
-                  >
-                    ✏️ تعديل
-                  </button>
-                  <button
-                    onClick={() => handleDeleteAthlete(athlete.id, athlete.name)}
-                    className="p-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg text-xs font-bold transition-all border border-rose-200"
-                    title="حذف اللاعب"
-                  >
-                    🗑️ حذف
-                  </button>
-                  <Link
-                    href={`/dashboard/athletes/${athlete.id}`}
-                    className="px-2.5 py-1.5 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs font-bold transition-all"
-                  >
-                    الملف
-                  </Link>
-                </div>
-              </div>
-
-              {/* Printable Barcode Button */}
-              <div className="pt-2 border-t border-gray-200/60 flex justify-end">
-                <PrintableAthleteCard athlete={athlete} />
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
       )}
 
       {/* Add Athlete Modal */}
@@ -308,24 +330,24 @@ export default function AthletesPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-3xl p-6 max-w-lg w-full space-y-4 shadow-2xl">
             <div className="flex justify-between items-center border-b pb-3">
-              <h2 className="text-xl font-bold text-gray-900">تسجيل لاعب جديد وترقيم الكودبار</h2>
+              <h2 className="text-xl font-bold text-gray-900">تسجيل لاعب جديد وتوليد الكودبار</h2>
               <button onClick={() => setShowAddModal(false)} className="text-gray-400 font-bold text-xl">✕</button>
             </div>
             <form className="space-y-4 text-sm" onSubmit={handleAddAthlete}>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">الاسم واللقب</label>
+                  <label className="block text-gray-700 font-semibold mb-1">الاسم واللقب *</label>
                   <input
                     type="text"
                     required
-                    placeholder="محمد بن علي"
+                    placeholder="مثال: أحمد بلحاج"
                     value={formName}
                     onChange={(e) => setFormName(e.target.value)}
                     className="w-full p-2.5 border rounded-xl bg-gray-50 font-semibold"
                   />
                 </div>
                 <div>
-                  <label className="block text-gray-700 font-semibold mb-1">العمر (سنوات)</label>
+                  <label className="block text-gray-700 font-semibold mb-1">العمر *</label>
                   <input
                     type="number"
                     required
@@ -367,7 +389,7 @@ export default function AthletesPage() {
                 </div>
               </div>
               <div>
-                <label className="block text-gray-700 font-semibold mb-1">رقم هاتف ولي الأمر / اللاعب</label>
+                <label className="block text-gray-700 font-semibold mb-1">رقم هاتف ولي الأمر *</label>
                 <input
                   type="tel"
                   required
@@ -379,7 +401,7 @@ export default function AthletesPage() {
               </div>
               <div className="pt-4 flex justify-end gap-3 border-t">
                 <button type="button" onClick={() => setShowAddModal(false)} className="px-4 py-2 text-gray-600 font-semibold">إلغاء</button>
-                <button type="submit" className="px-6 py-2 bg-blue-600 text-white font-bold rounded-xl shadow-lg">حفظ وتوليد الكودبار</button>
+                <button type="submit" className="px-6 py-2 bg-blue-600 text-white font-bold rounded-xl shadow-lg">حفظ ومزامنة دائمية</button>
               </div>
             </form>
           </div>
@@ -474,7 +496,7 @@ export default function AthletesPage() {
               </div>
               <div className="pt-4 flex justify-end gap-3 border-t">
                 <button type="button" onClick={() => setEditingAthlete(null)} className="px-4 py-2 text-gray-600 font-semibold">إلغاء</button>
-                <button type="submit" className="px-6 py-2 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">تحديث البيانات</button>
+                <button type="submit" className="px-6 py-2 bg-emerald-600 text-white font-bold rounded-xl shadow-lg">حفظ التحديثات</button>
               </div>
             </form>
           </div>

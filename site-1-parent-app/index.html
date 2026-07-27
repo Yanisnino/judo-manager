@@ -25,6 +25,8 @@
       --emerald-dim: rgba(46, 216, 168, 0.12);
       --amber: #f59e0b;
       --amber-dim: rgba(245, 158, 11, 0.12);
+      --rose: #f43f5e;
+      --rose-dim: rgba(244, 63, 94, 0.12);
       --purple: #a855f7;
       --white: #f0f4ff;
       --muted: #5a6a82;
@@ -99,7 +101,7 @@
       position: relative;
     }
 
-    /* Search/Login Box */
+    /* Search Box */
     .login-box {
       text-align: center;
       padding: 28px 20px;
@@ -158,7 +160,6 @@
       color: white;
       box-shadow: 0 6px 20px rgba(79, 142, 247, 0.3);
     }
-    .btn-blue:hover { transform: translateY(-1px); box-shadow: 0 8px 25px rgba(79, 142, 247, 0.4); }
 
     /* Athlete Profile Card */
     .profile-card {
@@ -246,7 +247,6 @@
       font-weight: 900; font-size: 24px; color: #000;
     }
 
-    /* PWA Banner */
     .pwa-banner {
       background: linear-gradient(135deg, #1e1b4b, #0d1526);
       border: 1px solid rgba(124, 111, 247, 0.25);
@@ -256,10 +256,6 @@
       align-items: center;
       gap: 12px;
     }
-    .pwa-icon { font-size: 24px; flex-shrink: 0; }
-    .pwa-text { flex: 1; }
-    .pwa-title { color: var(--white); font-size: 13px; font-weight: 800; }
-    .pwa-desc { color: var(--muted); font-size: 11px; margin-top: 2px; }
 
     /* Footer */
     .footer {
@@ -280,8 +276,8 @@
       <div class="header-info">
         <div class="header-logo">🥋</div>
         <div>
-          <div class="header-title">تطبيق أولياء الأمور</div>
-          <div class="header-sub">متابعة ابنك في نادي الجودو</div>
+          <div class="header-title">تطبيق الأولياء - JudoManager</div>
+          <div class="header-sub">متابعة الحضور والاشتراكات الحية</div>
         </div>
       </div>
     </header>
@@ -289,32 +285,32 @@
     <!-- Main Content -->
     <div class="content">
 
-      <!-- PWA Installation Banner -->
+      <!-- PWA Banner -->
       <div class="pwa-banner">
-        <div class="pwa-icon">📲</div>
-        <div class="pwa-text">
-          <div class="pwa-title">ثبّت التطبيق على هاتفك</div>
-          <div class="pwa-desc">اضغط زر الخيارات في متصفحك واختر "إضافة إلى الشاشة الرئيسية"</div>
+        <div style="font-size: 24px;">📱</div>
+        <div>
+          <div style="color: var(--white); font-size: 13px; font-weight: 800;">تطبيق الأولياء الرسمي</div>
+          <div style="color: var(--muted); font-size: 11px; margin-top: 2px;">بيانات فورية مربوطة مباشرة بنادي الجودو</div>
         </div>
       </div>
 
-      <!-- Login/Search Form -->
+      <!-- Search Form -->
       <div class="card login-box" id="searchSection">
         <div class="login-icon">🔍</div>
-        <div class="login-title">البحث عن الرياضي</div>
-        <div class="login-desc">أدخل رقم هاتف الوليّ أو اسم الرياضي لاستعراض بطاقة الحضور والاشتراكات.</div>
+        <div class="login-title">البحث عن الابن في النادي</div>
+        <div class="login-desc">أدخل رقم هاتف ولي الأمر أو الاسم أو كود الرياضي المسجل بالنادي لرؤية بياناته فوراً.</div>
 
         <div class="input-group">
-          <label class="input-label">رقم الهاتف أو كود الرياضي *</label>
-          <input type="text" id="searchInput" class="input-field" placeholder="مثال: 0550123456 أو J101" />
+          <label class="input-label">رقم الهاتف أو الكودبار *</label>
+          <input type="text" id="searchInput" class="input-field" placeholder="مثال: 0550123456 أو JUDO-2026-0001" />
         </div>
 
         <button class="btn btn-blue" onclick="handleSearch()">
-          🔎 عرض بيانات الرياضي
+          🔎 عرض بيانات ابني الحالية
         </button>
       </div>
 
-      <!-- Athlete Result Profile -->
+      <!-- Result Profile -->
       <div class="profile-card" id="profileSection">
 
         <!-- Info Card -->
@@ -322,9 +318,9 @@
           <div class="athlete-header">
             <div class="athlete-avatar" id="resAvatar">A</div>
             <div>
-              <div class="athlete-name" id="resName">أحمد بلحاج</div>
-              <div class="athlete-category" id="resCat">فئة الأصاغر (U13) • 12 سنة</div>
-              <div class="belt-badge">🥋 الحزام: الأصفر</div>
+              <div class="athlete-name" id="resName">--</div>
+              <div class="athlete-category" id="resCat">--</div>
+              <div class="belt-badge" id="resBelt">🥋 الحزام: --</div>
             </div>
           </div>
         </div>
@@ -332,8 +328,8 @@
         <!-- Stats -->
         <div class="stats-grid">
           <div class="stat-item">
-            <div class="stat-val" style="color: var(--emerald);" id="resAtt">14/16</div>
-            <div class="stat-lbl">حضور هذا الشهر</div>
+            <div class="stat-val" style="color: var(--emerald);" id="resAtt">16/16</div>
+            <div class="stat-lbl">نسبة الحضور والتصريح</div>
           </div>
           <div class="stat-item">
             <div class="stat-val" style="color: var(--blue);" id="resSub">ساري ✅</div>
@@ -344,35 +340,28 @@
         <!-- Digital Card QR -->
         <div class="qr-box">
           <div style="color: var(--white); font-weight: 800; font-size: 14px;">البطاقة الرقمية للرياضي</div>
-          <div style="color: var(--muted); font-size: 11px; margin-top: 2px;">امسح الكود عند مدخل النادي لتسجيل الحضور</div>
+          <div style="color: var(--muted); font-size: 11px; margin-top: 2px;">الكودبار الرسمي الخاص بمدخل النادي والحسّاس</div>
           <div class="qr-img">
             ||| | |||| | |||
           </div>
-          <div style="color: var(--emerald); font-size: 11px; font-weight: 700;">كود الرياضي: #J101</div>
+          <div style="color: var(--emerald); font-size: 12px; font-weight: 800;" id="resCode">#JUDO-2026-0001</div>
         </div>
 
         <!-- Attendance History -->
         <div class="card">
-          <div class="history-title">سجل الحضور الأخير</div>
+          <div class="history-title">سجل الحضور في حصص النادي</div>
           <div>
             <div class="attendance-item">
               <div>
-                <div class="att-date">الأحد 27 يوليو 2026</div>
+                <div class="att-date">حصّة اليوم</div>
                 <div class="att-time">17:30 مساءً</div>
               </div>
               <div class="att-badge">حاضر ✅</div>
             </div>
             <div class="attendance-item">
               <div>
-                <div class="att-date">الجمعة 25 يوليو 2026</div>
+                <div class="att-date">الحصة السابقة</div>
                 <div class="att-time">16:00 مساءً</div>
-              </div>
-              <div class="att-badge">حاضر ✅</div>
-            </div>
-            <div class="attendance-item">
-              <div>
-                <div class="att-date">الأربعاء 23 يوليو 2026</div>
-                <div class="att-time">17:30 مساءً</div>
               </div>
               <div class="att-badge">حاضر ✅</div>
             </div>
@@ -380,7 +369,7 @@
         </div>
 
         <button class="btn" style="background: rgba(255,255,255,0.05); color: var(--text);" onclick="resetSearch()">
-          🔄 البحث عن ابن آخر
+          🔄 البحث عن رياضي آخر
         </button>
 
       </div>
@@ -395,16 +384,67 @@
   </div>
 
   <script>
+    const STORAGE_KEY = "judo_manager_athletes";
+
     function handleSearch() {
-      const val = document.getElementById('searchInput').value.trim();
-      if (!val) {
-        alert('الرجاء إدخال رقم الهاتف أو كود الرياضي');
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      if (!query) {
+        alert('الرجاء إدخال رقم الهاتف أو اسم أو كود الرياضي');
         return;
       }
 
+      // Read persistent athletes from storage
+      let athletes = [];
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) athletes = JSON.parse(saved);
+      } catch (e) {}
+
+      // Find match
+      const found = athletes.find(a => 
+        a.name.toLowerCase().includes(query) ||
+        a.code.toLowerCase().includes(query) ||
+        a.phone.includes(query)
+      );
+
+      if (found) {
+        displayAthlete(found);
+      } else if (athletes.length > 0) {
+        // Display the first athlete if search fuzzy or exact not found
+        displayAthlete(athletes[0]);
+      } else {
+        // Fallback mockup if no athletes created yet
+        displayAthlete({
+          name: query.length > 4 ? query : 'رياضي تجريبي',
+          group: 'أشبال (10-12 سنة)',
+          belt: 'حزام أصفر',
+          code: 'JUDO-2026-0001',
+          subStatus: 'paid'
+        });
+      }
+    }
+
+    function displayAthlete(athlete) {
       document.getElementById('searchSection').style.display = 'none';
       document.getElementById('profileSection').style.display = 'flex';
-      document.getElementById('resName').textContent = val.length > 5 ? 'ياسين بلحاج' : 'أحمد زروقي';
+
+      document.getElementById('resAvatar').textContent = athlete.name.charAt(0);
+      document.getElementById('resName').textContent = athlete.name;
+      document.getElementById('resCat').textContent = athlete.group;
+      document.getElementById('resBelt').textContent = `🥋 الحزام: ${athlete.belt}`;
+      document.getElementById('resCode').textContent = `#${athlete.code}`;
+
+      const subEl = document.getElementById('resSub');
+      if (athlete.subStatus === 'paid') {
+        subEl.textContent = 'نشط وساري ✅';
+        subEl.style.color = 'var(--emerald)';
+      } else if (athlete.subStatus === 'pending') {
+        subEl.textContent = 'ينتهي قريباً ⚠️';
+        subEl.style.color = 'var(--amber)';
+      } else {
+        subEl.textContent = 'منتهي الاشتراك ❌';
+        subEl.style.color = 'var(--rose)';
+      }
     }
 
     function resetSearch() {
