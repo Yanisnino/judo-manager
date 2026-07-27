@@ -1,1 +1,14 @@
-[]
+[
+  {
+    "id": "ATH-1785189523899",
+    "name": "سيسش",
+    "code": "JUDO-2026-0001",
+    "belt": "حزام أبيض",
+    "beltColor": "bg-gray-100 text-gray-800 border border-gray-300 font-bold",
+    "group": "أشبال (10-12 سنة)",
+    "age": 10,
+    "phone": "05558738383",
+    "subStatus": "paid",
+    "status": "active"
+  }
+]
