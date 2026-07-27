@@ -3,138 +3,806 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JudoManager - البوابة الرسمية لتنزيل نظام إدارة أندية الجودو</title>
-  <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <title>JudoManager Pro - نظام إدارة أندية الجودو والرياضات القتالية</title>
+  <meta name="description" content="نظام متكامل لإدارة أندية الجودو: تسجيل الرياضيين، طباعة بطاقات الكودبار، متابعة الاشتراكات، وإشعار أولياء الأمور. متاح للحاسوب والهاتف.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
-    body { font-family: 'Cairo', sans-serif; }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue: #3b82f6;
+      --blue-dark: #2563eb;
+      --blue-light: #60a5fa;
+      --indigo: #6366f1;
+      --indigo-dark: #4f46e5;
+      --emerald: #10b981;
+      --emerald-dark: #059669;
+      --slate-950: #020617;
+      --slate-900: #0f172a;
+      --slate-800: #1e293b;
+      --slate-700: #334155;
+      --slate-400: #94a3b8;
+      --slate-300: #cbd5e1;
+      --white: #ffffff;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--slate-950);
+      color: var(--slate-300);
+      min-height: 100vh;
+      line-height: 1.6;
+    }
+
+    /* ============ HEADER ============ */
+    header {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(15, 23, 42, 0.92);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255,255,255,0.06);
+      padding: 14px 0;
+    }
+    .header-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+    .logo-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 20px rgba(99, 102, 241, 0.4);
+    }
+    .logo-text { color: white; font-weight: 900; font-size: 18px; }
+    .logo-sub { color: #60a5fa; font-size: 11px; font-weight: 600; display: block; margin-top: -2px; }
+
+    .header-contacts { display: flex; gap: 10px; flex-wrap: wrap; }
+    .btn-contact {
+      display: flex; align-items: center; gap: 6px;
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-wa { background: #16a34a; color: white; }
+    .btn-wa:hover { background: #15803d; transform: translateY(-1px); }
+    .btn-tg { background: #2563eb; color: white; }
+    .btn-tg:hover { background: #1d4ed8; transform: translateY(-1px); }
+
+    /* ============ HERO ============ */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #0f172a 100%);
+      padding: 70px 20px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -50%; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(99,102,241,0.15) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(99,102,241,0.15);
+      border: 1px solid rgba(99,102,241,0.3);
+      color: #a5b4fc;
+      padding: 6px 18px;
+      border-radius: 100px;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-size: clamp(28px, 5vw, 52px);
+      font-weight: 900;
+      color: white;
+      line-height: 1.25;
+      margin-bottom: 20px;
+    }
+    .hero h1 span { color: #60a5fa; }
+    .hero p {
+      font-size: 15px;
+      color: var(--slate-400);
+      max-width: 680px;
+      margin: 0 auto 36px;
+      line-height: 1.8;
+    }
+
+    /* ============ MAIN ============ */
+    .container { max-width: 1100px; margin: 0 auto; padding: 0 20px; }
+    section { padding: 60px 20px; max-width: 1100px; margin: 0 auto; }
+
+    /* ============ CARDS GRID ============ */
+    .cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-top: -30px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .card {
+      background: var(--slate-900);
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 24px;
+      padding: 32px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+    }
+    .card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 2px;
+      border-radius: 24px 24px 0 0;
+    }
+    .card-blue::before { background: linear-gradient(90deg, #3b82f6, #6366f1); }
+    .card-indigo::before { background: linear-gradient(90deg, #6366f1, #a855f7); }
+    .card-emerald::before { background: linear-gradient(90deg, #10b981, #3b82f6); }
+
+    .card:hover {
+      border-color: rgba(99,102,241,0.3);
+      transform: translateY(-4px);
+      box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+    }
+
+    .card-icon {
+      width: 56px; height: 56px;
+      border-radius: 18px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 26px;
+    }
+    .card-icon-blue { background: rgba(59,130,246,0.15); border: 1px solid rgba(59,130,246,0.2); }
+    .card-icon-indigo { background: rgba(99,102,241,0.15); border: 1px solid rgba(99,102,241,0.2); }
+    .card-icon-emerald { background: rgba(16,185,129,0.15); border: 1px solid rgba(16,185,129,0.2); }
+
+    .card h3 { color: white; font-size: 18px; font-weight: 800; margin-bottom: 8px; }
+    .card p { color: var(--slate-400); font-size: 13px; line-height: 1.7; flex: 1; }
+
+    .card-features {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .card-features li {
+      font-size: 12px;
+      color: var(--slate-400);
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .card-features li::before { content: '✓'; color: #10b981; font-weight: 700; }
+
+    /* ============ BUTTONS ============ */
+    .btn {
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      width: 100%;
+      padding: 14px 24px;
+      border-radius: 14px;
+      font-family: 'Cairo', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      text-decoration: none;
+      border: none;
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+    .btn-blue {
+      background: linear-gradient(135deg, #3b82f6, #6366f1);
+      color: white;
+      box-shadow: 0 8px 25px rgba(99,102,241,0.35);
+    }
+    .btn-blue:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(99,102,241,0.5); }
+
+    .btn-indigo {
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      color: white;
+      box-shadow: 0 8px 25px rgba(99,102,241,0.35);
+    }
+    .btn-indigo:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(168,85,247,0.5); }
+
+    .btn-emerald {
+      background: linear-gradient(135deg, #10b981, #3b82f6);
+      color: white;
+      box-shadow: 0 8px 25px rgba(16,185,129,0.3);
+    }
+    .btn-emerald:hover { transform: translateY(-2px); box-shadow: 0 12px 35px rgba(16,185,129,0.45); }
+
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255,255,255,0.12);
+      color: var(--slate-300);
+    }
+    .btn-outline:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.2); }
+
+    /* ============ STEPS ============ */
+    .steps-section { background: var(--slate-900); border-radius: 24px; padding: 40px; border: 1px solid rgba(255,255,255,0.06); }
+    .steps-section h2 { color: white; font-size: 22px; font-weight: 800; margin-bottom: 30px; display: flex; align-items: center; gap: 10px; }
+    .steps-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .step {
+      background: var(--slate-950);
+      border-radius: 16px;
+      padding: 24px;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .step-num {
+      width: 36px; height: 36px;
+      border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-weight: 900; font-size: 14px; color: white;
+      margin-bottom: 12px;
+    }
+    .step h4 { color: white; font-weight: 700; font-size: 14px; margin-bottom: 8px; }
+    .step p { color: var(--slate-400); font-size: 12px; line-height: 1.7; }
+
+    /* ============ MODAL ============ */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.85);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .modal-overlay.active { display: flex; }
+    .modal {
+      background: var(--slate-900);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 24px;
+      padding: 40px;
+      max-width: 500px;
+      width: 100%;
+      position: relative;
+      animation: slideUp 0.3s ease;
+    }
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(30px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .modal-close {
+      position: absolute;
+      top: 16px; left: 16px;
+      background: rgba(255,255,255,0.08);
+      border: none;
+      color: white;
+      width: 32px; height: 32px;
+      border-radius: 10px;
+      font-size: 16px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .modal-close:hover { background: rgba(255,255,255,0.15); }
+    .modal h3 { color: white; font-size: 20px; font-weight: 800; margin-bottom: 8px; }
+    .modal p { color: var(--slate-400); font-size: 13px; margin-bottom: 24px; line-height: 1.7; }
+
+    .form-group { margin-bottom: 16px; }
+    .form-group label { display: block; color: var(--slate-300); font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+    .form-group input, .form-group select, .form-group textarea {
+      width: 100%;
+      background: var(--slate-950);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 12px 16px;
+      color: white;
+      font-family: 'Cairo', sans-serif;
+      font-size: 14px;
+      transition: border-color 0.2s;
+      outline: none;
+    }
+    .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+      border-color: #6366f1;
+    }
+    .form-group textarea { resize: vertical; min-height: 80px; }
+    .form-group select option { background: var(--slate-900); }
+
+    /* ============ FEATURES ============ */
+    .features-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 16px; }
+    .feature-item {
+      background: var(--slate-900);
+      border: 1px solid rgba(255,255,255,0.06);
+      border-radius: 16px;
+      padding: 20px;
+      display: flex;
+      gap: 14px;
+      align-items: flex-start;
+      transition: border-color 0.2s;
+    }
+    .feature-item:hover { border-color: rgba(99,102,241,0.3); }
+    .feature-icon { font-size: 22px; flex-shrink: 0; }
+    .feature-text h4 { color: white; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .feature-text p { color: var(--slate-400); font-size: 11px; line-height: 1.6; }
+
+    /* ============ ALERT ============ */
+    .alert {
+      background: rgba(59,130,246,0.1);
+      border: 1px solid rgba(59,130,246,0.25);
+      border-radius: 14px;
+      padding: 16px 20px;
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+    .alert-icon { font-size: 18px; flex-shrink: 0; margin-top: 2px; }
+    .alert-text { font-size: 13px; line-height: 1.7; }
+    .alert-text strong { color: white; }
+
+    /* ============ PWA INSTRUCTIONS ============ */
+    .pwa-steps {
+      background: var(--slate-950);
+      border-radius: 16px;
+      padding: 20px;
+      border: 1px solid rgba(255,255,255,0.06);
+    }
+    .pwa-step {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.04);
+    }
+    .pwa-step:last-child { border-bottom: none; }
+    .pwa-step-num {
+      width: 26px; height: 26px; flex-shrink: 0;
+      background: rgba(99,102,241,0.2);
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 12px; font-weight: 700; color: #a5b4fc;
+    }
+    .pwa-step p { font-size: 13px; color: var(--slate-300); line-height: 1.6; }
+    .pwa-step p strong { color: white; }
+
+    /* ============ FOOTER ============ */
+    footer {
+      border-top: 1px solid rgba(255,255,255,0.06);
+      padding: 40px 20px;
+      text-align: center;
+      color: var(--slate-400);
+      font-size: 13px;
+    }
+    footer .footer-contacts { display: flex; justify-content: center; gap: 16px; margin-top: 16px; flex-wrap: wrap; }
+
+    /* ============ NOTICE ============ */
+    .notice {
+      background: rgba(16,185,129,0.08);
+      border: 1px solid rgba(16,185,129,0.2);
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-size: 12px;
+      color: #6ee7b7;
+      margin-top: 12px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 600px) {
+      .hero { padding: 50px 16px; }
+      section { padding: 40px 16px; }
+      .steps-section { padding: 24px 20px; }
+      .cards-grid { grid-template-columns: 1fr; }
+    }
+
+    /* Success State */
+    .success-msg {
+      display: none;
+      text-align: center;
+      padding: 30px;
+    }
+    .success-msg h3 { color: #34d399; font-size: 24px; margin-bottom: 12px; }
+    .success-msg p { color: var(--slate-400); font-size: 14px; }
   </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-blue-600 selection:text-white">
+<body>
 
-  <!-- Header & Developer Contact Topbar -->
-  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50">
-    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-3">
-      <div class="flex items-center gap-3">
-        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center font-black text-2xl shadow-lg shadow-blue-600/30">
-          🥋
-        </div>
+  <!-- HEADER -->
+  <header>
+    <div class="header-inner">
+      <a href="#" class="logo">
+        <div class="logo-icon">🥋</div>
         <div>
-          <span class="font-black text-xl text-white block">JudoManager Pro</span>
-          <span class="text-[11px] text-blue-400 font-bold">بوابة تنزيل وتفعيل ترخيص الأندية</span>
+          <span class="logo-text">JudoManager Pro</span>
+          <span class="logo-sub">نظام إدارة أندية الجودو والرياضات القتالية</span>
         </div>
-      </div>
-
-      <div class="flex items-center gap-2.5">
-        <a href="https://wa.me/213553823611?text=السلام%20عليكم،%20أريد%20تثبيت%20وتفعيل%20نظام%20إدارة%20أندية%20الجودو" target="_blank" class="px-3.5 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs transition-all flex items-center gap-1.5 shadow-md">
+      </a>
+      <div class="header-contacts">
+        <a href="https://wa.me/213553823611?text=السلام عليكم، أريد الحصول على نظام JudoManager" target="_blank" class="btn-contact btn-wa">
           💬 واتساب: 0553823611
         </a>
-        <a href="https://t.me/nisoo09" target="_blank" class="px-3.5 py-2 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs transition-all flex items-center gap-1.5 shadow-md">
+        <a href="https://t.me/nisoo09" target="_blank" class="btn-contact btn-tg">
           ✈️ تلغرام: @nisoo09
         </a>
       </div>
     </div>
   </header>
 
-  <!-- Hero Section -->
-  <main class="max-w-6xl mx-auto px-4 py-10 space-y-12">
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">✨ النظام الأول لإدارة أندية الجودو والرياضات القتالية في الجزائر</div>
+    <h1>نظام <span>JudoManager</span> المتكامل<br>للحواسيب والهواتف</h1>
+    <p>
+      حل احترافي شامل لجميع أندية وجمعيات الجودو والرياضات القتالية. تسجيل الرياضيين، طباعة بطاقات الكودبار، متابعة الاشتراكات المالية، تسجيل الحضور، وإشعار أولياء الأمور تلقائياً.
+    </p>
+  </div>
 
-    <div class="bg-gradient-to-r from-blue-950 via-slate-900 to-indigo-950 p-8 md:p-12 rounded-3xl border border-blue-800/40 shadow-2xl space-y-6 text-center md:text-right">
-      <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-blue-600/20 text-blue-300 border border-blue-500/30 rounded-full font-bold text-xs">
-        ✨ النظام الأول لإدارة أندية الجودو والرياضات القتالية
-      </div>
-      <h1 class="text-3xl md:text-5xl font-black text-white leading-snug">
-        نظام JudoManager المتكامل للحواسيب والهواتف
-      </h1>
-      <p class="text-slate-300 text-sm md:text-base leading-relaxed max-w-3xl">
-        حل احترافي شامل لجميع أندية وجمعيات الجودو والقتال. يتيح لك تسجيل الرياضيين، طباعة بطاقات الكودبار، متابعة الاشتراكات المالية، تسجيل الحضور عبر الهاتف أو كاميرا الحاسوب، وإشعار أولياء الأمور تلقائياً.
-      </p>
+  <!-- DOWNLOAD CARDS -->
+  <div class="container">
+    <div class="cards-grid">
 
-      <div class="flex flex-wrap gap-4 pt-2 justify-center md:justify-start">
-        <a href="../src/app/activate/page.tsx" onclick="window.location.href='/activate'; return false;" class="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-2xl text-sm shadow-lg shadow-blue-600/30 flex items-center gap-2">
-          🔑 طلب مفتاح تفعيل 14 يوماً مجاناً أو الشراء
+      <!-- PC Card -->
+      <div class="card card-blue">
+        <div class="card-icon card-icon-blue">🖥️</div>
+        <div>
+          <h3>نظام الكمبيوتر (Windows)</h3>
+          <p>النسخة الكاملة لأجهزة حواسيب النادي. تعمل أوفلاين بالكامل وتدعم طابعات الفواتير وقارئ الكودبار والكاميرا.</p>
+        </div>
+        <ul class="card-features">
+          <li>يعمل بدون إنترنت (أوفلاين)</li>
+          <li>دعم طابعات بطاقات الكودبار</li>
+          <li>قراءة الحضور بالكاميرا</li>
+          <li>تقارير مالية شاملة</li>
+        </ul>
+        <a href="./JudoManager-Installer.bat" download="JudoManager-Installer.bat" class="btn btn-blue" id="btn-download-pc">
+          📥 تحميل ملف التثبيت (.bat)
         </a>
+        <div class="notice">⚠️ تأكد من تثبيت <strong>Node.js</strong> و <strong>Git</strong> أولاً قبل تشغيل الملف. سيتم التحقق التلقائي.</div>
+      </div>
+
+      <!-- Mobile PWA Card -->
+      <div class="card card-indigo">
+        <div class="card-icon card-icon-indigo">📱</div>
+        <div>
+          <h3>تثبيت على الهاتف (تطبيق حقيقي)</h3>
+          <p>ثبّت نظام النادي كاملاً على هاتف المدرب أو الإدارة كتطبيق أصلي على الشاشة يعمل بشكل مستقل.</p>
+        </div>
+        <ul class="card-features">
+          <li>يُثبَّت كتطبيق أصلي على الشاشة</li>
+          <li>يعمل بدون فتح المتصفح</li>
+          <li>يدعم Android و iPhone</li>
+          <li>مزامنة مع نظام الحاسوب</li>
+        </ul>
+        <button class="btn btn-indigo" id="btn-install-pwa" onclick="showPwaModal()">
+          📲 طريقة تثبيت التطبيق على الهاتف
+        </button>
+      </div>
+
+      <!-- Trial/License Card -->
+      <div class="card card-emerald">
+        <div class="card-icon card-icon-emerald">🔑</div>
+        <div>
+          <h3>احصل على مفتاح التفعيل</h3>
+          <p>اطلب نسخة تجريبية 14 يوماً مجاناً أو اشترِ ترخيصاً دائماً مدى الحياة لناديك.</p>
+        </div>
+        <ul class="card-features">
+          <li>14 يوم تجريبي مجاني</li>
+          <li>ترخيص مدى الحياة بسعر رمزي</li>
+          <li>دعم فني مستمر</li>
+          <li>تحديثات مستقبلية مجانية</li>
+        </ul>
+        <button class="btn btn-emerald" onclick="showTrialModal()">
+          🎯 طلب نسخة تجريبية أو شراء الترخيص
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FEATURES SECTION -->
+  <section>
+    <h2 style="color:white; font-size:22px; font-weight:800; margin-bottom:8px; text-align:center;">
+      ماذا يقدم نظام JudoManager؟
+    </h2>
+    <p style="color:var(--slate-400); text-align:center; font-size:13px; margin-bottom:30px;">كل ما يحتاجه ناديك في مكان واحد</p>
+    <div class="features-grid">
+      <div class="feature-item">
+        <div class="feature-icon">👥</div>
+        <div class="feature-text">
+          <h4>تسجيل الرياضيين</h4>
+          <p>بيانات كاملة لكل رياضي مع صور ووثائق ومعلومات الأسرة</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">💳</div>
+        <div class="feature-text">
+          <h4>بطاقات الكودبار</h4>
+          <p>طباعة بطاقات هوية رياضية بكودبار للتعريف السريع</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📊</div>
+        <div class="feature-text">
+          <h4>الاشتراكات المالية</h4>
+          <p>متابعة دفعات الاشتراك والمديونيات وتقارير مالية دورية</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">✅</div>
+        <div class="feature-text">
+          <h4>الحضور التلقائي</h4>
+          <p>تسجيل حضور الرياضيين بالكودبار أو الكاميرا في ثوانٍ</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔔</div>
+        <div class="feature-text">
+          <h4>إشعارات أولياء الأمور</h4>
+          <p>إرسال إشعارات الحضور والغياب لأولياء الأمور مباشرة</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🥋</div>
+        <div class="feature-text">
+          <h4>إدارة الأحزمة</h4>
+          <p>تتبع مستويات وشهادات الأحزمة لكل رياضي</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">📱</div>
+        <div class="feature-text">
+          <h4>نسخة الهاتف الكاملة</h4>
+          <p>جميع الميزات متاحة على الهاتف مع مزامنة فورية</p>
+        </div>
+      </div>
+      <div class="feature-item">
+        <div class="feature-icon">🔐</div>
+        <div class="feature-text">
+          <h4>نظام صلاحيات متقدم</h4>
+          <p>تحكم بصلاحيات المدربين والإدارة بدقة عالية</p>
+        </div>
       </div>
     </div>
+  </section>
 
-    <!-- Download Options Grid (Cleaned: PC and Mobile Club Only, No Parent Card) -->
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-
-      <!-- PC Club Manager App -->
-      <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 space-y-4 hover:border-blue-500/50 transition-all shadow-xl flex flex-col justify-between">
-        <div class="space-y-3">
-          <div class="w-14 h-14 rounded-2xl bg-blue-600/20 text-blue-400 font-bold text-3xl flex items-center justify-center border border-blue-500/30">
-            🖥️
-          </div>
-          <h3 class="text-2xl font-bold text-white">نظام الكمبيوتر (Windows PC)</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            النسخة التنفيذية لأجهزة حواسيب النادي. تعمل أوفلاين وتدعم طابعات الفواتير وقارئ الكودبار.
-          </p>
+  <!-- STEPS SECTION -->
+  <section>
+    <div class="steps-section">
+      <h2>🚀 خطوات التفعيل والحصول على المفتاح</h2>
+      <div class="steps-grid">
+        <div class="step">
+          <div class="step-num" style="background:rgba(59,130,246,0.2);color:#60a5fa;">1</div>
+          <h4>طلب التجربة</h4>
+          <p>اضغط على "طلب نسخة تجريبية" وأدخل بيانات ناديك والبريد الإلكتروني</p>
         </div>
-
-        <a href="./JudoManager-Installer.bat" download="JudoManager-Installer.bat" class="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl text-sm text-center block transition-all shadow-lg shadow-blue-600/30">
-          📥 تحميل حزمة تثبيت الويندوز (.bat)
-        </a>
-      </div>
-
-      <!-- Mobile Club Manager App -->
-      <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 space-y-4 hover:border-indigo-500/50 transition-all shadow-xl flex flex-col justify-between">
-        <div class="space-y-3">
-          <div class="w-14 h-14 rounded-2xl bg-indigo-600/20 text-indigo-400 font-bold text-3xl flex items-center justify-center border border-indigo-500/30">
-            🥋
-          </div>
-          <h3 class="text-2xl font-bold text-white">تثبيت نظام النادي على الهاتف (PWA App)</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            تثبيت نظام النادي كاملاً على هاتف المدرب أو الإدارة للعمل به كـ تطبيق أصلي مثبت على الشاشة.
-          </p>
+        <div class="step">
+          <div class="step-num" style="background:rgba(99,102,241,0.2);color:#a5b4fc;">2</div>
+          <h4>الدفع (للترخيص الكامل)</h4>
+          <p>عند الرغبة بالشراء، حوّل المبلغ عبر BaridiMob وأرسل الوصل</p>
         </div>
-
-        <a href="../src/app/dashboard/page.tsx" onclick="window.location.href='/dashboard'; return false;" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl text-sm text-center block transition-all shadow-lg shadow-indigo-600/30">
-          📱 تثبيت تطبيق النادي على الهاتف
-        </a>
-      </div>
-
-    </div>
-
-    <!-- License & Trial Info Section -->
-    <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 space-y-6 shadow-xl">
-      <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
-        <span>🔐</span> خطوات التفعيل والحصول على المفتاح
-      </h2>
-
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
-        <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-2">
-          <span class="w-8 h-8 rounded-xl bg-blue-600 text-white font-black text-xs flex items-center justify-center">1</span>
-          <h4 class="font-bold text-white text-sm">طلب التجربة والمفتاح</h4>
-          <p class="text-slate-400 leading-relaxed">
-            أدخل بيانات النادي والبريد الإلكتروني للحصول على مفتاح التفعيل والتجربة المجانية.
-          </p>
+        <div class="step">
+          <div class="step-num" style="background:rgba(16,185,129,0.2);color:#6ee7b7;">3</div>
+          <h4>استلام المفتاح</h4>
+          <p>سيصلك مفتاح التفعيل الخاص بناديك عبر البريد الإلكتروني</p>
         </div>
-
-        <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-2">
-          <span class="w-8 h-8 rounded-xl bg-emerald-600 text-white font-black text-xs flex items-center justify-center">2</span>
-          <h4 class="font-bold text-white text-sm">الدفع عبر BaridiMob</h4>
-          <p class="text-slate-400 leading-relaxed">
-            عند الرغبة بالاشتراك الدائم مدى الحياة، يتم تحويل المبلغ بـ BaridiMob وإرفاق الوصل.
-          </p>
-        </div>
-
-        <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-2">
-          <span class="w-8 h-8 rounded-xl bg-indigo-600 text-white font-black text-xs flex items-center justify-center">3</span>
-          <h4 class="font-bold text-white text-sm">الاستلام عبر الإيميل</h4>
-          <p class="text-slate-400 leading-relaxed">
-            يقوم الأدمن بمراجعة الطلب وإرسال المفتاح فوراً إلى بريدك الإلكتروني لتنشيط حسابك.
-          </p>
+        <div class="step">
+          <div class="step-num" style="background:rgba(168,85,247,0.2);color:#d8b4fe;">4</div>
+          <h4>تفعيل وتشغيل</h4>
+          <p>أدخل المفتاح في النظام وابدأ الاستخدام الكامل فوراً</p>
         </div>
       </div>
     </div>
+  </section>
 
-  </main>
-
-  <!-- Footer -->
-  <footer class="border-t border-slate-800 py-8 text-center text-xs text-slate-500">
-    بوابة JudoManager الرسمية © جميع الحقوق محفوظة للمبرمج (0553823611 - @nisoo09)
+  <!-- FOOTER -->
+  <footer>
+    <p>© 2025 JudoManager Pro - جميع الحقوق محفوظة</p>
+    <div class="footer-contacts">
+      <a href="https://wa.me/213553823611" target="_blank" class="btn-contact btn-wa">💬 0553823611</a>
+      <a href="https://t.me/nisoo09" target="_blank" class="btn-contact btn-tg">✈️ @nisoo09</a>
+    </div>
   </footer>
+
+  <!-- MODAL: Trial / License Request -->
+  <div class="modal-overlay" id="trialModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('trialModal')">✕</button>
+      
+      <div id="trialFormSection">
+        <h3>🎯 طلب نسخة تجريبية أو شراء</h3>
+        <p>أدخل بيانات ناديك وسيتم التواصل معك خلال 24 ساعة لتأكيد طلبك وإرسال مفتاح التفعيل.</p>
+
+        <div class="alert">
+          <span class="alert-icon">💰</span>
+          <p class="alert-text">
+            <strong>أسعار الاشتراك:</strong><br>
+            • تجربة مجانية: 14 يوم كاملاً بدون دفع<br>
+            • ترخيص مدى الحياة: تواصل معي عبر واتساب للسعر
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label>اسم النادي / الجمعية *</label>
+          <input type="text" id="clubName" placeholder="مثال: نادي الرياضي للجودو" required>
+        </div>
+        <div class="form-group">
+          <label>البريد الإلكتروني (لاستلام المفتاح) *</label>
+          <input type="email" id="email" placeholder="example@gmail.com" required>
+        </div>
+        <div class="form-group">
+          <label>رقم الهاتف *</label>
+          <input type="tel" id="phone" placeholder="0551234567">
+        </div>
+        <div class="form-group">
+          <label>نوع الطلب *</label>
+          <select id="requestType">
+            <option value="trial">نسخة تجريبية 14 يوم (مجانية)</option>
+            <option value="paid">شراء ترخيص مدى الحياة</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>ملاحظات إضافية (اختياري)</label>
+          <textarea id="notes" placeholder="أي معلومات إضافية حول ناديك..."></textarea>
+        </div>
+
+        <button class="btn btn-emerald" onclick="submitTrialRequest()" style="margin-top:8px;">
+          📤 إرسال الطلب عبر واتساب
+        </button>
+      </div>
+
+      <div class="success-msg" id="trialSuccess">
+        <p style="font-size:48px; margin-bottom:16px;">✅</p>
+        <h3>تم إرسال طلبك بنجاح!</h3>
+        <p>سيتم التواصل معك خلال 24 ساعة عبر الواتساب وإرسال مفتاح التفعيل إلى بريدك الإلكتروني.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: PWA Installation Guide -->
+  <div class="modal-overlay" id="pwaModal">
+    <div class="modal">
+      <button class="modal-close" onclick="closeModal('pwaModal')">✕</button>
+      <h3>📲 تثبيت نظام النادي على الهاتف</h3>
+      <p>اتبع الخطوات التالية لتثبيت النظام كتطبيق حقيقي على هاتفك:</p>
+
+      <div class="alert" style="margin-bottom:16px;">
+        <span class="alert-icon">📌</span>
+        <p class="alert-text">
+          <strong>قبل البدء:</strong> تأكد من تشغيل نظام الكمبيوتر الخاص بالنادي أولاً، ثم اتبع الخطوات أدناه.
+        </p>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <p style="color:white; font-weight:700; font-size:14px; margin-bottom:12px;">📱 على Android:</p>
+        <div class="pwa-steps">
+          <div class="pwa-step">
+            <div class="pwa-step-num">1</div>
+            <p>افتح متصفح <strong>Chrome</strong> على هاتفك</p>
+          </div>
+          <div class="pwa-step">
+            <div class="pwa-step-num">2</div>
+            <p>اكتب عنوان النظام الذي يعطيك إياه الكمبيوتر (مثل: <strong>http://192.168.1.X:3000</strong>)</p>
+          </div>
+          <div class="pwa-step">
+            <div class="pwa-step-num">3</div>
+            <p>اضغط على النقاط الثلاث <strong>⋮</strong> في أعلى المتصفح</p>
+          </div>
+          <div class="pwa-step">
+            <div class="pwa-step-num">4</div>
+            <p>اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong> أو <strong>"تثبيت التطبيق"</strong></p>
+          </div>
+          <div class="pwa-step">
+            <div class="pwa-step-num">5</div>
+            <p>اضغط <strong>"تثبيت"</strong> وسيظهر أيقونة النظام على شاشتك الرئيسية</p>
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <p style="color:white; font-weight:700; font-size:14px; margin-bottom:12px;">🍎 على iPhone (Safari):</p>
+        <div class="pwa-steps">
+          <div class="pwa-step">
+            <div class="pwa-step-num">1</div>
+            <p>افتح متصفح <strong>Safari</strong> (مهم! ليس Chrome)</p>
+          </div>
+          <div class="pwa-step">
+            <div class="pwa-step-num">2</div>
+            <p>اكتب عنوان النظام في شريط العنوان</p>
+          </div>
+          <div class="pwa-step">
+            <div class="pwa-step-num">3</div>
+            <p>اضغط أيقونة المشاركة <strong>↑</strong> في الشريط السفلي</p>
+          </div>
+          <div class="pwa-step">
+            <div class="pwa-step-num">4</div>
+            <p>اختر <strong>"إضافة إلى الشاشة الرئيسية"</strong></p>
+          </div>
+          <div class="pwa-step">
+            <div class="pwa-step-num">5</div>
+            <p>اضغط <strong>"إضافة"</strong> وسيظهر التطبيق على شاشتك</p>
+          </div>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;">
+        <a href="https://wa.me/213553823611?text=السلام عليكم، أحتاج مساعدة في تثبيت نظام النادي على الهاتف" target="_blank" class="btn btn-emerald">
+          💬 تواصل معي للمساعدة المباشرة
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    function showTrialModal() {
+      document.getElementById('trialModal').classList.add('active');
+    }
+    function showPwaModal() {
+      document.getElementById('pwaModal').classList.add('active');
+    }
+    function closeModal(id) {
+      document.getElementById(id).classList.remove('active');
+    }
+
+    // Close modal on overlay click
+    document.querySelectorAll('.modal-overlay').forEach(overlay => {
+      overlay.addEventListener('click', function(e) {
+        if (e.target === this) this.classList.remove('active');
+      });
+    });
+
+    function submitTrialRequest() {
+      const clubName = document.getElementById('clubName').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const phone = document.getElementById('phone').value.trim();
+      const type = document.getElementById('requestType').value;
+      const notes = document.getElementById('notes').value.trim();
+
+      if (!clubName || !email) {
+        alert('الرجاء إدخال اسم النادي والبريد الإلكتروني على الأقل');
+        return;
+      }
+
+      const typeText = type === 'trial' ? 'نسخة تجريبية 14 يوم' : 'شراء ترخيص مدى الحياة';
+      let msg = `السلام عليكم،\n\nأريد ${typeText} لنظام JudoManager.\n\n`;
+      msg += `اسم النادي: ${clubName}\n`;
+      msg += `البريد الإلكتروني: ${email}\n`;
+      if (phone) msg += `رقم الهاتف: ${phone}\n`;
+      if (notes) msg += `ملاحظات: ${notes}\n`;
+
+      const waUrl = `https://wa.me/213553823611?text=${encodeURIComponent(msg)}`;
+      window.open(waUrl, '_blank');
+
+      document.getElementById('trialFormSection').style.display = 'none';
+      document.getElementById('trialSuccess').style.display = 'block';
+    }
+  </script>
 
 </body>
 </html>
