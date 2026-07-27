@@ -10,8 +10,18 @@ export default function DashboardOverview() {
   const [formName, setFormName] = useState("");
   const [formGroup, setFormGroup] = useState("أشبال (10-12 سنة)");
 
+  // State for club data (starts 100% clean and zero by default for new clubs)
+  const [athletesList, setAthletesList] = useState<any[]>([]);
+
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    const newAth = {
+      id: "ATH-" + (athletesList.length + 1).toString().padStart(3, "0"),
+      name: formName,
+      belt: "حزام أبيض",
+      group: formGroup,
+    };
+    setAthletesList([newAth, ...athletesList]);
     alert(`تمت إضافة اللاعب "${formName}" بنجاح إلى مجموعة ${formGroup}!`);
     setShowAddModal(false);
     setFormName("");
@@ -41,12 +51,12 @@ export default function DashboardOverview() {
         </div>
       </div>
 
-      {/* Stat Cards */}
+      {/* Stat Cards - ALL CLEAN & ZERO FOR NEW CLUB */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="إجمالي اللاعبين" value="124" trend="+5 هذا الشهر" color="blue" />
-        <StatCard title="حاضرون اليوم" value="45" trend="حصة الساعة 18:00" color="green" />
-        <StatCard title="اشتراكات تنتهي قريباً" value="12" trend="خلال 7 أيام" color="orange" />
-        <StatCard title="المدفوعات هذا الشهر" value="145000 دج" trend="+12% عن الشهر الماضي" color="purple" />
+        <StatCard title="إجمالي اللاعبين" value={athletesList.length.toString()} trend="لا يوجد لاعبون بعد" color="blue" />
+        <StatCard title="حاضرون اليوم" value="0" trend="0 حصص" color="green" />
+        <StatCard title="اشتراكات تنتهي قريباً" value="0" trend="لا توجد تذكيرات" color="orange" />
+        <StatCard title="المدفوعات هذا الشهر" value="0 دج" trend="0 دج مدفوعات" color="purple" />
       </div>
 
       {/* Main Grid */}
@@ -56,12 +66,24 @@ export default function DashboardOverview() {
             <h3 className="text-xl font-bold text-gray-800">أحدث التسجيلات بالنادي</h3>
             <Link href="/dashboard/athletes" className="text-blue-600 hover:underline text-xs font-bold">عرض الكل ➔</Link>
           </div>
-          <div className="space-y-4">
-            <AthleteRow name="محمد أمين بن علي" belt="حزام أصفر" group="أشبال (10-12 سنة)" />
-            <AthleteRow name="أحمد ياسين زروقي" belt="حزام برتقالي" group="أشبال (10-12 سنة)" />
-            <AthleteRow name="يوسف بلقاسم" belt="حزام أخضر" group="أواسط (13-16 سنة)" />
-            <AthleteRow name="سارة حداد" belt="حزام أبيض" group="براعم (6-9 سنوات)" />
-          </div>
+          {athletesList.length === 0 ? (
+            <div className="text-center py-10 space-y-3 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+              <span className="text-3xl block">🥋</span>
+              <p className="text-xs font-bold text-gray-500">لا يوجد لاعبون مسجلون في النادي بعد.</p>
+              <button
+                onClick={() => setShowAddModal(true)}
+                className="px-4 py-2 bg-blue-600 text-white font-bold rounded-xl text-xs shadow-md"
+              >
+                ➕ إضافة أول لاعب للنادي
+              </button>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {athletesList.map((ath) => (
+                <AthleteRow key={ath.id} name={ath.name} belt={ath.belt} group={ath.group} />
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -69,10 +91,9 @@ export default function DashboardOverview() {
             <h3 className="text-xl font-bold text-gray-800">تنبيهات وإشعار الأولياء</h3>
             <Link href="/dashboard/notifications" className="text-blue-600 hover:underline text-xs font-bold">إرسال إشعار ➔</Link>
           </div>
-          <div className="space-y-4">
-            <AlertRow text="اشتراك 5 لاعبين ينتهي غداً - إرسال تذكير" type="warning" />
-            <AlertRow text="بطولة الولاية المقررة بعد 14 يوم" type="info" />
-            <AlertRow text="تأكيد مواعيد حصة يوم السبت على 17:00" type="danger" />
+          <div className="text-center py-10 space-y-2 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+            <span className="text-3xl block">🔔</span>
+            <p className="text-xs font-bold text-gray-500">لا توجد تنبيهات عاجلة. يمكنك إرسال أول إشعار للأولياء.</p>
           </div>
         </div>
       </div>
@@ -178,20 +199,6 @@ function AthleteRow({ name, belt, group }: { name: string; belt: string; group: 
         </div>
       </div>
       <div className="text-xs font-semibold text-gray-700 bg-gray-100 px-3 py-1 rounded-full">{belt}</div>
-    </div>
-  );
-}
-
-function AlertRow({ text, type }: { text: string; type: "warning" | "info" | "danger" }) {
-  const styles = {
-    warning: "bg-orange-50 text-orange-800 border-orange-100",
-    info: "bg-blue-50 text-blue-800 border-blue-100",
-    danger: "bg-red-50 text-red-800 border-red-100",
-  };
-  return (
-    <div className={`p-4 rounded-lg border ${styles[type]} flex items-center gap-3 text-xs font-bold`}>
-      <span>{type === "warning" ? "⚠️" : type === "danger" ? "🚨" : "ℹ️"}</span>
-      <span>{text}</span>
     </div>
   );
 }
