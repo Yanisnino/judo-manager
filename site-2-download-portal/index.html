@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>JudoManager - الموقع الرسمي لتنزيل وتفعيل نظام إدارة أندية الجودو</title>
+  <title>JudoManager - البوابة الرسمية لتنزيل نظام إدارة أندية الجودو</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
   <style>
@@ -51,66 +51,46 @@
       </p>
 
       <div class="flex flex-wrap gap-4 pt-2 justify-center md:justify-start">
-        <a href="../src/app/activate/page.tsx" onclick="window.location.href='/activate'" class="px-6 py-3.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-2xl text-sm shadow-lg shadow-blue-600/30">
-          🔑 طلب مفتاح تفعيل 14 يوماً مجاناً
-        </a>
-        <a href="../src/app/admin/page.tsx" onclick="window.location.href='/admin'" class="px-6 py-3.5 bg-slate-900 border border-slate-700 hover:bg-slate-800 text-slate-200 font-bold rounded-2xl text-sm shadow-md">
-          ⚙️ لوحة تفعيل الأدمن
+        <a href="../src/app/activate/page.tsx" onclick="window.location.href='/activate'; return false;" class="px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-2xl text-sm shadow-lg shadow-blue-600/30 flex items-center gap-2">
+          🔑 طلب مفتاح تفعيل 14 يوماً مجاناً أو الشراء
         </a>
       </div>
     </div>
 
-    <!-- Download Options Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+    <!-- Download Options Grid (Cleaned: PC and Mobile Club Only, No Parent Card) -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
 
       <!-- PC Club Manager App -->
-      <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 space-y-4 hover:border-blue-500/50 transition-all shadow-xl flex flex-col justify-between">
+      <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 space-y-4 hover:border-blue-500/50 transition-all shadow-xl flex flex-col justify-between">
         <div class="space-y-3">
-          <div class="w-12 h-12 rounded-2xl bg-blue-600/20 text-blue-400 font-bold text-2xl flex items-center justify-center border border-blue-500/30">
+          <div class="w-14 h-14 rounded-2xl bg-blue-600/20 text-blue-400 font-bold text-3xl flex items-center justify-center border border-blue-500/30">
             🖥️
           </div>
-          <h3 class="text-xl font-bold text-white">نظام الكمبيوتر (Windows PC)</h3>
+          <h3 class="text-2xl font-bold text-white">نظام الكمبيوتر (Windows PC)</h3>
           <p class="text-xs text-slate-400 leading-relaxed">
-            النسخة التنفيذية لأجهزة حواسيب النادي. تعمل أوفلاين وتدعم طابعات الفواتير وقارئ الباركوذ.
+            النسخة التنفيذية لأجهزة حواسيب النادي. تعمل أوفلاين وتدعم طابعات الفواتير وقارئ الكودبار.
           </p>
         </div>
 
-        <a href="./JudoManager-Installer.bat" download="JudoManager-Installer.bat" class="w-full py-3.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl text-xs text-center block transition-all shadow-lg shadow-blue-600/30">
+        <a href="./JudoManager-Installer.bat" download="JudoManager-Installer.bat" class="w-full py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-2xl text-sm text-center block transition-all shadow-lg shadow-blue-600/30">
           📥 تحميل حزمة تثبيت الويندوز (.bat)
         </a>
       </div>
 
       <!-- Mobile Club Manager App -->
-      <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 space-y-4 hover:border-indigo-500/50 transition-all shadow-xl flex flex-col justify-between">
+      <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 space-y-4 hover:border-indigo-500/50 transition-all shadow-xl flex flex-col justify-between">
         <div class="space-y-3">
-          <div class="w-12 h-12 rounded-2xl bg-indigo-600/20 text-indigo-400 font-bold text-2xl flex items-center justify-center border border-indigo-500/30">
+          <div class="w-14 h-14 rounded-2xl bg-indigo-600/20 text-indigo-400 font-bold text-3xl flex items-center justify-center border border-indigo-500/30">
             🥋
           </div>
-          <h3 class="text-xl font-bold text-white">تثبيت نظام النادي على الهاتف (PWA App)</h3>
+          <h3 class="text-2xl font-bold text-white">تثبيت نظام النادي على الهاتف (PWA App)</h3>
           <p class="text-xs text-slate-400 leading-relaxed">
             تثبيت نظام النادي كاملاً على هاتف المدرب أو الإدارة للعمل به كـ تطبيق أصلي مثبت على الشاشة.
           </p>
         </div>
 
-        <a href="../src/app/dashboard/page.tsx" onclick="window.location.href='/dashboard'" class="w-full py-3.5 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl text-xs text-center block transition-all shadow-lg shadow-indigo-600/30">
+        <a href="../src/app/dashboard/page.tsx" onclick="window.location.href='/dashboard'; return false;" class="w-full py-4 bg-indigo-600 hover:bg-indigo-500 text-white font-bold rounded-2xl text-sm text-center block transition-all shadow-lg shadow-indigo-600/30">
           📱 تثبيت تطبيق النادي على الهاتف
-        </a>
-      </div>
-
-      <!-- Mobile Parent App -->
-      <div class="bg-slate-900 p-6 rounded-3xl border border-slate-800 space-y-4 hover:border-emerald-500/50 transition-all shadow-xl flex flex-col justify-between">
-        <div class="space-y-3">
-          <div class="w-12 h-12 rounded-2xl bg-emerald-600/20 text-emerald-400 font-bold text-2xl flex items-center justify-center border border-emerald-500/30">
-            👨‍👩‍👧
-          </div>
-          <h3 class="text-xl font-bold text-white">تطبيق أولياء الأمور (Parent App)</h3>
-          <p class="text-xs text-slate-400 leading-relaxed">
-            تطبيق خاص بأولياء الأمور لمتابعة حضور وأحزمة أبنائهم وتلقي التنبيهات على هواتفهم.
-          </p>
-        </div>
-
-        <a href="../site-1-parent-app/index.html" target="_blank" class="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl text-xs text-center block transition-all shadow-lg shadow-emerald-600/30">
-          📲 فتح تطبيق أولياء الأمور
         </a>
       </div>
 
@@ -119,15 +99,15 @@
     <!-- License & Trial Info Section -->
     <div class="bg-slate-900 p-8 rounded-3xl border border-slate-800 space-y-6 shadow-xl">
       <h2 class="text-2xl font-bold text-white border-b border-slate-800 pb-3 flex items-center gap-2">
-        <span>🔐</span> كيفية الحصول على مفتاح تفعيل النظام
+        <span>🔐</span> خطوات التفعيل والحصول على المفتاح
       </h2>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 text-xs">
         <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-2">
           <span class="w-8 h-8 rounded-xl bg-blue-600 text-white font-black text-xs flex items-center justify-center">1</span>
-          <h4 class="font-bold text-white text-sm">التجربة المجانية (14 يوماً)</h4>
+          <h4 class="font-bold text-white text-sm">طلب التجربة والمفتاح</h4>
           <p class="text-slate-400 leading-relaxed">
-            احصل على مفتاح تفعيل مجاني لمدة 14 يوماً لتجربة كل مميزات النظام بالنادي بدون أي التزام.
+            أدخل بيانات النادي والبريد الإلكتروني للحصول على مفتاح التفعيل والتجربة المجانية.
           </p>
         </div>
 
@@ -135,15 +115,15 @@
           <span class="w-8 h-8 rounded-xl bg-emerald-600 text-white font-black text-xs flex items-center justify-center">2</span>
           <h4 class="font-bold text-white text-sm">الدفع عبر BaridiMob</h4>
           <p class="text-slate-400 leading-relaxed">
-            بعد اقتناع النادي بالنظام، يتم تحويل اشتراك الترخيص عبر حساب بريدي موب مع إرفاق وصل الدفع.
+            عند الرغبة بالاشتراك الدائم مدى الحياة، يتم تحويل المبلغ بـ BaridiMob وإرفاق الوصل.
           </p>
         </div>
 
         <div class="bg-slate-950 p-5 rounded-2xl border border-slate-800 space-y-2">
           <span class="w-8 h-8 rounded-xl bg-indigo-600 text-white font-black text-xs flex items-center justify-center">3</span>
-          <h4 class="font-bold text-white text-sm">التفعيل الدائم مدى الحياة</h4>
+          <h4 class="font-bold text-white text-sm">الاستلام عبر الإيميل</h4>
           <p class="text-slate-400 leading-relaxed">
-            تقوم الإدارة بمراجعة طلبك وإرسال مفتاح الترخيص الدائم فوراً لتنشيط النظام في ثوانٍ.
+            يقوم الأدمن بمراجعة الطلب وإرسال المفتاح فوراً إلى بريدك الإلكتروني لتنشيط حسابك.
           </p>
         </div>
       </div>
@@ -153,7 +133,7 @@
 
   <!-- Footer -->
   <footer class="border-t border-slate-800 py-8 text-center text-xs text-slate-500">
-    بوابة JudoManager وتفعيل مفاتيح التراخيص © جميع الحقوق محفوظة للمبرمج (0553823611 - @nisoo09)
+    بوابة JudoManager الرسمية © جميع الحقوق محفوظة للمبرمج (0553823611 - @nisoo09)
   </footer>
 
 </body>

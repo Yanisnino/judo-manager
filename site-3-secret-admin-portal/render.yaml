@@ -1,0 +1,6 @@
+services:
+  - type: web
+    name: judo-secret-admin-portal
+    env: static
+    buildCommand: ""
+    staticPublishPath: .

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>لوحة التحكم السرية للمبرمج - JudoManager Admin Secret Portal</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Cairo', sans-serif; }
+  </style>
+</head>
+<body class="bg-slate-950 text-slate-100 min-h-screen selection:bg-blue-600 selection:text-white">
+
+  <!-- Admin Secret Top Header -->
+  <header class="border-b border-slate-800 bg-slate-900/90 backdrop-blur-md sticky top-0 z-50">
+    <div class="max-w-6xl mx-auto px-4 py-4 flex flex-wrap justify-between items-center gap-3">
+      <div class="flex items-center gap-3">
+        <div class="w-11 h-11 rounded-2xl bg-gradient-to-tr from-purple-600 to-indigo-600 flex items-center justify-center font-black text-2xl shadow-lg shadow-purple-600/30">
+          🔐
+        </div>
+        <div>
+          <span class="font-black text-xl text-white block">JudoManager Secret Admin</span>
+          <span class="text-[11px] text-purple-400 font-bold">لوحة التحكم السرية الخاصة بالمبرمج فقط</span>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <span class="px-3 py-1 bg-purple-600/20 text-purple-300 border border-purple-500/30 rounded-full font-bold text-xs">
+          🔒 حماية مشفرة
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Admin Dashboard Content -->
+  <main class="max-w-6xl mx-auto px-4 py-10 space-y-8">
+
+    <div class="bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 space-y-4 shadow-2xl">
+      <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-slate-800 pb-4">
+        <div>
+          <h2 class="text-2xl font-black text-white flex items-center gap-2">
+            <span>📋</span> طلبات تفعيل وتراخيص الأندية
+          </h2>
+          <p class="text-xs text-slate-400 mt-1">
+            فحص طلبات التجربة المجانية والاشتراكات الدائمة المطابقة لوصل تحويل BaridiMob
+          </p>
+        </div>
+        <button onclick="loadRequests()" class="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 font-bold rounded-xl text-xs flex items-center gap-1.5">
+          🔄 تحديث الطلبات
+        </button>
+      </div>
+
+      <!-- Requests Table -->
+      <div class="overflow-x-auto">
+        <table class="w-full text-right text-xs">
+          <thead class="bg-slate-950 text-slate-400 font-bold border-b border-slate-800">
+            <tr>
+              <th className="p-3.5">رقم الطلب</th>
+              <th className="p-3.5">اسم النادي</th>
+              <th className="p-3.5">المسؤول والهاتف</th>
+              <th className="p-3.5">البريد الإلكتروني (الإيميل)</th>
+              <th className="p-3.5">نوع الاشتراك</th>
+              <th className="p-3.5">وصل BaridiMob</th>
+              <th className="p-3.5">الحالة</th>
+              <th className="p-3.5 text-left">إجراء التفعيل والإرسال</th>
+            </tr>
+          </thead>
+          <tbody id="requestsTableBody" className="divide-y divide-slate-800/60">
+            <!-- Dynamic Javascript Table Rows -->
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="border-t border-slate-800 py-8 text-center text-xs text-slate-500">
+    لوحة الأدمن السرية لـ JudoManager © المبرمج (0553823611 - @nisoo09)
+  </footer>
+
+  <script>
+    const defaultData = [
+      {
+        id: "REQ-1001",
+        clubName: "نادي الأمل الرياضي للجودو",
+        managerName: "عبد القادر بلحاج",
+        phone: "0550123456",
+        email: "elamal.judo@gmail.com",
+        requestType: "TRIAL_14_DAYS",
+        status: "PENDING",
+        createdAt: "اليوم"
+      },
+      {
+        id: "REQ-1002",
+        clubName: "جمعية الأبطال للجودو والقتال",
+        managerName: "ياسين زروقي",
+        phone: "0661987654",
+        email: "champions.judo.dz@gmail.com",
+        requestType: "LIFETIME_PRO",
+        receiptUrl: "وصل تحويل بريدي موب #00982415 (مبلغ 15,000 دج)",
+        status: "PENDING",
+        createdAt: "اليوم"
+      }
+    ];
+
+    function loadRequests() {
+      const tbody = document.getElementById('requestsTableBody');
+      tbody.innerHTML = '';
+
+      defaultData.forEach((req, idx) => {
+        const isApproved = req.status === 'APPROVED';
+        const tr = document.createElement('tr');
+        tr.className = "hover:bg-slate-800/40 transition-all";
+        tr.innerHTML = `
+          <td class="p-3.5 font-mono text-slate-400 font-bold">${req.id}</td>
+          <td class="p-3.5 font-bold text-white">${req.clubName}</td>
+          <td class="p-3.5">
+            <span class="block text-slate-300 font-medium">${req.managerName}</span>
+            <span class="font-mono text-blue-400 text-[11px]">${req.phone}</span>
+          </td>
+          <td class="p-3.5 font-mono text-indigo-300 font-bold">${req.email}</td>
+          <td class="p-3.5">
+            ${req.requestType === 'LIFETIME_PRO' 
+              ? '<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px] border border-emerald-500/30">🏆 دائم مدى الحياة (مدفوع)</span>' 
+              : '<span class="px-2.5 py-1 rounded-full bg-indigo-500/20 text-indigo-400 font-bold text-[10px] border border-indigo-500/30">⏱️ تجربة 14 يوماً</span>'}
+          </td>
+          <td class="p-3.5">
+            ${req.receiptUrl ? `<span class="bg-slate-950 px-2.5 py-1 rounded-lg border border-slate-800 text-emerald-400 font-mono text-[11px] block max-w-[180px] truncate">${req.receiptUrl}</span>` : '<span class="text-slate-600">-</span>'}
+          </td>
+          <td class="p-3.5">
+            ${isApproved 
+              ? '<span class="px-2.5 py-1 rounded-full bg-emerald-500/20 text-emerald-400 font-bold text-[10px]">✅ تم التفعيل والإرسال</span>' 
+              : '<span class="px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 font-bold text-[10px]">⏳ قيد التحقق</span>'}
+          </td>
+          <td class="p-3.5 text-left">
+            ${isApproved ? `
+              <div class="flex flex-col items-end gap-1">
+                <span class="font-mono text-emerald-400 font-black bg-slate-950 px-3 py-1 rounded-xl border border-emerald-500/30 text-xs">${req.generatedKey}</span>
+              </div>
+            ` : `
+              <button onclick="approveReq(${idx})" class="px-3.5 py-2 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl shadow-md text-xs">
+                ⚡ تأكيد الدفع وتوليد المفتاح
+              </button>
+            `}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function approveReq(idx) {
+      const item = defaultData[idx];
+      const keyPrefix = item.requestType === 'LIFETIME_PRO' ? 'JUDO-PRO' : 'JUDO-TRL';
+      const key = `${keyPrefix}-${Math.floor(1000 + Math.random() * 9000)}-${Math.floor(1000 + Math.random() * 9000)}`;
+      item.status = 'APPROVED';
+      item.generatedKey = key;
+
+      loadRequests();
+
+      // Email & WhatsApp direct trigger link
+      const mailSubject = encodeURIComponent(`مفتاح تفعيل نظام JudoManager لـ ${item.clubName}`);
+      const mailBody = encodeURIComponent(`مرحباً ${item.managerName}،\n\nتم قبول وتأكيد طلبكم بنجاح!\nمفتاح التفعيل الخاص بناديكم هو:\n${key}\n\nشكراً لكم.`);
+      
+      const whatsappMsg = encodeURIComponent(`مرحباً ${item.managerName}، تم قبول وتأكيد طلبكم بنجاح! مفتاح التفعيل الخاص بكم على البريد ${item.email} هو: ${key}`);
+
+      alert(`✅ تم تأكيد الطلب وتوليد المفتاح: ${key}\nتم إعداده للإرسال إلى البريد الإلكتروني: ${item.email}`);
+      
+      window.open(`mailto:${item.email}?subject=${mailSubject}&body=${mailBody}`, '_blank');
+    }
+
+    loadRequests();
+  </script>
+</body>
+</html>

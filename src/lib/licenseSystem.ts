@@ -15,6 +15,7 @@ export interface LicenseRequest {
   clubName: string;
   managerName: string;
   phone: string;
+  email: string;
   requestType: "TRIAL_14_DAYS" | "LIFETIME_PRO";
   receiptUrl?: string;
   status: "PENDING" | "APPROVED" | "REJECTED";
@@ -25,13 +26,14 @@ export interface LicenseRequest {
 const STORAGE_KEY_LICENSE = "judomanager_club_license";
 const STORAGE_KEY_REQUESTS = "judomanager_admin_requests";
 
-// Default seed requests for Admin Demonstration
+// Default seed requests for Secret Admin Portal Demonstration
 const DEFAULT_REQUESTS: LicenseRequest[] = [
   {
     id: "REQ-1001",
     clubName: "نادي الأمل الرياضي للجودو",
     managerName: "عبد القادر بلحاج",
     phone: "0550123456",
+    email: "elamal.judo@gmail.com",
     requestType: "TRIAL_14_DAYS",
     status: "PENDING",
     createdAt: new Date().toISOString(),
@@ -41,8 +43,9 @@ const DEFAULT_REQUESTS: LicenseRequest[] = [
     clubName: "جمعية الأبطال للجودو والقتال",
     managerName: "ياسين زروقي",
     phone: "0661987654",
+    email: "champions.judo.dz@gmail.com",
     requestType: "LIFETIME_PRO",
-    receiptUrl: "https://placehold.co/600x800/1e293b/ffffff?text=BaridiMob+Receipt+Proof+0012984",
+    receiptUrl: "وصل تحويل بريدي موب BaridiMob - رقم العملية #00982415 (مبلغ 15,000 دج)",
     status: "PENDING",
     createdAt: new Date(Date.now() - 3600000 * 5).toISOString(),
   },
