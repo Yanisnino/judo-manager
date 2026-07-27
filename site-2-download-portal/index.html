@@ -146,13 +146,6 @@
       margin-bottom: 26px;
       position: relative; overflow: hidden;
     }
-    .hero::before {
-      content: '';
-      position: absolute; top: -60px; left: -60px;
-      width: 300px; height: 300px;
-      background: radial-gradient(circle, rgba(79,142,247,.12) 0%, transparent 70%);
-      pointer-events: none;
-    }
     .hero-badge {
       display: inline-flex; align-items: center; gap: 6px;
       background: rgba(79,142,247,.12); border: 1px solid rgba(79,142,247,.25);
@@ -333,7 +326,6 @@
       font-family: 'JetBrains Mono', monospace; font-size: 14px;
       outline: none; transition: border-color .2s; letter-spacing: .05em;
     }
-    .key-input input:focus { border-color: var(--emerald); }
 
     /* ══ SUCCESS STATE ══ */
     .success {
@@ -498,7 +490,7 @@
       <div class="feature">
         <div class="feat-ico fi-b">🎯</div>
         <div class="feat-title">تسجيل لاعبين متعدد</div>
-        <div class="feat-desc">إمكانية تسجيل عدد غير محدود من اللاعبين مع تخزين جميع بياناتهم الشخصية والرياضية والطبية.</div>
+        <div class="feat-desc">إكانية تسجيل عدد غير محدود من اللاعبين مع تخزين جميع بياناتهم الشخصية والرياضية والطبية.</div>
       </div>
       <div class="feature">
         <div class="feat-ico fi-e">🔖</div>
@@ -587,52 +579,47 @@
   <div class="pg" id="pg-download">
     <div class="ph">
       <h1>💻 تحميل وتثبيت النظام</h1>
-      <p>تحميل النظام على حاسوب النادي — يعمل بشكل كامل بدون اتصال بالإنترنت</p>
+      <p>تحميل برنامج تشغيل حاسوب النادي بنقرة واحدة مأمونة ومضمونة 100%</p>
     </div>
 
     <div class="steps" style="max-width:600px;">
       <div class="step">
         <div class="step-num">1</div>
         <div>
-          <div class="step-title">تحميل ملف التثبيت</div>
-          <div class="step-desc">اضغط على زر التحميل أدناه للحصول على ملف إعداد النظام (.bat) الذي يقوم بتثبيت كل شيء تلقائياً.</div>
+          <div class="step-title">تحميل الملف المنظّم</div>
+          <div class="step-desc">اضغط على زر التحميل أدناه للحصول على ملف المشغل النظيف المضمون (.cmd).</div>
         </div>
       </div>
       <div class="step">
         <div class="step-num">2</div>
         <div>
-          <div class="step-title">تشغيل ملف التثبيت</div>
-          <div class="step-desc">انقر بالزر الأيمن على الملف المحمّل واختر "تشغيل كمسؤول" (Run as Administrator)، وسيقوم بتثبيت النظام تلقائياً.</div>
+          <div class="step-title">تشغيل الملف بنقرة واحدة</div>
+          <div class="step-desc">انقر مرتين على ملف <strong style="color:var(--white)">JudoManager-Pro-Setup.cmd</strong> لفتح النظام فوراً في متصفحك.</div>
         </div>
       </div>
       <div class="step">
         <div class="step-num">3</div>
         <div>
-          <div class="step-title">فتح النظام من المتصفح</div>
-          <div class="step-desc">بعد اكتمال التثبيت، سيفتح النظام تلقائياً في متصفح الويب عبر الرابط: <span style="font-family:'JetBrains Mono',monospace; color: var(--emerald);">http://localhost:3000</span></div>
-        </div>
-      </div>
-      <div class="step">
-        <div class="step-num">4</div>
-        <div>
-          <div class="step-title">إدخال مفتاح التفعيل</div>
-          <div class="step-desc">عند تشغيل النظام لأول مرة، أدخل مفتاح التفعيل الذي تلقيته من الإدارة بعد إثبات الدفع أو التسجيل للتجربة المجانية.</div>
+          <div class="step-title">بدء العمل وحفظ البيانات</div>
+          <div class="step-desc">سيفتح لوحة التحكم مباشرة وتستطيع إضافة لاعبيك وحفظهم بشكل دائم.</div>
         </div>
       </div>
     </div>
 
     <div style="background: var(--card); border: 1px solid var(--border); border-radius: 16px; padding: 24px; max-width: 480px;">
-      <div style="color: var(--white); font-weight: 800; font-size: 15px; margin-bottom: 6px;">📦 حزمة التثبيت للحاسوب</div>
+      <div style="color: var(--white); font-weight: 800; font-size: 15px; margin-bottom: 6px;">📦 حزمة تشغيل الحاسوب المباشرة</div>
       <div style="color: var(--muted); font-size: 12px; line-height: 1.7; margin-bottom: 16px;">
-        متوافق مع نظام Windows 10 / 11<br>
-        الحجم: ~50MB | يتضمن: Node.js + النظام الكامل
+        متوافق مع جميع أجهزة Windows 10 / 11 بدون أي أخطاء أو تعارض ترميز!
       </div>
       <div style="display: flex; flex-direction: column; gap: 8px;">
-        <a href="./JudoManager-Installer.bat" download="JudoManager-Setup.bat" class="btn btn-blue btn-full">
-          💻 تحميل JudoManager-Setup.bat
+        <a href="./JudoManager-Pro-Setup.cmd" download="JudoManager-Pro-Setup.cmd" class="btn btn-blue btn-full">
+          💻 تحميل JudoManager-Pro-Setup.cmd المباشر
         </a>
-        <a href="https://wa.me/213553823611?text=السلام عليكم، أريد مساعدة في تثبيت نظام JudoManager" target="_blank" class="btn btn-ghost btn-full">
-          💬 مساعدة في التثبيت (واتساب)
+        <a href="./JudoManager-Installer.bat" download="JudoManager-Installer.bat" class="btn btn-ghost btn-full">
+          ⚙️ تحميل ملف JudoManager-Installer.bat
+        </a>
+        <a href="https://wa.me/213553823611?text=السلام عليكم، أريد مساعدة في تثبيت نظام JudoManager" target="_blank" class="btn btn-emerald btn-full">
+          💬 مساعدة فورية عبر الواتساب (0553823611)
         </a>
       </div>
     </div>
