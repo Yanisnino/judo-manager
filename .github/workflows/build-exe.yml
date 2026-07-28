@@ -1,0 +1,77 @@
+name: Build Windows Installer (.exe)
+
+on:
+  push:
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version tag (e.g. v1.0.0)'
+        required: true
+        default: 'v1.0.0'
+
+jobs:
+  build-windows-exe:
+    runs-on: windows-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm install --legacy-peer-deps
+
+      - name: Build Next.js (standalone mode)
+        run: npm run build
+        env:
+          NODE_ENV: production
+
+      - name: Prepare standalone bundle
+        run: node build-scripts/prepare-standalone.js
+
+      - name: Install electron icon tool
+        run: npm install png-to-ico --save-dev --legacy-peer-deps
+
+      - name: Build Windows installer (.exe)
+        run: npx electron-builder --win --x64
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Upload installer artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: JudoManager-Pro-Setup
+          path: dist-exe/*.exe
+          retention-days: 30
+
+      - name: Create GitHub Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist-exe/*.exe
+          name: JudoManager Pro ${{ github.ref_name }}
+          body: |
+            ## 🥋 JudoManager Pro - نظام إدارة أندية الجودو
+
+            ### تعليمات التثبيت:
+            1. حمّل ملف `JudoManager-Pro-Setup.exe`
+            2. شغّل الملف كمسؤول (Run as Administrator)
+            3. اتبع خطوات التثبيت
+            4. افتح البرنامج من سطح المكتب
+            5. أدخل مفتاح الترخيص للبدء
+
+            ### متطلبات النظام:
+            - Windows 10/11 (64-bit)
+            - 4 GB RAM على الأقل
+            - 500 MB مساحة فارغة
+          draft: false
+          prerelease: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

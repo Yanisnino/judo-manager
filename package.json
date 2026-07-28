@@ -1,76 +1,54 @@
 {
   "name": "judo-manager",
   "version": "1.0.0",
+  "productName": "JudoManager Pro",
   "private": true,
   "main": "electron/main.js",
   "scripts": {
-    "dev": "next dev --webpack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "electron:dev": "set ELECTRON_DEV=true && electron .",
-    "desktop:build": "electron-builder --win",
-    "build:exe": "next build && electron-builder --win"
+    "build:exe": "npm run build && node build-scripts/prepare-standalone.js && electron-builder --win --x64"
   },
   "dependencies": {
-    "next": "16.2.11",
-    "react": "19.2.4",
-    "react-dom": "19.2.4"
+    "next": "15.3.3",
+    "react": "19.1.0",
+    "react-dom": "19.1.0"
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
-    "electron": "^34.0.0",
-    "electron-builder": "^25.1.8",
     "eslint": "^9",
-    "eslint-config-next": "16.2.11",
+    "eslint-config-next": "15.3.3",
     "tailwindcss": "^4",
     "typescript": "^5"
+  },
+  "devDependencies_desktop_build": {
+    "_note": "Install these only when building .exe via: npm install electron electron-builder",
+    "electron": "^34.0.0",
+    "electron-builder": "^25.1.8"
   },
   "build": {
     "appId": "com.judomanager.pro",
     "productName": "JudoManager Pro",
     "copyright": "© 2026 JudoManager Pro",
     "asar": false,
-    "directories": {
-      "output": "dist-exe"
-    },
     "files": [
-      "electron/**/*",
-      "package.json"
+      "electron/**/*"
     ],
     "extraResources": [
       {
-        "from": ".next/standalone",
+        "from": "electron-app-bundle",
         "to": "app",
-        "filter": ["**/*"]
-      },
-      {
-        "from": ".next/static",
-        "to": "app/.next/static",
-        "filter": ["**/*"]
-      },
-      {
-        "from": "public",
-        "to": "app/public",
-        "filter": ["**/*"]
-      },
-      {
-        "from": "data",
-        "to": "app/data",
         "filter": ["**/*"]
       }
     ],
     "win": {
-      "target": [
-        {
-          "target": "nsis",
-          "arch": ["x64"]
-        }
-      ],
-      "icon": "electron/icon.ico",
-      "requestedExecutionLevel": "asInvoker"
+      "target": [{ "target": "nsis", "arch": ["x64"] }],
+      "icon": "electron/icon.ico"
     },
     "nsis": {
       "oneClick": false,
@@ -80,8 +58,10 @@
       "createStartMenuShortcut": true,
       "shortcutName": "JudoManager Pro",
       "installerLanguages": ["ar"],
-      "unicode": true,
-      "deleteAppDataOnUninstall": false
+      "unicode": true
+    },
+    "directories": {
+      "output": "dist-exe"
     }
   }
 }

@@ -1,71 +1,74 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, dialog } = require('electron');
 const path = require('path');
-const { fork } = require('child_process');
 const http = require('http');
 
-let mainWindow;
-let serverProcess;
 const PORT = 3000;
+let mainWindow = null;
+let serverProcess = null;
 
-function checkServerReady(url, maxAttempts = 30, interval = 500) {
+// ─── Start embedded Next.js standalone server ───────────────────────
+function startServer() {
   return new Promise((resolve, reject) => {
-    let attempts = 0;
+    try {
+      // In production: resources/app/server.js (standalone Next.js)
+      const serverScript = app.isPackaged
+        ? path.join(process.resourcesPath, 'app', 'server.js')
+        : path.join(__dirname, '..', '.next', 'standalone', 'server.js');
+
+      // Set env vars BEFORE requiring the server
+      process.env.PORT = String(PORT);
+      process.env.HOSTNAME = 'localhost';
+      process.env.NODE_ENV = 'production';
+
+      // The standalone server uses __dirname to find .next and public
+      // We need to chdir to the standalone folder
+      const serverDir = app.isPackaged
+        ? path.join(process.resourcesPath, 'app')
+        : path.join(__dirname, '..', '.next', 'standalone');
+
+      process.chdir(serverDir);
+      require(serverScript);
+
+      resolve();
+    } catch (err) {
+      reject(err);
+    }
+  });
+}
+
+// ─── Poll until port 3000 is ready ──────────────────────────────────
+function waitForServer(maxTries = 30) {
+  return new Promise((resolve, reject) => {
+    let tries = 0;
     const check = () => {
-      attempts++;
-      http.get(url, (res) => {
-        if (res.statusCode === 200 || res.statusCode === 304 || res.statusCode === 302) {
-          resolve(true);
-        } else if (attempts < maxAttempts) {
-          setTimeout(check, interval);
+      tries++;
+      const req = http.get(`http://localhost:${PORT}`, () => {
+        resolve();
+      });
+      req.on('error', () => {
+        if (tries >= maxTries) {
+          reject(new Error('Server did not start in time'));
         } else {
-          resolve(false);
-        }
-      }).on('error', () => {
-        if (attempts < maxAttempts) {
-          setTimeout(check, interval);
-        } else {
-          resolve(false);
+          setTimeout(check, 800);
         }
       });
+      req.end();
     };
     check();
   });
 }
 
-function startLocalServer() {
-  if (process.env.ELECTRON_DEV) {
-    return Promise.resolve('http://localhost:3000');
-  }
-
-  return new Promise((resolve) => {
-    // In standalone build, server.js is in resources/app/server.js
-    const serverPath = path.join(process.resourcesPath, 'app', 'server.js');
-    
-    try {
-      serverProcess = fork(serverPath, [], {
-        env: { ...process.env, PORT: PORT.toString(), NODE_ENV: 'production' },
-        stdio: 'ignore'
-      });
-    } catch (err) {
-      console.error('Failed to fork server process', err);
-    }
-
-    const appUrl = `http://localhost:${PORT}/dashboard`;
-    checkServerReady(appUrl).then(() => {
-      resolve(appUrl);
-    });
-  });
-}
-
+// ─── Create main window ──────────────────────────────────────────────
 function createWindow(url) {
   mainWindow = new BrowserWindow({
-    width: 1280,
-    height: 800,
+    width: 1350,
+    height: 840,
     minWidth: 1024,
-    minHeight: 700,
-    title: 'JudoManager Pro – نظام إدارة أندية الجودو',
-    icon: path.join(__dirname, 'icon.png'),
+    minHeight: 680,
+    title: 'JudoManager Pro',
     autoHideMenuBar: true,
+    backgroundColor: '#0f172a',
+    show: false, // show after load
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -74,17 +77,36 @@ function createWindow(url) {
 
   mainWindow.loadURL(url);
 
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 }
 
+// ─── App lifecycle ───────────────────────────────────────────────────
 app.whenReady().then(async () => {
-  const url = await startLocalServer();
-  createWindow(url);
+  try {
+    // In dev mode: connect to already-running next dev server
+    const isDev = !app.isPackaged;
+
+    if (!isDev) {
+      await startServer();
+    }
+
+    await waitForServer();
+    createWindow(`http://localhost:${PORT}/dashboard`);
+  } catch (err) {
+    dialog.showErrorBox(
+      'خطأ في التشغيل',
+      `فشل تشغيل JudoManager Pro.\n\nالتفاصيل: ${err.message}\n\nيرجى إعادة تثبيت البرنامج أو التواصل مع الدعم: 0553823611`
+    );
+    app.quit();
+  }
 });
 
 app.on('window-all-closed', () => {
-  if (serverProcess) serverProcess.kill();
-  if (process.platform !== 'darwin') app.quit();
+  app.quit();
 });
