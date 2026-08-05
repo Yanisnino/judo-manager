@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { GoogleSheetsSyncEngine, BackupData } from "@/lib/googleSheetsSync";
 
 export default function BackupPage() {
@@ -8,6 +8,7 @@ export default function BackupPage() {
   const [syncStatus, setSyncStatus] = useState<string | null>(null);
   const [lastSyncTime, setLastSyncTime] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     setSheetUrl(GoogleSheetsSyncEngine.getSheetUrl());
@@ -22,48 +23,123 @@ export default function BackupPage() {
     setTimeout(() => setSyncStatus(null), 3000);
   };
 
-  const getBackupPayload = (): BackupData => {
+  // Fetch REAL system data for payload
+  const getRealBackupPayload = async (): Promise<BackupData> => {
+    let athletes: any[] = [];
+    let subscriptions: any[] = [];
+    let beltExams: any[] = [];
+
+    // 1. Fetch real athletes from API
+    try {
+      const res = await fetch("/api/athletes");
+      if (res.ok) {
+        athletes = await res.json();
+      }
+    } catch (e) {
+      console.error("Failed to fetch athletes for backup", e);
+    }
+
+    // 2. Fetch real subscriptions from localStorage
+    try {
+      const storedSubs = localStorage.getItem("judo_subscriptions_v1");
+      if (storedSubs) subscriptions = JSON.parse(storedSubs);
+    } catch (e) {
+      console.error("Failed to fetch subscriptions for backup", e);
+    }
+
+    // 3. Fetch real belt exams from localStorage
+    try {
+      const storedExams = localStorage.getItem("judo_belt_exams_v1");
+      if (storedExams) beltExams = JSON.parse(storedExams);
+    } catch (e) {
+      console.error("Failed to fetch belt exams for backup", e);
+    }
+
     return {
       version: "1.0.0",
       timestamp: new Date().toISOString(),
-      clubName: "نادي الأبطال للجودو والفنون القتالية",
-      athletes: [
-        { id: "ATH-001", name: "محمد أمين بن علي", belt: "أصفر", phone: "0555123456" },
-        { id: "ATH-002", name: "أحمد ياسين زروقي", belt: "برتقالي", phone: "0661987654" },
-        { id: "ATH-003", name: "يوسف بلقاسم", belt: "أخضر", phone: "0770112233" },
-      ],
-      attendance: [
-        { date: "2026-07-20", athleteId: "ATH-001", status: "حاضر" },
-        { date: "2026-07-20", athleteId: "ATH-002", status: "حاضر" },
-      ],
-      subscriptions: [
-        { id: "SUB-101", athleteName: "محمد أمين بن علي", amount: 2500, status: "paid" },
-      ],
-      belts: [
-        { name: "حزام أصفر", count: 24 },
-        { name: "حزام برتقالي", count: 18 },
-      ],
+      clubName: "نادي الجودو والرياضات القتالية",
+      athletes,
+      attendance: [],
+      subscriptions,
+      belts: beltExams,
     };
   };
 
   const handleManualSync = async () => {
     setIsLoading(true);
-    setSyncStatus("جاري المزامنة مع غوغل شيت...");
-    
-    const payload = getBackupPayload();
+    setSyncStatus("جاري تجميع البيانات الحقيقية والمزامنة مع غوغل شيت...");
+
+    const payload = await getRealBackupPayload();
     const result = await GoogleSheetsSyncEngine.syncToGoogleSheets(payload);
-    
+
     const now = new Date().toLocaleString("ar-DZ");
     localStorage.setItem("judo_last_sync_time", now);
     setLastSyncTime(now);
-    
+
     setIsLoading(false);
     setSyncStatus(result.message);
   };
 
-  const handleDownloadBackup = () => {
-    const payload = getBackupPayload();
+  const handleDownloadBackup = async () => {
+    setIsLoading(true);
+    const payload = await getRealBackupPayload();
     GoogleSheetsSyncEngine.downloadLocalJsonBackup(payload);
+    setIsLoading(false);
+    setSyncStatus("✓ تم تحميل ملف النسخة الاحتياطية الحقيقية بنجاح!");
+    setTimeout(() => setSyncStatus(null), 4000);
+  };
+
+  // Handle restoring data from local JSON file
+  const handleRestoreFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = async (event) => {
+      try {
+        const content = event.target?.result as string;
+        const backupData: BackupData = JSON.parse(content);
+
+        if (!backupData || !Array.isArray(backupData.athletes)) {
+          alert("تنبيه: ملف النسخة الاحتياطية غير صالح أو صيغته خاطئة!");
+          return;
+        }
+
+        if (!confirm(`هل أنت متأكد من استرجاع البيانات؟ سيتم استرجاع ${backupData.athletes.length} لاعبين و ${backupData.subscriptions?.length || 0} اشتراكات.`)) {
+          return;
+        }
+
+        setIsLoading(true);
+
+        // 1. Restore athletes to system
+        for (const ath of backupData.athletes) {
+          await fetch("/api/athletes", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(ath),
+          });
+        }
+
+        // 2. Restore subscriptions to localStorage
+        if (Array.isArray(backupData.subscriptions)) {
+          localStorage.setItem("judo_subscriptions_v1", JSON.stringify(backupData.subscriptions));
+        }
+
+        // 3. Restore belt exams to localStorage
+        if (Array.isArray(backupData.belts)) {
+          localStorage.setItem("judo_belt_exams_v1", JSON.stringify(backupData.belts));
+        }
+
+        setIsLoading(false);
+        alert("🎉 تم استرجاع واستعادة كافة بيانات النادي بنجاح!");
+        window.location.reload();
+      } catch (err) {
+        setIsLoading(false);
+        alert("حدث خطأ أثناء قراءة واسترجاع ملف النسخة الاحتياطية!");
+      }
+    };
+    reader.readAsText(file);
   };
 
   return (
@@ -71,7 +147,7 @@ export default function BackupPage() {
       <div>
         <h1 className="text-3xl font-black text-gray-900">النسخ الاحتياطي والمزامنة مع غوغل شيت</h1>
         <p className="text-gray-500 text-sm mt-1">
-          حفظ بيانات النادي أوفلاين على جهازك ومزامنتها تلقائياً مع Google Sheets كاحتياط آمن
+          حفظ بيانات النادي الحقيقية أوفلاين على جهازك ومزامنتها تلقائياً مع Google Sheets كاحتياط آمن
         </p>
       </div>
 
@@ -108,7 +184,7 @@ export default function BackupPage() {
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
         <h2 className="text-lg font-bold text-gray-900 border-b pb-2">ربط جدول غوغل شيت (Google Sheets API)</h2>
         <p className="text-xs text-gray-500 leading-relaxed">
-          أدخل رابط Google Apps Script Webhook لربط تطبيقك بـ Google Sheet خاص بك. سيقوم البرنامج بنقل كافة بيانات اللاعبين والحضور والمالية تلقائياً.
+          أدخل رابط Google Apps Script Webhook لربط تطبيقك بـ Google Sheet خاص بك. سيقوم البرنامج بنقل كافة بيانات اللاعبين والمالية والاشتراكات تلقائياً.
         </p>
 
         <form onSubmit={handleSaveUrl} className="space-y-4 text-sm">
@@ -138,21 +214,31 @@ export default function BackupPage() {
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
         <h2 className="text-lg font-bold text-gray-900 border-b pb-2">النسخ الاحتياطي المحلي واسترجاع البيانات</h2>
         <p className="text-xs text-gray-500">
-          تستطيع تحميل ملف النسخة الاحتياطية كاملاً على جهاز الكمبيوتر في أي وقت وبدون إنترنت.
+          تستطيع تحميل ملف النسخة الاحتياطية كاملاً على جهاز الكمبيوتر في أي وقت، واستعادته بنقرة واحدة بدون الحاجة لإنترنت.
         </p>
+
+        <input
+          type="file"
+          accept=".json"
+          ref={fileInputRef}
+          onChange={handleRestoreFile}
+          className="hidden"
+        />
 
         <div className="flex flex-col sm:flex-row gap-4 pt-2">
           <button
             onClick={handleDownloadBackup}
+            disabled={isLoading}
             className="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl text-xs transition-all border border-gray-300 flex items-center justify-center gap-2"
           >
-            <span>📥</span> تحميل ملف النسخة الاحتياطية (.JSON)
+            <span>📥</span> تحميل ملف النسخة الاحتياطية الحقيقية (.JSON)
           </button>
           <button
-            onClick={() => alert("يرجى اختيار ملف النسخة الاحتياطية لاسترجاع البيانات")}
-            className="flex-1 py-3 px-4 bg-gray-100 hover:bg-gray-200 text-gray-800 font-bold rounded-xl text-xs transition-all border border-gray-300 flex items-center justify-center gap-2"
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isLoading}
+            className="flex-1 py-3 px-4 bg-blue-50 hover:bg-blue-100 text-blue-700 font-bold rounded-xl text-xs transition-all border border-blue-200 flex items-center justify-center gap-2"
           >
-            <span>📤</span> استرجاع البيانات من ملف محلي
+            <span>📤</span> استرجاع البيانات من ملف محلي (.JSON)
           </button>
         </div>
       </div>
