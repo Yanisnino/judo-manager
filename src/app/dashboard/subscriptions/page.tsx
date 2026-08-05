@@ -18,30 +18,6 @@ export default function SubscriptionsPage() {
   const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([]);
   const [filter, setFilter] = useState("all");
 
-  // Load stored subscriptions on mount
-  useEffect(() => {
-    try {
-      const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
-      if (stored) {
-        setSubscriptions(JSON.parse(stored));
-      } else {
-        setSubscriptions([]);
-      }
-    } catch {
-      setSubscriptions([]);
-    }
-  }, []);
-
-  // Save to localStorage on change
-  const saveSubscriptions = (newSubs: SubscriptionItem[]) => {
-    setSubscriptions(newSubs);
-    try {
-      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newSubs));
-    } catch (e) {
-      console.error(e);
-    }
-  };
-  
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false);
   const [editingSub, setEditingSub] = useState<SubscriptionItem | null>(null);
@@ -55,17 +31,52 @@ export default function SubscriptionsPage() {
   const [endDate, setEndDate] = useState("2026-08-30");
   const [status, setStatus] = useState<"paid" | "pending" | "expired">("paid");
 
+  // Load stored subscriptions on mount safely
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (stored) {
+        setSubscriptions(JSON.parse(stored));
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  // Save to localStorage helper
+  const saveSubscriptions = (newSubs: SubscriptionItem[]) => {
+    setSubscriptions(newSubs);
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newSubs));
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
   const filteredSubs = subscriptions.filter((s) => {
     if (filter === "all") return true;
     return s.status === filter;
   });
 
-  const totalRevenue = subscriptions.reduce((sum, s) => sum + s.amount, 0);
+  const totalRevenue = subscriptions
+    .filter((s) => s.status === "paid")
+    .reduce((sum, s) => sum + (s.amount || 0), 0);
+
+  const resetForm = () => {
+    setAthleteName("");
+    setPlanName("اشتراك شهري عادي");
+    setAmount(2500);
+    setStartDate(new Date().toISOString().split("T")[0]);
+    setEndDate("2026-08-30");
+    setStatus("paid");
+  };
 
   const handleAddSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!athleteName.trim()) return;
+
     const newSub: SubscriptionItem = {
-      id: "SUB-" + (subscriptions.length + 101),
+      id: "SUB-" + Date.now().toString().slice(-4),
       athleteName,
       planName,
       amount: Number(amount),
@@ -73,6 +84,7 @@ export default function SubscriptionsPage() {
       endDate,
       status,
     };
+
     saveSubscriptions([newSub, ...subscriptions]);
     setShowAddModal(false);
     resetForm();
@@ -81,14 +93,14 @@ export default function SubscriptionsPage() {
   const handleRenew = (sub: SubscriptionItem) => {
     const today = new Date();
     const nextMonth = new Date(today.setMonth(today.getMonth() + 1)).toISOString().split("T")[0];
-    
+
     const updated = subscriptions.map((s) =>
       s.id === sub.id
         ? { ...s, startDate: new Date().toISOString().split("T")[0], endDate: nextMonth, status: "paid" as const }
         : s
     );
     saveSubscriptions(updated);
-    alert(`تم تجديد اشتراك اللاعب "${sub.athleteName}" لغاية ${nextMonth} بنجاح!`);
+    alert(`تم تجديد اشتراك اللاعب "${sub.athleteName}" بنجاح!`);
   };
 
   const handleEditClick = (sub: SubscriptionItem) => {
@@ -105,38 +117,30 @@ export default function SubscriptionsPage() {
     e.preventDefault();
     if (!editingSub) return;
 
-    setSubscriptions((prev) =>
-      prev.map((s) =>
-        s.id === editingSub.id
-          ? {
-              ...s,
-              athleteName,
-              planName,
-              amount: Number(amount),
-              startDate,
-              endDate,
-              status,
-            }
-          : s
-      )
+    const updated = subscriptions.map((s) =>
+      s.id === editingSub.id
+        ? {
+            ...s,
+            athleteName,
+            planName,
+            amount: Number(amount),
+            startDate,
+            endDate,
+            status,
+          }
+        : s
     );
+
+    saveSubscriptions(updated);
     setEditingSub(null);
     resetForm();
   };
 
   const handleDelete = (id: string, name: string) => {
     if (window.confirm(`هل أنت تأكد من رغبتك في حذف سجل اشتراك اللاعب "${name}"؟`)) {
-      setSubscriptions((prev) => prev.filter((s) => s.id !== id));
+      const updated = subscriptions.filter((s) => s.id !== id);
+      saveSubscriptions(updated);
     }
-  };
-
-  const resetForm = () => {
-    setAthleteName("");
-    setPlanName("اشتراك شهري عادي");
-    setAmount(2500);
-    setStartDate(new Date().toISOString().split("T")[0]);
-    setEndDate("2026-08-30");
-    setStatus("paid");
   };
 
   return (
@@ -164,7 +168,7 @@ export default function SubscriptionsPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
           <span className="text-xs font-bold text-gray-400 block mb-1">مداخيل الاشتراكات المحسوبة</span>
-          <div className="text-3xl font-black text-emerald-600">{totalRevenue} دج</div>
+          <div className="text-3xl font-black text-emerald-600">{totalRevenue.toLocaleString()} دج</div>
           <span className="text-xs text-gray-500 mt-2 block">سجل مالي محدث بدقة</span>
         </div>
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
@@ -219,77 +223,93 @@ export default function SubscriptionsPage() {
         </button>
       </div>
 
-      {/* Table */}
+      {/* Table / Empty state */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden">
-        <table className="w-full text-right text-sm">
-          <thead className="bg-gray-50 border-b border-gray-100 text-gray-500 font-bold text-xs">
-            <tr>
-              <th className="p-4">اللاعب</th>
-              <th className="p-4">نوع الاشتراك</th>
-              <th className="p-4">المبلغ</th>
-              <th className="p-4">من - إلى</th>
-              <th className="p-4">حالة الدفع</th>
-              <th className="p-4 text-center">إجراءات التحكم</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-gray-100">
-            {filteredSubs.map((sub) => (
-              <tr key={sub.id} className="hover:bg-gray-50/60 transition-colors">
-                <td className="p-4 font-bold text-gray-900">{sub.athleteName}</td>
-                <td className="p-4 text-gray-600">{sub.planName}</td>
-                <td className="p-4 font-mono font-bold text-gray-900">{sub.amount} دج</td>
-                <td className="p-4 text-gray-500 font-mono text-xs">
-                  {sub.startDate} ➔ {sub.endDate}
-                </td>
-                <td className="p-4">
-                  {sub.status === "paid" && (
-                    <span className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold">
-                      مسدد (Paid)
-                    </span>
-                  )}
-                  {sub.status === "pending" && (
-                    <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-bold">
-                      ينتهي قريباً
-                    </span>
-                  )}
-                  {sub.status === "expired" && (
-                    <span className="bg-rose-100 text-rose-800 px-3 py-1 rounded-full text-xs font-bold">
-                      منتهي
-                    </span>
-                  )}
-                </td>
-                <td className="p-4 flex items-center justify-center gap-1.5 flex-wrap">
-                  <button
-                    onClick={() => handleRenew(sub)}
-                    className="px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg font-bold text-xs transition-all border border-emerald-200"
-                    title="تجديد الاشتراك شهر إضافي"
-                  >
-                    🔄 تجديد
-                  </button>
-                  <button
-                    onClick={() => setReceiptSub(sub)}
-                    className="px-2.5 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg font-bold text-xs transition-all border border-blue-200"
-                    title="طباعة وصل الدفع"
-                  >
-                    🧾 وصل
-                  </button>
-                  <button
-                    onClick={() => handleEditClick(sub)}
-                    className="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-bold text-xs border"
-                  >
-                    ✏️
-                  </button>
-                  <button
-                    onClick={() => handleDelete(sub.id, sub.athleteName)}
-                    className="px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg font-bold text-xs border border-rose-200"
-                  >
-                    🗑️
-                  </button>
-                </td>
+        {filteredSubs.length === 0 ? (
+          <div className="text-center py-12 px-4 space-y-3">
+            <span className="text-4xl block">💳</span>
+            <p className="text-sm font-bold text-gray-700">لا توجد اشتراكات أو مدفوعات مسجلة بعد.</p>
+            <button
+              onClick={() => {
+                resetForm();
+                setShowAddModal(true);
+              }}
+              className="px-4 py-2 bg-blue-600 text-white font-bold rounded-xl text-xs shadow-md"
+            >
+              ➕ تسجيل أول دفعة اشتراك
+            </button>
+          </div>
+        ) : (
+          <table className="w-full text-right text-sm">
+            <thead className="bg-gray-50 border-b border-gray-100 text-gray-500 font-bold text-xs">
+              <tr>
+                <th className="p-4">اللاعب</th>
+                <th className="p-4">نوع الاشتراك</th>
+                <th className="p-4">المبلغ</th>
+                <th className="p-4">من - إلى</th>
+                <th className="p-4">حالة الدفع</th>
+                <th className="p-4 text-center">إجراءات التحكم</th>
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody className="divide-y divide-gray-100">
+              {filteredSubs.map((sub) => (
+                <tr key={sub.id} className="hover:bg-gray-50/60 transition-colors">
+                  <td className="p-4 font-bold text-gray-900">{sub.athleteName}</td>
+                  <td className="p-4 text-gray-600">{sub.planName}</td>
+                  <td className="p-4 font-mono font-bold text-gray-900">{sub.amount} دج</td>
+                  <td className="p-4 text-gray-500 font-mono text-xs">
+                    {sub.startDate} ➔ {sub.endDate}
+                  </td>
+                  <td className="p-4">
+                    {sub.status === "paid" && (
+                      <span className="bg-emerald-100 text-emerald-800 px-3 py-1 rounded-full text-xs font-bold">
+                        مسدد (Paid)
+                      </span>
+                    )}
+                    {sub.status === "pending" && (
+                      <span className="bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-xs font-bold">
+                        ينتهي قريباً
+                      </span>
+                    )}
+                    {sub.status === "expired" && (
+                      <span className="bg-rose-100 text-rose-800 px-3 py-1 rounded-full text-xs font-bold">
+                        منتهي
+                      </span>
+                    )}
+                  </td>
+                  <td className="p-4 flex items-center justify-center gap-1.5 flex-wrap">
+                    <button
+                      onClick={() => handleRenew(sub)}
+                      className="px-2.5 py-1 bg-emerald-50 text-emerald-700 hover:bg-emerald-100 rounded-lg font-bold text-xs transition-all border border-emerald-200"
+                      title="تجديد الاشتراك شهر إضافي"
+                    >
+                      🔄 تجديد
+                    </button>
+                    <button
+                      onClick={() => setReceiptSub(sub)}
+                      className="px-2.5 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded-lg font-bold text-xs transition-all border border-blue-200"
+                      title="طباعة وصل الدفع"
+                    >
+                      🧾 وصل
+                    </button>
+                    <button
+                      onClick={() => handleEditClick(sub)}
+                      className="px-2 py-1 bg-gray-100 hover:bg-gray-200 text-gray-700 rounded-lg font-bold text-xs border"
+                    >
+                      ✏️
+                    </button>
+                    <button
+                      onClick={() => handleDelete(sub.id, sub.athleteName)}
+                      className="px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 rounded-lg font-bold text-xs border border-rose-200"
+                    >
+                      🗑️
+                    </button>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
       {/* Add Subscription Modal */}
@@ -297,12 +317,12 @@ export default function SubscriptionsPage() {
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
           <div className="bg-white rounded-3xl p-6 max-w-lg w-full space-y-4 shadow-2xl">
             <div className="flex justify-between items-center border-b pb-3">
-              <h2 className="text-xl font-bold text-gray-900">تسجيل دفعة واشتراك جديد</h2>
+              <h2 className="text-xl font-bold text-gray-900">تسجيل دفعة وااشتراك جديد</h2>
               <button onClick={() => setShowAddModal(false)} className="text-gray-400 font-bold text-xl">✕</button>
             </div>
             <form onSubmit={handleAddSubmit} className="space-y-4 text-sm">
               <div>
-                <label className="block text-gray-700 font-semibold mb-1">اسم اللاعب</label>
+                <label className="block text-gray-700 font-semibold mb-1">اسم اللاعب *</label>
                 <input
                   type="text"
                   required
