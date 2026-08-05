@@ -41,14 +41,21 @@ export default function ActivatePage() {
       alert("يرجى ملء جميع الحقول المطلوبة (اسم النادي، رقم الهاتف، والبريد الإلكتروني)!");
       return;
     }
+
+    if (type === "LIFETIME_PRO" && !receiptUrl.trim()) {
+      alert("يرجى كتابة رقم وصل الدفع أو بيانات العملية بريدي موب!");
+      return;
+    }
+
     const req = submitLicenseRequest({
       clubName,
-      managerName,
+      managerName: managerName || clubName,
       phone,
       email,
       requestType: type,
       receiptUrl: type === "LIFETIME_PRO" ? receiptUrl || "وصل تحويل بريدي موب BaridiMob مرفوق" : undefined,
     });
+
     setSubmittedReqId(req.id);
   };
 
@@ -89,19 +96,19 @@ export default function ActivatePage() {
         {/* Navigation Tabs */}
         <div className="grid grid-cols-3 gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 text-xs font-bold">
           <button
-            onClick={() => setActiveTab("KEY")}
+            onClick={() => { setActiveTab("KEY"); setSubmittedReqId(null); }}
             className={`py-2.5 rounded-xl transition-all ${activeTab === "KEY" ? "bg-blue-600 text-white shadow-md" : "text-slate-400 hover:text-white"}`}
           >
             🔑 إدخال مفتاح التفعيل
           </button>
           <button
-            onClick={() => setActiveTab("TRIAL")}
+            onClick={() => { setActiveTab("TRIAL"); setSubmittedReqId(null); }}
             className={`py-2.5 rounded-xl transition-all ${activeTab === "TRIAL" ? "bg-indigo-600 text-white shadow-md" : "text-slate-400 hover:text-white"}`}
           >
             ⏱️ تجربة 14 يوماً مجاناً
           </button>
           <button
-            onClick={() => setActiveTab("PAYMENT")}
+            onClick={() => { setActiveTab("PAYMENT"); setSubmittedReqId(null); }}
             className={`py-2.5 rounded-xl transition-all ${activeTab === "PAYMENT" ? "bg-emerald-600 text-white shadow-md" : "text-slate-400 hover:text-white"}`}
           >
             💳 الشراء عبر BaridiMob
@@ -223,64 +230,86 @@ export default function ActivatePage() {
                 <span className="font-mono text-white font-bold text-base">9,000 دج</span>
               </div>
               <div className="text-[11px] text-slate-400 pt-1">
-                يرجى رفع بيانات وصل التحويل والبريد الإلكتروني، وسيتم إرسال مفتاح التفعيل الدائم على إيميلك فور تأكيد التحويل.
+                يرجى رفع بيانات وصل التحويل والبريد الإلكتروني، وسيتم إرسال مفتاح التفعيل الدائم على إيميلك فور تأكيد التحويل من الأدمن.
               </div>
             </div>
 
-            <form onSubmit={(e) => handleRequestSubmit(e, "LIFETIME_PRO")} className="space-y-3 text-xs">
-              <div>
-                <label className="block text-slate-300 font-bold mb-1">اسم النادي أو الجمعية</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="نادي الأبطال للجودو"
-                  value={clubName}
-                  onChange={(e) => setClubName(e.target.value)}
-                  className="w-full px-3.5 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white"
-                />
-              </div>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-slate-300 font-bold mb-1">رقم الهاتف</label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="0553823611"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full px-3.5 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono"
-                  />
-                </div>
-                <div>
-                  <label className="block text-slate-300 font-bold mb-1">البريد الإلكتروني (لتلقي المفتاح)</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="club@gmail.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full px-3.5 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono"
-                  />
+            {submittedReqId ? (
+              <div className="bg-emerald-600/10 border border-emerald-500/30 rounded-2xl p-6 text-center space-y-3">
+                <span className="text-3xl block">💳</span>
+                <h3 className="font-bold text-white text-base">تم إرسال وصل الدفع والطلب للأدمن بنجاح!</h3>
+                <p className="text-xs text-slate-300 leading-relaxed">
+                  رقم العملية الخاص بطلبك: <strong className="text-emerald-400 font-mono">{submittedReqId}</strong>
+                </p>
+                <p className="text-xs text-slate-300">
+                  سيتم التحقق من التحويل من الأدمن وإرسال مفتاح الترخيص مدى الحياة إلى بريدك الإلكتروني: <strong className="text-white font-mono">{email}</strong>
+                </p>
+                <div className="pt-2">
+                  <a
+                    href={`https://wa.me/213553823611?text=السلام%20عليكم،%20قمت%20بتحويل%20مبلغ%209000دج%20بريدي%20موب%20لطلب%20الترخيص:%20${submittedReqId}%20الوصل:%20${encodeURIComponent(receiptUrl)}`}
+                    target="_blank"
+                    className="px-4 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs inline-flex items-center gap-1.5"
+                  >
+                    💬 إرسال نسخة الوصل للأدمن فورياً عبر الواتساب
+                  </a>
                 </div>
               </div>
-              <div>
-                <label className="block text-slate-300 font-bold mb-1">بيانات/رقم وصل دفع BaridiMob</label>
-                <input
-                  type="text"
-                  required
-                  placeholder="رقم عملية التحويل #00982415 أو صورة الوصل"
-                  value={receiptUrl}
-                  onChange={(e) => setReceiptUrl(e.target.value)}
-                  className="w-full px-3.5 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white"
-                />
-              </div>
-              <button
-                type="submit"
-                className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl shadow-lg shadow-emerald-600/30 transition-all text-sm"
-              >
-                إرسال وصل الدفع وتلقي المفتاح عبر الإيميل 💳
-              </button>
-            </form>
+            ) : (
+              <form onSubmit={(e) => handleRequestSubmit(e, "LIFETIME_PRO")} className="space-y-3 text-xs">
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">اسم النادي أو الجمعية *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="نادي الأبطال للجودو"
+                    value={clubName}
+                    onChange={(e) => setClubName(e.target.value)}
+                    className="w-full px-3.5 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white"
+                  />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-slate-300 font-bold mb-1">رقم الهاتف *</label>
+                    <input
+                      type="tel"
+                      required
+                      placeholder="0553823611"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full px-3.5 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-slate-300 font-bold mb-1">البريد الإلكتروني (لتلقي المفتاح) *</label>
+                    <input
+                      type="email"
+                      required
+                      placeholder="club@gmail.com"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      className="w-full px-3.5 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono"
+                    />
+                  </div>
+                </div>
+                <div>
+                  <label className="block text-slate-300 font-bold mb-1">بيانات/رقم وصل دفع BaridiMob *</label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="رقم عملية التحويل #00982415 أو صورة الوصل"
+                    value={receiptUrl}
+                    onChange={(e) => setReceiptUrl(e.target.value)}
+                    className="w-full px-3.5 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white"
+                  />
+                </div>
+                <button
+                  type="submit"
+                  className="w-full py-3.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-2xl shadow-lg shadow-emerald-600/30 transition-all text-sm"
+                >
+                  إرسال وصل الدفع وتلقي المفتاح عبر الإيميل 💳
+                </button>
+              </form>
+            )}
           </div>
         )}
 
