@@ -24,7 +24,7 @@ export interface LicenseRequest {
 }
 
 const STORAGE_KEY_LICENSE = "judomanager_club_license";
-const STORAGE_KEY_REQUESTS = "judomanager_admin_requests";
+const STORAGE_KEY_REQUESTS = "judo_requests_v2";
 
 // Default seed requests for Secret Admin Portal Demonstration
 const DEFAULT_REQUESTS: LicenseRequest[] = [

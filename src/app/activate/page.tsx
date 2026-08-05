@@ -216,11 +216,11 @@ export default function ActivatePage() {
             <div className="bg-slate-950 p-4 rounded-2xl border border-slate-800 space-y-2 text-xs">
               <div className="flex justify-between items-center border-b border-slate-800 pb-2">
                 <span className="font-bold text-slate-400">حساب بريدي موب (BaridiMob RIP)</span>
-                <span className="font-mono text-emerald-400 font-bold text-sm">00799999000123456789</span>
+                <span className="font-mono text-emerald-400 font-bold text-sm">00799999004034591143</span>
               </div>
               <div className="flex justify-between items-center">
                 <span className="font-bold text-slate-400">مبلغ الترخيص الدائم مدى الحياة</span>
-                <span className="font-mono text-white font-bold">15,000 دج</span>
+                <span className="font-mono text-white font-bold text-base">9,000 دج</span>
               </div>
               <div className="text-[11px] text-slate-400 pt-1">
                 يرجى رفع بيانات وصل التحويل والبريد الإلكتروني، وسيتم إرسال مفتاح التفعيل الدائم على إيميلك فور تأكيد التحويل.

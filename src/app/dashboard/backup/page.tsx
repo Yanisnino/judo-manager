@@ -184,12 +184,12 @@ export default function BackupPage() {
       <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
         <h2 className="text-lg font-bold text-gray-900 border-b pb-2">ربط جدول غوغل شيت (Google Sheets API)</h2>
         <p className="text-xs text-gray-500 leading-relaxed">
-          أدخل رابط Google Apps Script Webhook لربط تطبيقك بـ Google Sheet خاص بك. سيقوم البرنامج بنقل كافة بيانات اللاعبين والمالية والاشتراكات تلقائياً.
+          أدخل رابط <strong>Google Apps Script Webhook URL</strong> المباشر لنقل الحضور، واللاعبين والاشتراكات لجدولك في غوغل تلقائياً.
         </p>
 
         <form onSubmit={handleSaveUrl} className="space-y-4 text-sm">
           <div>
-            <label className="block text-xs font-bold text-gray-700 mb-1">رابط Google Sheet Webhook URL</label>
+            <label className="block text-xs font-bold text-gray-700 mb-1">رابط Google Sheet Webhook URL (مثال: https://script.google.com/macros/s/.../exec)</label>
             <input
               type="url"
               placeholder="https://script.google.com/macros/s/.../exec"
@@ -199,10 +199,27 @@ export default function BackupPage() {
             />
           </div>
 
-          <div className="flex justify-end">
+          <div className="flex justify-between items-center flex-wrap gap-2 pt-1">
+            <details className="text-xs text-gray-600 cursor-pointer">
+              <summary className="font-bold text-blue-600 hover:underline">💡 كيف أحصل على رابط Webhook الخاص بشيت غوغل؟ (اضغط هنا)</summary>
+              <div className="mt-3 p-3 bg-gray-50 rounded-xl border border-gray-200 space-y-2 text-[11px] text-gray-700 leading-relaxed">
+                <p>1. افتح جدول غوغل شيت الخاص بك واذهب إلى: <strong>Extensions ➔ Apps Script</strong> (الإضافات ➔ نص برمجيات تطبيق).</p>
+                <p>2. امسح الكود القديم وضّع الكود التالي ثم اضغط <strong>Deploy ➔ New Deployment ➔ Web App</strong> (نشر ➔ نشر جديد ➔ تطبيق ويب) واجعل من يمكنه الوصول <em>Anyone (أي شخص)</em>:</p>
+                <pre className="bg-slate-900 text-emerald-400 p-2.5 rounded-lg overflow-x-auto font-mono text-[10px] dir-ltr text-left">
+                  {`function doPost(e) {
+  var data = JSON.parse(e.postData.contents);
+  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
+  sheet.appendRow([new Date(), "نسخة احتياطية", JSON.stringify(data)]);
+  return ContentService.createTextOutput("OK");
+}`}
+                </pre>
+                <p>3. انسخ رابط <strong>Web App URL</strong> وضع الرابط فوق واضغط حفظ!</p>
+              </div>
+            </details>
+
             <button
               type="submit"
-              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-md"
+              className="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl text-xs shadow-md mr-auto"
             >
               💾 حفظ رابط غوغل شيت
             </button>
