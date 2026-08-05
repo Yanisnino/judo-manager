@@ -19,6 +19,8 @@
 
 # production
 /build
+/electron-app-bundle/
+/dist-exe/
 
 # misc
 .DS_Store
