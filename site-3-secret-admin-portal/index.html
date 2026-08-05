@@ -582,7 +582,7 @@ async function fetchServerRequests() {
 
   toast("⏳ جاري فحص ومزامنة الطلبات السحابية...");
 
-  let fetched = false;
+  let fetchedData = null;
 
   for (const ep of endpoints) {
     try {
@@ -590,6 +590,7 @@ async function fetchServerRequests() {
       if (res.ok) {
         const serverReqs = await res.json();
         if (Array.isArray(serverReqs) && serverReqs.length > 0) {
+          fetchedData = serverReqs;
           const local = getData();
           const localIds = new Set(local.map(r => r.id));
           const merged = [...local];
@@ -613,24 +614,24 @@ async function fetchServerRequests() {
             }
           }
           
-          if (addedCount > 0) {
-            localStorage.setItem(DATA_KEY, JSON.stringify(merged));
-            refreshAll();
-            toast(`🎉 وصلك ${addedCount} طلب جديد من الزبائن!`);
-          } else {
-            toast("✅ البيانات محدثة 100%. لا توجد طلبات معلقة حالياً.");
-          }
-          fetched = true;
+          localStorage.setItem(DATA_KEY, JSON.stringify(merged));
+          refreshAll();
           break;
         }
       }
     } catch(e) {
-      // Continue trying next fallback endpoint
+      // Continue next endpoint
     }
   }
 
-  if (!fetched) {
-    toast("💡 ملاحظة: تذكر استلام وصل التحويل من الزبون عبر الواتساب فورياً وبضغطة زر واحدة.");
+  const allReqs = getData();
+  if (allReqs.length > 0) {
+    const latest = allReqs[0];
+    viewReceipt(latest.id);
+    toast(`✅ تم فتح بيانات طلب النادي: ${latest.clubName}`);
+  } else {
+    showPage('add', document.querySelectorAll('.nb')[2]);
+    toast("💡 يرجى إضافة الطلب أو تأكيد استلامه من الواتساب.");
   }
 }
 
@@ -934,9 +935,21 @@ function viewReceipt(id) {
         </div>
       </div>
 
-      <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--mu); border-top:1px solid var(--bd); padding-top:8px;">
+      <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--mu); border-top:1px solid var(--bd); padding-top:10px; margin-top:10px;">
         <span>نوع الطلب: <strong>${req.type === 'LIFETIME' ? 'ترخيص دائم (9000 دج)' : 'تجريبي 14 يوم'}</strong></span>
         <span>التاريخ: ${req.createdAt || ''}</span>
+      </div>
+
+      <div style="margin-top:14px; text-align:center;">
+        ${req.status === 'APPROVED' ? `
+          <div style="background:var(--grn-d); color:var(--grn); padding:10px; border-radius:10px; font-weight:bold; font-family:monospace;">
+            ✅ مفعّل بمفتاح: ${req.key}
+          </div>
+        ` : `
+          <button class="btn btn-pur" style="width:100%; padding:12px; font-weight:900; font-size:14px;" onclick="closeModal('receiptModal'); approveReq('${req.id}');">
+            ⚡ موافقة وتوليد مفتاح التفعيل للعميل فوراً
+          </button>
+        `}
       </div>
     </div>
     ${req.receiptImg ? `<div style="margin-top:14px;"><img src="${req.receiptImg}" alt="صورة الوصل" style="max-width:100%;max-height:380px;border-radius:12px;border:1px solid var(--bd);"></div>` : ''}
