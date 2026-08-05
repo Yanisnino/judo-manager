@@ -316,8 +316,9 @@
       <div class="ph">
         <div><h1>📊 لوحة البيانات</h1><p>نظرة عامة شاملة على الطلبات والتراخيص</p></div>
         <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost" onclick="fetchServerRequests()" title="جلب أحدث طلبات الزبائن فوراً">⚡ جلب الطلبات السحابية</button>
           <button class="btn btn-ghost" onclick="exportData()">📤 تصدير JSON</button>
-          <button class="btn btn-pur" onclick="refreshAll()">🔄 تحديث</button>
+          <button class="btn btn-pur" onclick="fetchServerRequests(); refreshAll();">🔄 تحديث البيانات</button>
         </div>
       </div>
 
@@ -571,6 +572,47 @@ function saveData(d) {
   refreshAll();
 }
 
+async function fetchServerRequests() {
+  try {
+    const res = await fetch('/api/license-requests');
+    if (res.ok) {
+      const serverReqs = await res.json();
+      if (Array.isArray(serverReqs) && serverReqs.length > 0) {
+        const local = getData();
+        const localIds = new Set(local.map(r => r.id));
+        const merged = [...local];
+        let addedCount = 0;
+        
+        for (const sReq of serverReqs) {
+          if (!localIds.has(sReq.id)) {
+            merged.unshift({
+              id: sReq.id,
+              clubName: sReq.clubName,
+              manager: sReq.managerName || sReq.clubName,
+              email: sReq.email,
+              phone: sReq.phone,
+              type: sReq.requestType === 'LIFETIME_PRO' ? 'LIFETIME' : 'TRIAL',
+              receiptNum: sReq.receiptUrl,
+              status: sReq.status || 'PENDING',
+              createdAt: sReq.createdAt ? new Date(sReq.createdAt).toLocaleString('ar-DZ') : new Date().toLocaleString('ar-DZ'),
+              key: null
+            });
+            addedCount++;
+          }
+        }
+        
+        if (addedCount > 0) {
+          localStorage.setItem(DATA_KEY, JSON.stringify(merged));
+          refreshAll();
+          toast(`⚡ وصلك ${addedCount} طلب جديد من الزبائن!`);
+        }
+      }
+    }
+  } catch(e) {
+    console.error("Failed to sync server requests", e);
+  }
+}
+
 /* ═══════ LOGIN ═══════ */
 function doLogin() {
   const u = document.getElementById('lu').value.trim();
@@ -578,7 +620,9 @@ function doLogin() {
   if (u === 'admin' && p === ADMIN_PASS) {
     document.getElementById('loginScreen').style.display = 'none';
     document.getElementById('app').classList.add('on');
+    fetchServerRequests();
     refreshAll();
+    setInterval(fetchServerRequests, 10000); // Auto-sync every 10 sec
   } else {
     document.getElementById('loginErr').style.display = 'block';
     document.getElementById('lp').value = '';
