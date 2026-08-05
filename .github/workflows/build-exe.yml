@@ -1,4 +1,4 @@
-name: Build Windows Installer (.exe)
+name: 🥋 Build & Release JudoManager Pro
 
 on:
   push:
@@ -16,62 +16,107 @@ jobs:
     runs-on: windows-latest
 
     steps:
-      - name: Checkout code
+      # ─── 1. Checkout ───────────────────────────────────────────────────
+      - name: 📥 Checkout code
         uses: actions/checkout@v4
 
-      - name: Setup Node.js 20
+      # ─── 2. Node.js ────────────────────────────────────────────────────
+      - name: ⚙️ Setup Node.js 20
         uses: actions/setup-node@v4
         with:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install dependencies
+      # ─── 3. Install ALL deps (includes electron + electron-builder) ────
+      - name: 📦 Install dependencies
         run: npm install --legacy-peer-deps
 
-      - name: Build Next.js (standalone mode)
+      # ─── 4. Build Next.js in standalone mode ──────────────────────────
+      - name: 🔨 Build Next.js (standalone)
         run: npm run build
         env:
           NODE_ENV: production
 
-      - name: Prepare standalone bundle
+      # ─── 5. Prepare electron bundle ────────────────────────────────────
+      - name: 📂 Prepare standalone bundle
         run: node build-scripts/prepare-standalone.js
 
-      - name: Install electron icon tool
-        run: npm install png-to-ico --save-dev --legacy-peer-deps
+      # ─── 6. Create fallback icon if missing ────────────────────────────
+      - name: 🎨 Create app icon (fallback)
+        shell: pwsh
+        run: |
+          if (-Not (Test-Path "electron/icon.ico")) {
+            Write-Host "⚠ icon.ico not found - creating placeholder..."
+            # Download a generic icon as placeholder
+            Invoke-WebRequest -Uri "https://github.com/electron/electron/raw/main/shell/browser/resources/win/electron.ico" -OutFile "electron/icon.ico" -UseBasicParsing
+            Write-Host "✅ Placeholder icon created."
+          } else {
+            Write-Host "✅ icon.ico already exists."
+          }
 
-      - name: Build Windows installer (.exe)
+      # ─── 7. Build .exe installer ───────────────────────────────────────
+      - name: 🏗️ Build Windows installer (.exe)
         run: npx electron-builder --win --x64
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload installer artifact
+      # ─── 8. Find the generated .exe ────────────────────────────────────
+      - name: 🔍 List dist-exe contents
+        shell: pwsh
+        run: |
+          Write-Host "=== dist-exe contents ==="
+          Get-ChildItem -Path dist-exe -Recurse | Select-Object FullName, Length
+
+      # ─── 9. Upload as GitHub Actions artifact (always) ────────────────
+      - name: 📤 Upload installer artifact
         uses: actions/upload-artifact@v4
         with:
-          name: JudoManager-Pro-Setup
+          name: JudoManager-Pro-Setup-${{ github.ref_name || inputs.version }}
           path: dist-exe/*.exe
           retention-days: 30
+          if-no-files-found: error
 
-      - name: Create GitHub Release
+      # ─── 10. Create GitHub Release (only on tag push) ─────────────────
+      - name: 🚀 Create GitHub Release
         if: startsWith(github.ref, 'refs/tags/')
         uses: softprops/action-gh-release@v2
         with:
           files: dist-exe/*.exe
-          name: JudoManager Pro ${{ github.ref_name }}
+          name: "🥋 JudoManager Pro ${{ github.ref_name }}"
           body: |
-            ## 🥋 JudoManager Pro - نظام إدارة أندية الجودو
+            ## 🥋 JudoManager Pro ${{ github.ref_name }}
+            ### نظام إدارة أندية الجودو
 
-            ### تعليمات التثبيت:
-            1. حمّل ملف `JudoManager-Pro-Setup.exe`
-            2. شغّل الملف كمسؤول (Run as Administrator)
-            3. اتبع خطوات التثبيت
-            4. افتح البرنامج من سطح المكتب
-            5. أدخل مفتاح الترخيص للبدء
+            ---
 
-            ### متطلبات النظام:
-            - Windows 10/11 (64-bit)
-            - 4 GB RAM على الأقل
-            - 500 MB مساحة فارغة
+            ### ⬇️ تحميل البرنامج
+
+            انقر على ملف **`JudoManager-Pro-Setup.exe`** أدناه لتحميل البرنامج مباشرة.
+
+            ---
+
+            ### 📋 خطوات التثبيت:
+            1. ⬇️ حمّل ملف `JudoManager-Pro-Setup.exe`
+            2. 🖱️ شغّل الملف بالنقر عليه مرتين
+            3. ✅ اتبع خطوات التثبيت (بعض الأجهزة قد تطلب صلاحيات مسؤول)
+            4. 🖥️ افتح البرنامج من اختصار سطح المكتب
+            5. 🔑 أدخل مفتاح الترخيص للبدء
+
+            ---
+
+            ### 💻 متطلبات النظام:
+            | المتطلب | التفاصيل |
+            |---------|----------|
+            | نظام التشغيل | Windows 10 / 11 (64-bit) |
+            | الذاكرة العشوائية | 4 GB RAM على الأقل |
+            | المساحة الحرة | 500 MB على الأقل |
+
+            ---
+
+            ### 📞 الدعم الفني:
+            للمساعدة تواصل على: **0553823611**
           draft: false
           prerelease: false
+          fail_on_unmatched_files: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
