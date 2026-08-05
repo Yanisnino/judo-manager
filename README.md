@@ -10,8 +10,8 @@
 
 ![JudoManager Pro](https://img.shields.io/badge/JudoManager-Pro-1a1a2e?style=for-the-badge&logo=data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCI+PHBhdGggZmlsbD0id2hpdGUiIGQ9Ik0xMiAyQzYuNDggMiAyIDYuNDggMiAxMnM0LjQ4IDEwIDEwIDEwIDEwLTQuNDggMTAtMTBTMTcuNTIgMiAxMiAyem0tMiAxNWwtNS01IDEuNDEtMS40MUwxMCAxNC4xN2w3LjU5LTcuNTlMMTkgOGwtOSA5eiIvPjwvc3ZnPg==)
 ![Platform](https://img.shields.io/badge/Platform-Windows%2010%2F11-0078d4?style=for-the-badge&logo=windows)
-![Version](https://img.shields.io/github/v/release/YOUR_USERNAME/judo-manager?style=for-the-badge&label=أحدث%20إصدار&color=28a745)
-![Downloads](https://img.shields.io/github/downloads/YOUR_USERNAME/judo-manager/total?style=for-the-badge&label=تحميل&color=ff6b35)
+![Version](https://img.shields.io/github/v/release/Yanisnino/judo-manager?style=for-the-badge&label=أحدث%20إصدار&color=28a745)
+![Downloads](https://img.shields.io/github/downloads/Yanisnino/judo-manager/total?style=for-the-badge&label=تحميل&color=ff6b35)
 
 <br/>
 
