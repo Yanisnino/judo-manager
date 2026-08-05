@@ -900,15 +900,45 @@ function saveEdit() {
 function viewReceipt(id) {
   const req = getData().find(r => r.id === id);
   if (!req) return;
-  document.getElementById('receiptInfo').textContent = `نادي: ${req.clubName} — ${req.receiptNum || ''}`;
+
   const cont = document.getElementById('receiptContent');
-  if (req.receiptImg) {
-    cont.innerHTML = `<img src="${req.receiptImg}" alt="وصل الدفع" style="max-width:100%;max-height:380px;border-radius:12px;border:1px solid var(--bd);">`;
-  } else if (req.receiptNum) {
-    cont.innerHTML = `<div style="background:var(--grn-d);border:1px solid rgba(46,216,168,.2);border-radius:12px;padding:20px;font-size:14px;color:var(--grn);">🧾 رقم الوصل: <strong>${req.receiptNum}</strong></div>`;
-  } else {
-    cont.innerHTML = `<p style="color:var(--mu)">لا يوجد وصل مرفق</p>`;
-  }
+  cont.innerHTML = `
+    <div style="background:var(--bg); border:1px solid var(--bd); border-radius:16px; padding:18px; text-align:right; font-size:13px; space-y-3;">
+      <div style="color:var(--pur); font-weight:900; font-size:16px; border-bottom:1px solid var(--bd); padding-bottom:8px; margin-bottom:12px;">
+        🏛️ ${req.clubName}
+      </div>
+
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:12px;">
+        <div>
+          <span style="color:var(--mu); font-size:11px; block">اسم المسؤول/المدرب:</span>
+          <strong style="color:var(--wh);">${req.manager || 'غير محدد'}</strong>
+        </div>
+        <div>
+          <span style="color:var(--mu); font-size:11px; block">رقم الهاتف:</span>
+          <strong style="color:var(--grn); font-family:monospace;">${req.phone || 'غير محدد'}</strong>
+        </div>
+      </div>
+
+      <div style="margin-bottom:12px;">
+        <span style="color:var(--mu); font-size:11px; block">البريد الإلكتروني (لتلقي المفتاح):</span>
+        <strong style="color:var(--blu); font-family:monospace;">${req.email}</strong>
+      </div>
+
+      <div style="background:var(--card); padding:12px; border-radius:12px; border:1px solid var(--bd); margin-bottom:12px;">
+        <span style="color:var(--amb); font-size:11px; font-weight:700; block mb-1">بيانات/رقم وصل دفع BaridiMob:</span>
+        <div style="color:var(--wh); font-family:monospace; font-weight:700; font-size:14px;">
+          ${req.receiptNum || req.receiptUrl || 'وصل مرفوق مع الطلب'}
+        </div>
+      </div>
+
+      <div style="display:flex; justify-content:space-between; font-size:11px; color:var(--mu); border-top:1px solid var(--bd); padding-top:8px;">
+        <span>نوع الطلب: <strong>${req.type === 'LIFETIME' ? 'ترخيص دائم (9000 دج)' : 'تجريبي 14 يوم'}</strong></span>
+        <span>التاريخ: ${req.createdAt || ''}</span>
+      </div>
+    </div>
+    ${req.receiptImg ? `<div style="margin-top:14px;"><img src="${req.receiptImg}" alt="صورة الوصل" style="max-width:100%;max-height:380px;border-radius:12px;border:1px solid var(--bd);"></div>` : ''}
+  `;
+
   document.getElementById('receiptModal').classList.add('on');
 }
 
