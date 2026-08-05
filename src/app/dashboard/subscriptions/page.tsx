@@ -12,48 +12,35 @@ interface SubscriptionItem {
   status: "paid" | "pending" | "expired";
 }
 
-const initialSubscriptions: SubscriptionItem[] = [
-  {
-    id: "SUB-101",
-    athleteName: "محمد أمين بن علي",
-    planName: "اشتراك شهري عادي",
-    amount: 2500,
-    startDate: "2026-07-01",
-    endDate: "2026-08-01",
-    status: "paid",
-  },
-  {
-    id: "SUB-102",
-    athleteName: "أحمد ياسين زروقي",
-    planName: "اشتراك شهري عادي",
-    amount: 2500,
-    startDate: "2026-06-25",
-    endDate: "2026-07-25",
-    status: "pending",
-  },
-  {
-    id: "SUB-103",
-    athleteName: "يوسف بلقاسم",
-    planName: "اشتراك 3 أشهر مكثف",
-    amount: 6500,
-    startDate: "2026-04-10",
-    endDate: "2026-07-10",
-    status: "expired",
-  },
-  {
-    id: "SUB-104",
-    athleteName: "سارة حداد",
-    planName: "اشتراك سنوي شامل",
-    amount: 22000,
-    startDate: "2026-01-01",
-    endDate: "2027-01-01",
-    status: "paid",
-  },
-];
+const LOCAL_STORAGE_KEY = "judo_subscriptions_v1";
 
 export default function SubscriptionsPage() {
-  const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>(initialSubscriptions);
+  const [subscriptions, setSubscriptions] = useState<SubscriptionItem[]>([]);
   const [filter, setFilter] = useState("all");
+
+  // Load stored subscriptions on mount
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (stored) {
+        setSubscriptions(JSON.parse(stored));
+      } else {
+        setSubscriptions([]);
+      }
+    } catch {
+      setSubscriptions([]);
+    }
+  }, []);
+
+  // Save to localStorage on change
+  const saveSubscriptions = (newSubs: SubscriptionItem[]) => {
+    setSubscriptions(newSubs);
+    try {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(newSubs));
+    } catch (e) {
+      console.error(e);
+    }
+  };
   
   // Modals state
   const [showAddModal, setShowAddModal] = useState(false);
@@ -86,7 +73,7 @@ export default function SubscriptionsPage() {
       endDate,
       status,
     };
-    setSubscriptions([newSub, ...subscriptions]);
+    saveSubscriptions([newSub, ...subscriptions]);
     setShowAddModal(false);
     resetForm();
   };
@@ -95,18 +82,12 @@ export default function SubscriptionsPage() {
     const today = new Date();
     const nextMonth = new Date(today.setMonth(today.getMonth() + 1)).toISOString().split("T")[0];
     
-    setSubscriptions((prev) =>
-      prev.map((s) =>
-        s.id === sub.id
-          ? {
-              ...s,
-              startDate: new Date().toISOString().split("T")[0],
-              endDate: nextMonth,
-              status: "paid",
-            }
-          : s
-      )
+    const updated = subscriptions.map((s) =>
+      s.id === sub.id
+        ? { ...s, startDate: new Date().toISOString().split("T")[0], endDate: nextMonth, status: "paid" as const }
+        : s
     );
+    saveSubscriptions(updated);
     alert(`تم تجديد اشتراك اللاعب "${sub.athleteName}" لغاية ${nextMonth} بنجاح!`);
   };
 

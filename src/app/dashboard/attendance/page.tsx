@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 interface SessionAthlete {
   id: string;
@@ -11,41 +11,37 @@ interface SessionAthlete {
 }
 
 export default function AttendancePage() {
-  const [selectedGroup, setSelectedGroup] = useState("أشبال (10-12 سنة)");
+  const [selectedGroup, setSelectedGroup] = useState("براعم (6-9 سنوات)");
   const [selectedDate, setSelectedDate] = useState(
     new Date().toISOString().split("T")[0]
   );
+  const [athletes, setAthletes] = useState<SessionAthlete[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
 
-  const [athletes, setAthletes] = useState<SessionAthlete[]>([
-    {
-      id: "ATH-001",
-      name: "محمد أمين بن علي",
-      belt: "أصفر",
-      beltColor: "bg-yellow-400 text-gray-900",
-      attendance: "present",
-    },
-    {
-      id: "ATH-002",
-      name: "أحمد ياسين زروقي",
-      belt: "برتقالي",
-      beltColor: "bg-orange-500 text-white",
-      attendance: "present",
-    },
-    {
-      id: "ATH-003",
-      name: "يوسف بلقاسم",
-      belt: "أخضر",
-      beltColor: "bg-emerald-600 text-white",
-      attendance: "absent",
-    },
-    {
-      id: "ATH-004",
-      name: "سارة حداد",
-      belt: "أبيض",
-      beltColor: "bg-gray-100 text-gray-800 border border-gray-300",
-      attendance: "late",
-    },
-  ]);
+  // Load real athletes list
+  useEffect(() => {
+    async function loadAthletes() {
+      try {
+        const res = await fetch("/api/athletes");
+        if (res.ok) {
+          const data = await res.json();
+          const sessionAthletes: SessionAthlete[] = data.map((a: any) => ({
+            id: a.id,
+            name: a.name,
+            belt: a.belt || "حزام أبيض",
+            beltColor: a.beltColor || "bg-gray-100 text-gray-800 border border-gray-300",
+            attendance: "absent",
+          }));
+          setAthletes(sessionAthletes);
+        }
+      } catch (e) {
+        console.error(e);
+      } finally {
+        setIsLoading(false);
+      }
+    }
+    loadAthletes();
+  }, []);
 
   const updateAttendance = (
     id: string,
@@ -136,58 +132,66 @@ export default function AttendancePage() {
 
       {/* Athletes Attendance List */}
       <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden divide-y divide-gray-100">
-        {athletes.map((athlete) => (
-          <div
-            key={athlete.id}
-            className="p-4 md:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50/50 transition-all"
-          >
-            <div className="flex items-center gap-3">
-              <div className="w-11 h-11 rounded-full bg-blue-100 text-blue-800 font-black text-base flex items-center justify-center">
-                {athlete.name.charAt(0)}
-              </div>
-              <div>
-                <div className="font-bold text-gray-900 text-base">{athlete.name}</div>
-                <span className={`text-xs font-bold px-2 py-0.5 rounded-full inline-block mt-0.5 ${athlete.beltColor}`}>
-                  {athlete.belt}
-                </span>
-              </div>
-            </div>
-
-            {/* Attendance Buttons */}
-            <div className="flex gap-2">
-              <button
-                onClick={() => updateAttendance(athlete.id, "present")}
-                className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-                  athlete.attendance === "present"
-                    ? "bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20"
-                    : "bg-white text-gray-600 border-gray-200 hover:bg-gray-100"
-                }`}
-              >
-                ✓ حاضر
-              </button>
-              <button
-                onClick={() => updateAttendance(athlete.id, "absent")}
-                className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-                  athlete.attendance === "absent"
-                    ? "bg-rose-600 text-white border-rose-600 shadow-md shadow-rose-600/20"
-                    : "bg-white text-gray-600 border-gray-200 hover:bg-gray-100"
-                }`}
-              >
-                ✕ غائب
-              </button>
-              <button
-                onClick={() => updateAttendance(athlete.id, "late")}
-                className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
-                  athlete.attendance === "late"
-                    ? "bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/20"
-                    : "bg-white text-gray-600 border-gray-200 hover:bg-gray-100"
-                }`}
-              >
-                ⏰ متأخر
-              </button>
-            </div>
+        {athletes.length === 0 ? (
+          <div className="text-center py-12 px-4 space-y-3">
+            <span className="text-4xl block">📋</span>
+            <p className="text-sm font-bold text-gray-700">لا يوجد لاعبون مسجلون في النادي بعد.</p>
+            <p className="text-xs text-gray-400">قم بإضافة لاعبين جدد أولاً من صفحة "اللاعبون" لتسجيل حضورهم هنا.</p>
           </div>
-        ))}
+        ) : (
+          athletes.map((athlete) => (
+            <div
+              key={athlete.id}
+              className="p-4 md:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-4 hover:bg-gray-50/50 transition-all"
+            >
+              <div className="flex items-center gap-3">
+                <div className="w-11 h-11 rounded-full bg-blue-100 text-blue-800 font-black text-base flex items-center justify-center">
+                  {athlete.name.charAt(0)}
+                </div>
+                <div>
+                  <div className="font-bold text-gray-900 text-base">{athlete.name}</div>
+                  <span className={`text-xs font-bold px-2 py-0.5 rounded-full inline-block mt-0.5 ${athlete.beltColor}`}>
+                    {athlete.belt}
+                  </span>
+                </div>
+              </div>
+
+              {/* Attendance Buttons */}
+              <div className="flex gap-2">
+                <button
+                  onClick={() => updateAttendance(athlete.id, "present")}
+                  className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                    athlete.attendance === "present"
+                      ? "bg-emerald-600 text-white border-emerald-600 shadow-md shadow-emerald-600/20"
+                      : "bg-white text-gray-600 border-gray-200 hover:bg-gray-100"
+                  }`}
+                >
+                  ✓ حاضر
+                </button>
+                <button
+                  onClick={() => updateAttendance(athlete.id, "absent")}
+                  className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                    athlete.attendance === "absent"
+                      ? "bg-rose-600 text-white border-rose-600 shadow-md shadow-rose-600/20"
+                      : "bg-white text-gray-600 border-gray-200 hover:bg-gray-100"
+                  }`}
+                >
+                  ✕ غائب
+                </button>
+                <button
+                  onClick={() => updateAttendance(athlete.id, "late")}
+                  className={`flex-1 sm:flex-initial px-4 py-2 rounded-xl text-xs font-bold transition-all border ${
+                    athlete.attendance === "late"
+                      ? "bg-amber-500 text-white border-amber-500 shadow-md shadow-amber-500/20"
+                      : "bg-white text-gray-600 border-gray-200 hover:bg-gray-100"
+                  }`}
+                >
+                  ⏰ متأخر
+                </button>
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   );

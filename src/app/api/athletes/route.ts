@@ -5,21 +5,8 @@ import path from "path";
 const DATA_DIR = path.join(process.cwd(), "data");
 const FILE_PATH = path.join(DATA_DIR, "athletes.json");
 
-// Initial sample data if file does not exist
-const initialData = [
-  {
-    id: "ATH-001",
-    name: "أحمد بن علي",
-    code: "JUDO-2026-0001",
-    belt: "حزام أصفر",
-    beltColor: "bg-yellow-400 text-gray-900 font-bold",
-    group: "أشبال (10-12 سنة)",
-    age: 11,
-    phone: "0550123456",
-    subStatus: "paid",
-    status: "active"
-  }
-];
+// Initial data: empty array so user starts with 0 athletes
+const initialData: any[] = [];
 
 function ensureFileExists() {
   if (!fs.existsSync(DATA_DIR)) {

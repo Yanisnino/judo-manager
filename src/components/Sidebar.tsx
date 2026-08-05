@@ -1,13 +1,10 @@
 "use client";
 
-import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import ParentShareModal from "./ParentShareModal";
 
 export default function Sidebar() {
   const pathname = usePathname();
-  const [showShareModal, setShowShareModal] = useState(false);
 
   const menuItems = [
     { name: "الرئيسية", href: "/dashboard", icon: "📊" },
@@ -15,7 +12,6 @@ export default function Sidebar() {
     { name: "الحضور", href: "/dashboard/attendance", icon: "✅" },
     { name: "الاشتراكات", href: "/dashboard/subscriptions", icon: "💰" },
     { name: "الأحزمة", href: "/dashboard/belts", icon: "🟨" },
-    { name: "الإشعارات للأولياء", href: "/dashboard/notifications", icon: "📩" },
     { name: "النسخ الاحتياطي", href: "/dashboard/backup", icon: "🔄" },
     { name: "الإعدادات", href: "/dashboard/settings", icon: "⚙️" },
   ];
@@ -27,16 +23,6 @@ export default function Sidebar() {
         <h2 className="text-2xl font-black text-blue-900 flex items-center gap-2">
           <span>🥋</span> JudoManager
         </h2>
-      </div>
-
-      {/* Parent App Quick Share Button */}
-      <div className="p-3 border-b border-gray-100 shrink-0">
-        <button
-          onClick={() => setShowShareModal(true)}
-          className="w-full py-2.5 px-3 bg-gradient-to-r from-indigo-600 to-blue-600 hover:from-indigo-700 hover:to-blue-700 text-white rounded-xl font-bold text-xs shadow-md flex items-center justify-center gap-2"
-        >
-          <span>👨‍👩‍👧</span> رابط ومسح تطبيق الأولياء
-        </button>
       </div>
 
       {/* Scrollable Navigation Sections List */}
@@ -70,8 +56,6 @@ export default function Sidebar() {
           تسجيل الخروج
         </Link>
       </div>
-
-      {showShareModal && <ParentShareModal onClose={() => setShowShareModal(false)} />}
     </aside>
   );
 }

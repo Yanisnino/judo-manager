@@ -11,34 +11,88 @@ export default function DashboardOverview() {
   const [showAttendanceModal, setShowAttendanceModal] = useState(false);
 
   const [formName, setFormName] = useState("");
-  const [formGroup, setFormGroup] = useState("أشبال (10-12 سنة)");
+  const [formGroup, setFormGroup] = useState("براعم (6-9 سنوات)");
 
-  // State for club data
+  // Dynamic state for club data
   const [athletesList, setAthletesList] = useState<any[]>([]);
+  const [subscriptionsList, setSubscriptionsList] = useState<any[]>([]);
   const [licenseInfo, setLicenseInfo] = useState<any>(null);
+
+  const loadAllData = async () => {
+    try {
+      const res = await fetch("/api/athletes");
+      if (res.ok) {
+        const data = await res.json();
+        setAthletesList(data);
+      }
+    } catch (e) {
+      console.error(e);
+    }
+
+    try {
+      const storedSubs = localStorage.getItem("judo_subscriptions_v1");
+      if (storedSubs) {
+        setSubscriptionsList(JSON.parse(storedSubs));
+      } else {
+        setSubscriptionsList([]);
+      }
+    } catch (e) {
+      setSubscriptionsList([]);
+    }
+  };
 
   useEffect(() => {
     const lic = getStoredLicense();
     setLicenseInfo(lic);
     if (!lic.isActivated) {
-      // If not activated, redirect to activation page
       router.push("/activate");
     }
+
+    loadAllData();
   }, [router]);
 
-  const handleAddSubmit = (e: React.FormEvent) => {
+  const handleAddSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!formName.trim()) return;
+
     const newAth = {
-      id: "ATH-" + (athletesList.length + 1).toString().padStart(3, "0"),
+      id: "ATH-" + Date.now(),
       name: formName,
+      code: `JUDO-2026-${(athletesList.length + 1).toString().padStart(4, "0")}`,
       belt: "حزام أبيض",
+      beltColor: "bg-gray-100 text-gray-800 border border-gray-300 font-bold",
       group: formGroup,
+      age: 10,
+      phone: "",
+      subStatus: "paid",
+      status: "active",
     };
-    setAthletesList([newAth, ...athletesList]);
-    alert(`تمت إضافة اللاعب "${formName}" بنجاح إلى مجموعة ${formGroup}!`);
-    setShowAddModal(false);
-    setFormName("");
+
+    try {
+      const res = await fetch("/api/athletes", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newAth),
+      });
+
+      if (res.ok) {
+        alert(`تمت إضافة اللاعب "${formName}" بنجاح إلى ${formGroup}!`);
+        setShowAddModal(false);
+        setFormName("");
+        loadAllData();
+      }
+    } catch (e) {
+      alert("حدث خطأ أثناء حفظ اللاعب!");
+    }
   };
+
+  // Calculate live stats
+  const totalAthletes = athletesList.length;
+  const activeSubs = subscriptionsList.filter((s) => s.status === "paid").length;
+  const expiredSubs = subscriptionsList.filter((s) => s.status === "expired" || s.status === "pending").length;
+  const totalRevenue = subscriptionsList
+    .filter((s) => s.status === "paid")
+    .reduce((sum, s) => sum + (s.amount || 0), 0);
 
   return (
     <div className="space-y-6">
@@ -46,8 +100,8 @@ export default function DashboardOverview() {
       {licenseInfo?.type === "TRIAL_14_DAYS" && (
         <div className="bg-indigo-600 text-white px-5 py-3 rounded-2xl shadow-md flex flex-wrap items-center justify-between gap-3 text-xs">
           <div className="flex items-center gap-2">
-            <span class="text-base">⏱️</span>
-            <span class="font-bold">
+            <span className="text-base">⏱️</span>
+            <span className="font-bold">
               نسخة تجريبية نشطة - متبقي {licenseInfo.daysRemaining} يوماً على انتهاء الصلاحية التجريبية
             </span>
           </div>
@@ -55,7 +109,7 @@ export default function DashboardOverview() {
             href="/activate"
             className="px-3.5 py-1.5 bg-white text-indigo-900 font-black rounded-xl hover:bg-indigo-50 transition-all text-xs"
           >
-            التجميع والشراء مدى الحياة (BaridiMob) 💳
+            التفعيل الشامل مدى الحياة 💳
           </Link>
         </div>
       )}
@@ -84,49 +138,56 @@ export default function DashboardOverview() {
 
       {/* Stat Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatCard title="إجمالي اللاعبين" value={athletesList.length.toString()} trend="لا يوجد لاعبون بعد" color="blue" />
-        <StatCard title="حاضرون اليوم" value="0" trend="0 حصص" color="green" />
-        <StatCard title="اشتراكات تنتهي قريباً" value="0" trend="لا توجد تذكيرات" color="orange" />
-        <StatCard title="المدفوعات هذا الشهر" value="0 دج" trend="0 دج مدفوعات" color="purple" />
+        <StatCard
+          title="إجمالي اللاعبين"
+          value={totalAthletes.toString()}
+          trend={totalAthletes === 0 ? "لا يوجد لاعبون مسجلون بعد" : `${totalAthletes} لاعب مسجل`}
+          color="blue"
+        />
+        <StatCard
+          title="الاشتراكات النشطة"
+          value={activeSubs.toString()}
+          trend={`${activeSubs} اشتراك مفعّل`}
+          color="green"
+        />
+        <StatCard
+          title="اشتراكات معلقة/منتهية"
+          value={expiredSubs.toString()}
+          trend={`${expiredSubs} يحتاج تجديد`}
+          color="orange"
+        />
+        <StatCard
+          title="مداخيل الاشتراكات"
+          value={`${totalRevenue.toLocaleString()} دج`}
+          trend="إجمالي المداخيل"
+          color="purple"
+        />
       </div>
 
-      {/* Main Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold text-gray-800">أحدث التسجيلات بالنادي</h3>
-            <Link href="/dashboard/athletes" className="text-blue-600 hover:underline text-xs font-bold">عرض الكل ➔</Link>
-          </div>
-          {athletesList.length === 0 ? (
-            <div className="text-center py-10 space-y-3 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
-              <span className="text-3xl block">🥋</span>
-              <p className="text-xs font-bold text-gray-500">لا يوجد لاعبون مسجلون في النادي بعد.</p>
-              <button
-                onClick={() => setShowAddModal(true)}
-                className="px-4 py-2 bg-blue-600 text-white font-bold rounded-xl text-xs shadow-md"
-              >
-                ➕ إضافة أول لاعب للنادي
-              </button>
-            </div>
-          ) : (
-            <div className="space-y-4">
-              {athletesList.map((ath) => (
-                <AthleteRow key={ath.id} name={ath.name} belt={ath.belt} group={ath.group} />
-              ))}
-            </div>
-          )}
+      {/* Recent Athletes Table */}
+      <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
+        <div className="flex justify-between items-center mb-4">
+          <h3 className="text-xl font-bold text-gray-800">أحدث التسجيلات بالنادي</h3>
+          <Link href="/dashboard/athletes" className="text-blue-600 hover:underline text-xs font-bold">عرض الكل ➔</Link>
         </div>
-
-        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100">
-          <div className="flex justify-between items-center mb-4">
-            <h3 className="text-xl font-bold text-gray-800">تنبيهات وإشعار الأولياء</h3>
-            <Link href="/dashboard/notifications" className="text-blue-600 hover:underline text-xs font-bold">إرسال إشعار ➔</Link>
+        {athletesList.length === 0 ? (
+          <div className="text-center py-10 space-y-3 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
+            <span className="text-3xl block">🥋</span>
+            <p className="text-xs font-bold text-gray-500">لا يوجد لاعبون مسجلون في النادي بعد.</p>
+            <button
+              onClick={() => setShowAddModal(true)}
+              className="px-4 py-2 bg-blue-600 text-white font-bold rounded-xl text-xs shadow-md"
+            >
+              ➕ إضافة أول لاعب للنادي
+            </button>
           </div>
-          <div className="text-center py-10 space-y-2 bg-gray-50/50 rounded-2xl border border-dashed border-gray-200">
-            <span className="text-3xl block">🔔</span>
-            <p className="text-xs font-bold text-gray-500">لا توجد تنبيهات عاجلة. يمكنك إرسال أول إشعار للأولياء.</p>
+        ) : (
+          <div className="space-y-3">
+            {athletesList.slice(0, 5).map((ath) => (
+              <AthleteRow key={ath.id} name={ath.name} belt={ath.belt || "حزام أبيض"} group={ath.group} />
+            ))}
           </div>
-        </div>
+        )}
       </div>
 
       {/* Quick Add Athlete Modal */}
@@ -139,7 +200,7 @@ export default function DashboardOverview() {
             </div>
             <form onSubmit={handleAddSubmit} className="space-y-4 text-sm">
               <div>
-                <label className="block text-gray-700 font-semibold mb-1">الاسم واللقب</label>
+                <label className="block text-gray-700 font-semibold mb-1">الاسم واللقب *</label>
                 <input
                   type="text"
                   required

@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تثبيت تطبيق أولياء الأمور - JudoManager</title>
+  <link rel="manifest" href="/manifest.json">
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: #090d16;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      text-align: center;
+      padding: 20px;
+    }
+    .card {
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 24px;
+      padding: 32px 24px;
+      max-width: 380px;
+      width: 100%;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+    }
+    .icon {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      border-radius: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 40px;
+      margin: 0 auto 20px;
+      box-shadow: 0 10px 25px rgba(37,99,235,0.4);
+    }
+    h1 {
+      font-size: 22px;
+      margin-bottom: 8px;
+    }
+    p {
+      color: #9ca3af;
+      font-size: 13px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .btn {
+      display: block;
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(90deg, #2563eb, #4f46e5);
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+      border-radius: 16px;
+      font-size: 15px;
+      box-shadow: 0 10px 20px rgba(37,99,235,0.3);
+      border: none;
+      cursor: pointer;
+      box-sizing: border-box;
+    }
+    .btn:hover {
+      opacity: 0.95;
+    }
+    .steps {
+      margin-top: 24px;
+      text-align: right;
+      background: #0b0f19;
+      padding: 16px;
+      border-radius: 16px;
+      border: 1px solid #1f2937;
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+    .steps ol {
+      margin: 8px 0 0 0;
+      padding-right: 20px;
+    }
+    .steps li {
+      margin-bottom: 6px;
+    }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="icon">👨‍👩‍👧</div>
+    <h1>تطبيق أولياء الأمور الرسمي</h1>
+    <p>تطبيق مخصص لأولياء الأمور لمتابعة حضور الأبناء، الأحزمة، البطولات وتلقي الإشعارات الفورية من النادي.</p>
+
+    <button id="installBtn" class="btn">📲 تثبيت التطبيق على هاتف ولي الأمر</button>
+
+    <div className="steps" style="margin-top: 20px; text-align: right; background: #0b0f19; padding: 14px; border-radius: 16px; font-size: 12px;">
+      <strong>💡 طريقة التثبيت على الهاتف:</strong>
+      <ol style="margin-top: 6px; padding-right: 18px;">
+        <li>اضغط على زر <strong>"تثبيت التطبيق"</strong> أعلاه.</li>
+        <li>أو اختر من خيارات المتصفح (⋮) ➔ <strong>"الإضافة إلى الشاشة الرئيسية"</strong>.</li>
+      </ol>
+    </div>
+  </div>
+
+  <script>
+    let deferredPrompt;
+    const installBtn = document.getElementById('installBtn');
+
+    window.addEventListener('beforeinstallprompt', (e) => {
+      e.preventDefault();
+      deferredPrompt = e;
+      installBtn.style.display = 'block';
+    });
+
+    installBtn.addEventListener('click', async () => {
+      if (deferredPrompt) {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if (outcome === 'accepted') {
+          deferredPrompt = null;
+        }
+      } else {
+        window.location.href = '/parent';
+      }
+    });
+  </script>
+</body>
+</html>
