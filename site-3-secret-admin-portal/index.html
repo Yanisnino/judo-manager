@@ -573,8 +573,20 @@ function saveData(d) {
 }
 
 async function fetchServerRequests() {
+  let customApiUrl = localStorage.getItem('judo_admin_api_endpoint') || '';
+  if (!customApiUrl) {
+    const entered = prompt("يرجى إدخال رابط سيرفر/شيت المزامنة المباشر (أو اتركه فارغاً للاستخدام الافتراضي):", "");
+    if (entered) {
+      customApiUrl = entered.trim();
+      localStorage.setItem('judo_admin_api_endpoint', customApiUrl);
+    }
+  }
+
+  const endpoint = customApiUrl || '/api/license-requests';
+
   try {
-    const res = await fetch('/api/license-requests');
+    toast("⏳ جاري فحص وجلب الطلبات السحابية...");
+    const res = await fetch(endpoint);
     if (res.ok) {
       const serverReqs = await res.json();
       if (Array.isArray(serverReqs) && serverReqs.length > 0) {
@@ -586,16 +598,16 @@ async function fetchServerRequests() {
         for (const sReq of serverReqs) {
           if (!localIds.has(sReq.id)) {
             merged.unshift({
-              id: sReq.id,
-              clubName: sReq.clubName,
-              manager: sReq.managerName || sReq.clubName,
-              email: sReq.email,
-              phone: sReq.phone,
-              type: sReq.requestType === 'LIFETIME_PRO' ? 'LIFETIME' : 'TRIAL',
-              receiptNum: sReq.receiptUrl,
+              id: sReq.id || 'REQ-' + Date.now(),
+              clubName: sReq.clubName || 'نادي جديد',
+              manager: sReq.managerName || sReq.clubName || '',
+              email: sReq.email || '',
+              phone: sReq.phone || '',
+              type: (sReq.requestType === 'LIFETIME_PRO' || sReq.type === 'LIFETIME') ? 'LIFETIME' : 'TRIAL',
+              receiptNum: sReq.receiptUrl || sReq.receiptNum || '',
               status: sReq.status || 'PENDING',
               createdAt: sReq.createdAt ? new Date(sReq.createdAt).toLocaleString('ar-DZ') : new Date().toLocaleString('ar-DZ'),
-              key: null
+              key: sReq.key || null
             });
             addedCount++;
           }
@@ -604,12 +616,18 @@ async function fetchServerRequests() {
         if (addedCount > 0) {
           localStorage.setItem(DATA_KEY, JSON.stringify(merged));
           refreshAll();
-          toast(`⚡ وصلك ${addedCount} طلب جديد من الزبائن!`);
+          toast(`🎉 وصلك ${addedCount} طلب جديد من الزبائن!`);
+        } else {
+          toast("✅ البيانات محدثة. لا توجد طلبات جديدة معلقة.");
         }
+      } else {
+        toast("✅ لا توجد طلبات جديدة في السيرفر حالياً.");
       }
+    } else {
+      toast("⚠️ تعذر الوصول لرابط المزامنة، استخدم إضافة طلب يدوي من الواتساب.");
     }
   } catch(e) {
-    console.error("Failed to sync server requests", e);
+    toast("💡 لتفعيل المزامنة المباشرة، يرجى تعيين رابط سيرفر المزامنة من زر الإعدادات.");
   }
 }
 
