@@ -174,6 +174,18 @@ export function submitLicenseRequest(data: Omit<LicenseRequest, "id" | "status" 
   };
   const updated = [newReq, ...requests];
   saveAdminRequests(updated);
+
+  // Send request live to cloud API so admin receives it automatically
+  try {
+    fetch("/api/license-requests", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(newReq),
+    }).catch((e) => console.error(e));
+  } catch (e) {
+    console.error(e);
+  }
+
   return newReq;
 }
 
