@@ -1,8 +1,22 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import os from "os";
 
-const DATA_DIR = path.join(process.cwd(), "data");
+// Persistent storage path outside application installation folder (AppData / User Home)
+const getStorageDir = () => {
+  const appData = process.env.APPDATA || (process.platform === "darwin" ? path.join(os.homedir(), "Library", "Preferences") : path.join(os.homedir(), ".config"));
+  const persistentDir = path.join(appData, "JudoManagerProData");
+  
+  if (fs.existsSync(persistentDir)) {
+    return persistentDir;
+  }
+  
+  // Fallback to local data dir inside root if appData not accessible
+  return path.join(process.cwd(), "data");
+};
+
+const DATA_DIR = getStorageDir();
 const FILE_PATH = path.join(DATA_DIR, "athletes.json");
 
 // Initial data: empty array so user starts with 0 athletes
