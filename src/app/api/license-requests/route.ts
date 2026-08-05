@@ -1,8 +1,16 @@
 import { NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+import os from "os";
 
-const DATA_DIR = path.join(process.cwd(), "data");
+const getStorageDir = () => {
+  const appData = process.env.APPDATA || (process.platform === "darwin" ? path.join(os.homedir(), "Library", "Preferences") : path.join(os.homedir(), ".config"));
+  const persistentDir = path.join(appData, "JudoManagerProData");
+  if (fs.existsSync(persistentDir)) return persistentDir;
+  return path.join(process.cwd(), "data");
+};
+
+const DATA_DIR = getStorageDir();
 const REQUESTS_FILE = path.join(DATA_DIR, "license_requests.json");
 
 function ensureFileExists() {
@@ -14,14 +22,24 @@ function ensureFileExists() {
   }
 }
 
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+};
+
+export async function OPTIONS() {
+  return NextResponse.json({}, { headers: corsHeaders });
+}
+
 export async function GET() {
   try {
     ensureFileExists();
     const content = fs.readFileSync(REQUESTS_FILE, "utf-8");
     const requests = JSON.parse(content);
-    return NextResponse.json(requests);
+    return NextResponse.json(requests, { headers: corsHeaders });
   } catch (error) {
-    return NextResponse.json([], { status: 500 });
+    return NextResponse.json([], { status: 500, headers: corsHeaders });
   }
 }
 
@@ -47,8 +65,8 @@ export async function POST(request: Request) {
     const updated = [newReq, ...requests];
     fs.writeFileSync(REQUESTS_FILE, JSON.stringify(updated, null, 2), "utf-8");
 
-    return NextResponse.json({ success: true, data: newReq });
+    return NextResponse.json({ success: true, data: newReq }, { headers: corsHeaders });
   } catch (error) {
-    return NextResponse.json({ error: "Failed to save license request" }, { status: 500 });
+    return NextResponse.json({ error: "Failed to save license request" }, { status: 500, headers: corsHeaders });
   }
 }
