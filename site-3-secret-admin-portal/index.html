@@ -288,6 +288,7 @@
       <button class="nb on" onclick="showPage('dashboard',this)">📊 لوحة البيانات</button>
 
       <div class="nl" style="margin-top:6px;">الطلبات</div>
+      <button class="nb" onclick="showPage('inbox',this)">📥 الطلبات الواردة المباشرة <span class="nbadge" id="inboxBadge" style="background:var(--pur);color:white;">0</span></button>
       <button class="nb" onclick="showPage('requests',this)">📋 كل الطلبات <span class="nbadge" id="pendBadge">0</span></button>
       <button class="nb" onclick="showPage('add',this)">➕ إضافة طلب يدوي</button>
       <button class="nb" onclick="showPage('approved',this)">✅ المفعّلة</button>
@@ -341,6 +342,18 @@
       <div class="tw">
         <div class="th"><div><h2>📋 آخر الطلبات</h2></div></div>
         <div id="dashRecent"><div class="ep"><div class="ep-i">📭</div><h3>لا طلبات بعد</h3></div></div>
+      </div>
+    <!-- ══ INBOX DIRECT REQUESTS ══ -->
+    <div class="ps" id="page-inbox">
+      <div class="ph">
+        <div><h1>📥 الطلبات الواردة المباشرة</h1><p>استقبال ومعاينة كافة الطلبات والمدفوعات المحولة فورياً من الزبائن</p></div>
+        <div>
+          <button class="btn btn-pur" onclick="fetchServerRequests(); refreshAll();">🔄 مزامنة وجلب الحية</button>
+        </div>
+      </div>
+
+      <div id="inboxCards" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px;">
+        <!-- Filled dynamically -->
       </div>
     </div>
 
@@ -680,10 +693,67 @@ function refreshAll() {
   document.getElementById('s-paid').textContent  = paid.length;
   document.getElementById('s-trial').textContent = trial.length;
   document.getElementById('pendBadge').textContent = pend.length;
+  document.getElementById('inboxBadge').textContent = data.length;
 
   renderDashRecent(data.slice(-6).reverse());
   renderReqs(data);
   renderApproved(appv);
+  renderInboxCards(data);
+}
+
+function renderInboxCards(items) {
+  const container = document.getElementById('inboxCards');
+  if (!container) return;
+
+  if (!items || items.length === 0) {
+    container.innerHTML = `
+      <div style="grid-column: 1 / -1; text-align:center; padding:40px; background:var(--card); border:1px solid var(--bd); border-radius:20px;">
+        <span style="font-size:40px; display:block; margin-bottom:8px;">📥</span>
+        <h3 style="color:var(--wh); font-weight:800; font-size:16px;">لا توجد طلبات حية واردة بعد</h3>
+        <p style="color:var(--mu); font-size:12px; margin-top:4px;">ستظهر طلبات الاشتراكات المحولة من الزبائن فورياً في هذا القسم</p>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = items.map(r => {
+    const waText = encodeURIComponent(`السلام عليكم ${r.manager || r.clubName}، تم تفعيل حسابكم في JudoManager Pro بنجاح! مفتاح التفعيل الخاص بكم هو:\n${r.key || 'جاري التفعيل'}`);
+    return `
+      <div style="background:var(--card); border:1px solid ${r.status==='PENDING' ? 'rgba(245,158,11,0.4)' : 'var(--bd)'}; border-radius:18px; padding:18px; display:flex; flex-direction:column; justify-between; gap:12px; box-shadow:0 8px 24px rgba(0,0,0,0.3);">
+        <div style="display:flex; justify-content:space-between; align-items:center; border-b border-gray-800 pb-2;">
+          <h3 style="color:var(--wh); font-weight:900; font-size:15px; display:flex; align-items:center; gap:6px;">
+            🏛️ ${r.clubName}
+          </h3>
+          ${statusBadge(r.status)}
+        </div>
+
+        <div style="space-y-1 text-xs;">
+          <div style="color:var(--tx);"><span style="color:var(--mu);">المدرب/المسؤول:</span> <strong style="color:var(--wh);">${r.manager || 'غير محدد'}</strong></div>
+          <div style="color:var(--tx);"><span style="color:var(--mu);">الهاتف:</span> <strong style="color:var(--grn); font-family:monospace;">${r.phone || 'غير محدد'}</strong></div>
+          <div style="color:var(--tx);"><span style="color:var(--mu);">البريد:</span> <strong style="color:var(--blu); font-family:monospace;">${r.email}</strong></div>
+        </div>
+
+        <div style="background:rgba(0,0,0,0.25); padding:10px 12px; border-radius:10px; border:1px dashed var(--bd); font-size:12px;">
+          <span style="color:var(--amb); font-weight:700; display:block; font-size:11px;">بيانات/وصل تحويل BaridiMob:</span>
+          <strong style="color:var(--wh); font-family:monospace; font-size:13px;">${r.receiptNum || r.receiptUrl || 'تحويل بريدي موب'}</strong>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; align-items:center; font-size:11px; color:var(--mu);">
+          <span>النوع: ${typeBadge(r.type)}</span>
+          <span>${r.createdAt || ''}</span>
+        </div>
+
+        <div style="display:flex; gap:6px; margin-top:4px;">
+          ${r.status === 'PENDING' ? `
+            <button class="btn btn-pur" style="flex:1; padding:8px 10px; font-weight:800; font-size:12px;" onclick="approveReq('${r.id}')">⚡ موافقة وتوليد المفتاح</button>
+          ` : `
+            <a href="https://wa.me/${r.phone}?text=${waText}" target="_blank" class="btn btn-ghost" style="flex:1; text-align:center; padding:8px; background:var(--grn-d); color:var(--grn); text-decoration:none; font-weight:800; font-size:11px; border-radius:9px;">💬 إرسال المفتاح عبر WhatsApp</a>
+          `}
+          <button class="ab ab-blu" onclick="viewReceipt('${r.id}')" title="عرض التفاصيل الكاملة">👁️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
 }
 
 /* ═══════ DASHBOARD RECENT ═══════ */
