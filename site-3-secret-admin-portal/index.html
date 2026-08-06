@@ -1,725 +1,1634 @@
 <!DOCTYPE html>
 <html lang="ar" dir="rtl">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel – JudoManager Pro</title>
   <meta name="robots" content="noindex, nofollow">
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap"
+    rel="stylesheet">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
     :root {
-      --bg: #060b14; --sb: #09111f; --card: #0d1b2e;
-      --bd: rgba(255,255,255,0.06);
-      --pur: #a855f7; --pur-d: rgba(168,85,247,0.12);
-      --blu: #4f8ef7; --blu-d: rgba(79,142,247,0.12);
-      --grn: #2ed8a8; --grn-d: rgba(46,216,168,0.10);
-      --amb: #f59e0b; --amb-d: rgba(245,158,11,0.10);
-      --red: #f87171; --red-d: rgba(248,113,113,0.10);
-      --wh: #e8f0fe; --mu: #4a5e78; --tx: #8fa8c8;
+      --bg: #060b14;
+      --sb: #09111f;
+      --card: #0d1b2e;
+      --bd: rgba(255, 255, 255, 0.06);
+      --pur: #a855f7;
+      --pur-d: rgba(168, 85, 247, 0.12);
+      --blu: #4f8ef7;
+      --blu-d: rgba(79, 142, 247, 0.12);
+      --grn: #2ed8a8;
+      --grn-d: rgba(46, 216, 168, 0.10);
+      --amb: #f59e0b;
+      --amb-d: rgba(245, 158, 11, 0.10);
+      --red: #f87171;
+      --red-d: rgba(248, 113, 113, 0.10);
+      --wh: #e8f0fe;
+      --mu: #4a5e78;
+      --tx: #8fa8c8;
       --sbw: 230px;
     }
-    html { scroll-behavior: smooth; }
-    body { font-family: 'Cairo', sans-serif; background: var(--bg); color: var(--tx); min-height: 100vh; }
-    input, select, textarea, button { font-family: 'Cairo', sans-serif; }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: var(--bg);
+      color: var(--tx);
+      min-height: 100vh;
+    }
+
+    input,
+    select,
+    textarea,
+    button {
+      font-family: 'Cairo', sans-serif;
+    }
 
     /* ═══ LOGIN ═══ */
     #loginScreen {
-      min-height:100vh; display:flex; align-items:center; justify-content:center;
-      background: radial-gradient(ellipse at 60% 40%, rgba(168,85,247,.08) 0%, transparent 60%), var(--bg);
-      padding:20px;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at 60% 40%, rgba(168, 85, 247, .08) 0%, transparent 60%), var(--bg);
+      padding: 20px;
     }
-    .lc { background:var(--card); border:1px solid rgba(168,85,247,.2); border-radius:20px; padding:40px 36px; width:100%; max-width:370px; box-shadow:0 30px 80px rgba(0,0,0,.5); }
-    .lc-logo { text-align:center; margin-bottom:28px; }
-    .lc-ico { width:54px; height:54px; background:linear-gradient(135deg,#a855f7,#6366f1); border-radius:16px; display:inline-flex; align-items:center; justify-content:center; font-size:26px; box-shadow:0 8px 24px rgba(168,85,247,.4); margin-bottom:12px; }
-    .lc h1 { color:var(--wh); font-size:17px; font-weight:900; }
-    .lc p  { color:var(--mu); font-size:11px; margin-top:3px; }
-    .l-fg  { margin-bottom:13px; }
-    .l-fg label { display:block; color:var(--tx); font-size:12px; font-weight:600; margin-bottom:6px; }
-    .l-fg input { width:100%; background:rgba(255,255,255,.03); border:1px solid var(--bd); border-radius:10px; padding:10px 14px; color:white; font-size:13px; outline:none; transition:border-color .2s; font-family:'JetBrains Mono',monospace; }
-    .l-fg input:focus { border-color:var(--pur); }
-    .l-err { background:var(--red-d); border:1px solid rgba(248,113,113,.2); border-radius:9px; padding:9px 14px; font-size:12px; color:var(--red); margin-bottom:12px; display:none; text-align:center; }
-    .btn-login { width:100%; padding:12px; background:linear-gradient(135deg,#a855f7,#6366f1); border:none; border-radius:11px; color:white; font-size:14px; font-weight:800; cursor:pointer; box-shadow:0 6px 20px rgba(168,85,247,.35); margin-top:4px; transition:all .2s; }
-    .btn-login:hover { transform:translateY(-1px); box-shadow:0 10px 30px rgba(168,85,247,.5); }
+
+    .lc {
+      background: var(--card);
+      border: 1px solid rgba(168, 85, 247, .2);
+      border-radius: 20px;
+      padding: 40px 36px;
+      width: 100%;
+      max-width: 370px;
+      box-shadow: 0 30px 80px rgba(0, 0, 0, .5);
+    }
+
+    .lc-logo {
+      text-align: center;
+      margin-bottom: 28px;
+    }
+
+    .lc-ico {
+      width: 54px;
+      height: 54px;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      border-radius: 16px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      box-shadow: 0 8px 24px rgba(168, 85, 247, .4);
+      margin-bottom: 12px;
+    }
+
+    .lc h1 {
+      color: var(--wh);
+      font-size: 17px;
+      font-weight: 900;
+    }
+
+    .lc p {
+      color: var(--mu);
+      font-size: 11px;
+      margin-top: 3px;
+    }
+
+    .l-fg {
+      margin-bottom: 13px;
+    }
+
+    .l-fg label {
+      display: block;
+      color: var(--tx);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .l-fg input {
+      width: 100%;
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: 10px 14px;
+      color: white;
+      font-size: 13px;
+      outline: none;
+      transition: border-color .2s;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .l-fg input:focus {
+      border-color: var(--pur);
+    }
+
+    .l-err {
+      background: var(--red-d);
+      border: 1px solid rgba(248, 113, 113, .2);
+      border-radius: 9px;
+      padding: 9px 14px;
+      font-size: 12px;
+      color: var(--red);
+      margin-bottom: 12px;
+      display: none;
+      text-align: center;
+    }
+
+    .btn-login {
+      width: 100%;
+      padding: 12px;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      border: none;
+      border-radius: 11px;
+      color: white;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(168, 85, 247, .35);
+      margin-top: 4px;
+      transition: all .2s;
+    }
+
+    .btn-login:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 30px rgba(168, 85, 247, .5);
+    }
 
     /* ═══ APP ═══ */
-    #app { display:none; min-height:100vh; }
-    #app.on { display:flex; }
+    #app {
+      display: none;
+      min-height: 100vh;
+    }
+
+    #app.on {
+      display: flex;
+    }
 
     /* ═══ SIDEBAR ═══ */
     .sb {
-      width:var(--sbw); min-height:100vh; background:var(--sb);
-      border-left:1px solid var(--bd);
-      display:flex; flex-direction:column;
-      position:fixed; top:0; right:0; z-index:100;
+      width: var(--sbw);
+      min-height: 100vh;
+      background: var(--sb);
+      border-left: 1px solid var(--bd);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 100;
     }
-    .sb-logo { padding:18px 14px; border-bottom:1px solid var(--bd); display:flex; align-items:center; gap:10px; }
-    .sb-ico { width:36px; height:36px; background:linear-gradient(135deg,#a855f7,#6366f1); border-radius:11px; display:flex; align-items:center; justify-content:center; font-size:17px; flex-shrink:0; }
-    .sb-name { color:var(--wh); font-weight:900; font-size:13px; }
-    .sb-sub  { color:var(--mu); font-size:10px; }
-    .sb-nav { flex:1; padding:10px 8px; display:flex; flex-direction:column; gap:2px; overflow-y:auto; }
-    .nl { font-size:10px; font-weight:700; color:var(--mu); padding:10px 8px 4px; letter-spacing:.08em; }
+
+    .sb-logo {
+      padding: 18px 14px;
+      border-bottom: 1px solid var(--bd);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sb-ico {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      border-radius: 11px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+      flex-shrink: 0;
+    }
+
+    .sb-name {
+      color: var(--wh);
+      font-weight: 900;
+      font-size: 13px;
+    }
+
+    .sb-sub {
+      color: var(--mu);
+      font-size: 10px;
+    }
+
+    .sb-nav {
+      flex: 1;
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      overflow-y: auto;
+    }
+
+    .nl {
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--mu);
+      padding: 10px 8px 4px;
+      letter-spacing: .08em;
+    }
+
     .nb {
-      display:flex; align-items:center; gap:9px; padding:9px 11px;
-      border-radius:10px; cursor:pointer; font-size:12.5px; font-weight:600;
-      color:var(--mu); border:1px solid transparent; background:none;
-      width:100%; text-align:right; transition:all .18s; position:relative;
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 11px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-size: 12.5px;
+      font-weight: 600;
+      color: var(--mu);
+      border: 1px solid transparent;
+      background: none;
+      width: 100%;
+      text-align: right;
+      transition: all .18s;
+      position: relative;
     }
-    .nb:hover { background:rgba(255,255,255,.03); color:var(--wh); }
-    .nb.on { background:var(--pur-d); color:var(--pur); border-color:rgba(168,85,247,.18); }
-    .nbadge { margin-right:auto; background:var(--amb); color:#060b14; font-size:10px; font-weight:900; padding:1px 7px; border-radius:100px; }
-    .sb-ft { padding:12px 8px; border-top:1px solid var(--bd); }
-    .sb-user { display:flex; align-items:center; gap:8px; padding:9px 10px; background:rgba(255,255,255,.03); border-radius:10px; cursor:pointer; border:1px solid var(--bd); transition:background .2s; }
-    .sb-user:hover { background:rgba(255,255,255,.06); }
-    .sb-av { width:30px; height:30px; background:linear-gradient(135deg,#a855f7,#6366f1); border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
-    .sb-uname { color:var(--wh); font-size:12px; font-weight:700; }
-    .sb-role  { color:var(--mu); font-size:10px; }
-    .sb-out { margin-right:auto; font-size:14px; color:var(--red); }
+
+    .nb:hover {
+      background: rgba(255, 255, 255, .03);
+      color: var(--wh);
+    }
+
+    .nb.on {
+      background: var(--pur-d);
+      color: var(--pur);
+      border-color: rgba(168, 85, 247, .18);
+    }
+
+    .nbadge {
+      margin-right: auto;
+      background: var(--amb);
+      color: #060b14;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 1px 7px;
+      border-radius: 100px;
+    }
+
+    .sb-ft {
+      padding: 12px 8px;
+      border-top: 1px solid var(--bd);
+    }
+
+    .sb-user {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 9px 10px;
+      background: rgba(255, 255, 255, .03);
+      border-radius: 10px;
+      cursor: pointer;
+      border: 1px solid var(--bd);
+      transition: background .2s;
+    }
+
+    .sb-user:hover {
+      background: rgba(255, 255, 255, .06);
+    }
+
+    .sb-av {
+      width: 30px;
+      height: 30px;
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      flex-shrink: 0;
+    }
+
+    .sb-uname {
+      color: var(--wh);
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .sb-role {
+      color: var(--mu);
+      font-size: 10px;
+    }
+
+    .sb-out {
+      margin-right: auto;
+      font-size: 14px;
+      color: var(--red);
+    }
 
     /* ═══ MAIN ═══ */
-    .mn { margin-right:var(--sbw); flex:1; padding:26px; min-height:100vh; max-width:calc(100vw - var(--sbw)); overflow-x:auto; }
-    .ps { display:none; }
-    .ps.on { display:block; }
+    .mn {
+      margin-right: var(--sbw);
+      flex: 1;
+      padding: 26px;
+      min-height: 100vh;
+      max-width: calc(100vw - var(--sbw));
+      overflow-x: auto;
+    }
+
+    .ps {
+      display: none;
+    }
+
+    .ps.on {
+      display: block;
+    }
 
     /* ═══ PAGE HEADER ═══ */
-    .ph { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; margin-bottom:22px; flex-wrap:wrap; }
-    .ph h1 { color:var(--wh); font-size:19px; font-weight:900; margin-bottom:3px; }
-    .ph p  { color:var(--mu); font-size:12px; }
+    .ph {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 14px;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+    }
+
+    .ph h1 {
+      color: var(--wh);
+      font-size: 19px;
+      font-weight: 900;
+      margin-bottom: 3px;
+    }
+
+    .ph p {
+      color: var(--mu);
+      font-size: 12px;
+    }
 
     /* ═══ STATS ═══ */
-    .stats { display:grid; grid-template-columns:repeat(auto-fill,minmax(135px,1fr)); gap:10px; margin-bottom:22px; }
-    .st { background:var(--card); border:1px solid var(--bd); border-radius:13px; padding:15px 17px; }
-    .st-v { font-size:28px; font-weight:900; line-height:1; margin-bottom:4px; }
-    .st-l { color:var(--mu); font-size:11px; }
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .st {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 13px;
+      padding: 15px 17px;
+    }
+
+    .st-v {
+      font-size: 28px;
+      font-weight: 900;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .st-l {
+      color: var(--mu);
+      font-size: 11px;
+    }
 
     /* ═══ TABLE WRAPPER ═══ */
-    .tw { background:var(--card); border:1px solid var(--bd); border-radius:15px; overflow:hidden; margin-bottom:16px; }
-    .th { display:flex; align-items:center; justify-content:space-between; padding:14px 18px; border-bottom:1px solid var(--bd); flex-wrap:wrap; gap:10px; }
-    .th h2 { color:var(--wh); font-size:13.5px; font-weight:800; display:flex; align-items:center; gap:7px; }
-    .th p  { color:var(--mu); font-size:11px; margin-top:2px; }
-    .tf { display:flex; gap:7px; flex-wrap:wrap; }
-    .fb { padding:6px 11px; border-radius:8px; font-size:11px; font-weight:700; cursor:pointer; border:1px solid var(--bd); background:transparent; color:var(--mu); transition:all .18s; }
-    .fb.on { background:var(--pur-d); border-color:rgba(168,85,247,.3); color:var(--pur); }
-    .fb:hover { color:var(--wh); }
-    table { width:100%; border-collapse:collapse; font-size:12px; }
-    thead tr { background:rgba(255,255,255,.02); }
-    th { padding:9px 14px; color:var(--mu); font-weight:700; text-align:right; font-size:11px; white-space:nowrap; border-bottom:1px solid var(--bd); }
-    td { padding:11px 14px; border-bottom:1px solid rgba(255,255,255,.02); vertical-align:middle; }
-    tbody tr { transition:background .15s; }
-    tbody tr:hover { background:rgba(255,255,255,.02); }
-    tbody tr:last-child td { border-bottom:none; }
+    .tw {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 15px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+
+    .th {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--bd);
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .th h2 {
+      color: var(--wh);
+      font-size: 13.5px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .th p {
+      color: var(--mu);
+      font-size: 11px;
+      margin-top: 2px;
+    }
+
+    .tf {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+    }
+
+    .fb {
+      padding: 6px 11px;
+      border-radius: 8px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--bd);
+      background: transparent;
+      color: var(--mu);
+      transition: all .18s;
+    }
+
+    .fb.on {
+      background: var(--pur-d);
+      border-color: rgba(168, 85, 247, .3);
+      color: var(--pur);
+    }
+
+    .fb:hover {
+      color: var(--wh);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+
+    thead tr {
+      background: rgba(255, 255, 255, .02);
+    }
+
+    th {
+      padding: 9px 14px;
+      color: var(--mu);
+      font-weight: 700;
+      text-align: right;
+      font-size: 11px;
+      white-space: nowrap;
+      border-bottom: 1px solid var(--bd);
+    }
+
+    td {
+      padding: 11px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, .02);
+      vertical-align: middle;
+    }
+
+    tbody tr {
+      transition: background .15s;
+    }
+
+    tbody tr:hover {
+      background: rgba(255, 255, 255, .02);
+    }
+
+    tbody tr:last-child td {
+      border-bottom: none;
+    }
 
     /* ═══ BADGES ═══ */
-    .bx { display:inline-flex; align-items:center; gap:4px; padding:3px 8px; border-radius:100px; font-size:10px; font-weight:700; white-space:nowrap; }
-    .bp { background:var(--amb-d); color:var(--amb); border:1px solid rgba(245,158,11,.2); }
-    .ba { background:var(--grn-d); color:var(--grn); border:1px solid rgba(46,216,168,.2); }
-    .bt { background:var(--blu-d); color:var(--blu); border:1px solid rgba(79,142,247,.2); }
-    .bl { background:var(--pur-d); color:var(--pur); border:1px solid rgba(168,85,247,.2); }
-    .br { background:var(--red-d); color:var(--red); border:1px solid rgba(248,113,113,.2); }
+    .bx {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 100px;
+      font-size: 10px;
+      font-weight: 700;
+      white-space: nowrap;
+    }
 
-    .mono { font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--grn); letter-spacing:.04em; }
-    .email-c { color:var(--blu); font-size:11px; }
+    .bp {
+      background: var(--amb-d);
+      color: var(--amb);
+      border: 1px solid rgba(245, 158, 11, .2);
+    }
+
+    .ba {
+      background: var(--grn-d);
+      color: var(--grn);
+      border: 1px solid rgba(46, 216, 168, .2);
+    }
+
+    .bt {
+      background: var(--blu-d);
+      color: var(--blu);
+      border: 1px solid rgba(79, 142, 247, .2);
+    }
+
+    .bl {
+      background: var(--pur-d);
+      color: var(--pur);
+      border: 1px solid rgba(168, 85, 247, .2);
+    }
+
+    .br {
+      background: var(--red-d);
+      color: var(--red);
+      border: 1px solid rgba(248, 113, 113, .2);
+    }
+
+    .mono {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10.5px;
+      color: var(--grn);
+      letter-spacing: .04em;
+    }
+
+    .email-c {
+      color: var(--blu);
+      font-size: 11px;
+    }
 
     /* ═══ ACTION BUTTONS ═══ */
-    .acts { display:flex; gap:5px; flex-wrap:wrap; }
-    .ab { padding:5px 10px; border-radius:7px; font-size:11px; font-weight:700; cursor:pointer; border:none; transition:all .18s; white-space:nowrap; }
-    .ab-grn { background:var(--grn-d); color:var(--grn); border:1px solid rgba(46,216,168,.25); }
-    .ab-grn:hover { background:rgba(46,216,168,.2); }
-    .ab-red { background:var(--red-d); color:var(--red); border:1px solid rgba(248,113,113,.2); }
-    .ab-red:hover { background:rgba(248,113,113,.18); }
-    .ab-blu { background:var(--blu-d); color:var(--blu); border:1px solid rgba(79,142,247,.2); }
-    .ab-blu:hover { background:rgba(79,142,247,.18); }
-    .ab-pur { background:var(--pur-d); color:var(--pur); border:1px solid rgba(168,85,247,.2); }
-    .ab-pur:hover { background:rgba(168,85,247,.18); }
-    .ab-amb { background:var(--amb-d); color:var(--amb); border:1px solid rgba(245,158,11,.2); }
-    .ab-amb:hover { background:rgba(245,158,11,.18); }
+    .acts {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+    }
+
+    .ab {
+      padding: 5px 10px;
+      border-radius: 7px;
+      font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all .18s;
+      white-space: nowrap;
+    }
+
+    .ab-grn {
+      background: var(--grn-d);
+      color: var(--grn);
+      border: 1px solid rgba(46, 216, 168, .25);
+    }
+
+    .ab-grn:hover {
+      background: rgba(46, 216, 168, .2);
+    }
+
+    .ab-red {
+      background: var(--red-d);
+      color: var(--red);
+      border: 1px solid rgba(248, 113, 113, .2);
+    }
+
+    .ab-red:hover {
+      background: rgba(248, 113, 113, .18);
+    }
+
+    .ab-blu {
+      background: var(--blu-d);
+      color: var(--blu);
+      border: 1px solid rgba(79, 142, 247, .2);
+    }
+
+    .ab-blu:hover {
+      background: rgba(79, 142, 247, .18);
+    }
+
+    .ab-pur {
+      background: var(--pur-d);
+      color: var(--pur);
+      border: 1px solid rgba(168, 85, 247, .2);
+    }
+
+    .ab-pur:hover {
+      background: rgba(168, 85, 247, .18);
+    }
+
+    .ab-amb {
+      background: var(--amb-d);
+      color: var(--amb);
+      border: 1px solid rgba(245, 158, 11, .2);
+    }
+
+    .ab-amb:hover {
+      background: rgba(245, 158, 11, .18);
+    }
 
     /* ═══ RECEIPT IMAGE ═══ */
-    .receipt-thumb { width:40px; height:40px; border-radius:7px; object-fit:cover; border:1px solid var(--bd); cursor:pointer; transition:all .2s; }
-    .receipt-thumb:hover { transform:scale(1.1); border-color:var(--grn); }
-    .receipt-no { color:var(--mu); font-size:10px; }
+    .receipt-thumb {
+      width: 40px;
+      height: 40px;
+      border-radius: 7px;
+      object-fit: cover;
+      border: 1px solid var(--bd);
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .receipt-thumb:hover {
+      transform: scale(1.1);
+      border-color: var(--grn);
+    }
+
+    .receipt-no {
+      color: var(--mu);
+      font-size: 10px;
+    }
 
     /* ═══ MODALS ═══ */
-    .mo { display:none; position:fixed; inset:0; background:rgba(6,11,20,.85); backdrop-filter:blur(7px); z-index:500; align-items:center; justify-content:center; padding:20px; }
-    .mo.on { display:flex; }
-    .mb { background:var(--card); border:1px solid rgba(168,85,247,.18); border-radius:18px; padding:28px; width:100%; animation:su .25s ease; position:relative; }
-    @keyframes su { from { opacity:0; transform:translateY(18px); } }
-    .mb-close { position:absolute; top:14px; left:14px; background:rgba(255,255,255,.06); border:none; color:var(--wh); width:30px; height:30px; border-radius:8px; font-size:15px; cursor:pointer; display:flex; align-items:center; justify-content:center; }
-    .mb-close:hover { background:rgba(255,255,255,.12); }
-    .mb h3 { color:var(--wh); font-size:16px; font-weight:800; margin-bottom:5px; }
-    .mb > p  { color:var(--mu); font-size:12px; margin-bottom:20px; }
+    .mo {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(6, 11, 20, .85);
+      backdrop-filter: blur(7px);
+      z-index: 500;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .mo.on {
+      display: flex;
+    }
+
+    .mb {
+      background: var(--card);
+      border: 1px solid rgba(168, 85, 247, .18);
+      border-radius: 18px;
+      padding: 28px;
+      width: 100%;
+      animation: su .25s ease;
+      position: relative;
+    }
+
+    @keyframes su {
+      from {
+        opacity: 0;
+        transform: translateY(18px);
+      }
+    }
+
+    .mb-close {
+      position: absolute;
+      top: 14px;
+      left: 14px;
+      background: rgba(255, 255, 255, .06);
+      border: none;
+      color: var(--wh);
+      width: 30px;
+      height: 30px;
+      border-radius: 8px;
+      font-size: 15px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mb-close:hover {
+      background: rgba(255, 255, 255, .12);
+    }
+
+    .mb h3 {
+      color: var(--wh);
+      font-size: 16px;
+      font-weight: 800;
+      margin-bottom: 5px;
+    }
+
+    .mb>p {
+      color: var(--mu);
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
 
     /* key modal */
-    #keyModal .mb { max-width:440px; }
-    .key-box { background:rgba(255,255,255,.03); border:1px solid rgba(46,216,168,.25); border-radius:11px; padding:13px 16px; font-family:'JetBrains Mono',monospace; font-size:17px; color:var(--grn); font-weight:600; text-align:center; margin-bottom:14px; cursor:pointer; user-select:all; letter-spacing:.08em; }
-    .key-box:hover { background:rgba(46,216,168,.06); }
-    .ma { display:flex; gap:9px; flex-wrap:wrap; }
-    .bm { flex:1; padding:10px; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer; border:none; display:flex; align-items:center; justify-content:center; gap:6px; transition:all .2s; }
-    .bm-g { background:linear-gradient(135deg,#2ed8a8,#4f8ef7); color:#060b14; }
-    .bm-w { background:#16a34a; color:white; }
-    .bm-x { background:rgba(255,255,255,.05); color:var(--tx); border:1px solid var(--bd); }
+    #keyModal .mb {
+      max-width: 440px;
+    }
+
+    .key-box {
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid rgba(46, 216, 168, .25);
+      border-radius: 11px;
+      padding: 13px 16px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 17px;
+      color: var(--grn);
+      font-weight: 600;
+      text-align: center;
+      margin-bottom: 14px;
+      cursor: pointer;
+      user-select: all;
+      letter-spacing: .08em;
+    }
+
+    .key-box:hover {
+      background: rgba(46, 216, 168, .06);
+    }
+
+    .ma {
+      display: flex;
+      gap: 9px;
+      flex-wrap: wrap;
+    }
+
+    .bm {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all .2s;
+    }
+
+    .bm-g {
+      background: linear-gradient(135deg, #2ed8a8, #4f8ef7);
+      color: #060b14;
+    }
+
+    .bm-w {
+      background: #16a34a;
+      color: white;
+    }
+
+    .bm-x {
+      background: rgba(255, 255, 255, .05);
+      color: var(--tx);
+      border: 1px solid var(--bd);
+    }
 
     /* edit modal */
-    #editModal .mb { max-width:540px; }
-    .fg { margin-bottom:12px; }
-    .fg label { display:block; color:var(--tx); font-size:12px; font-weight:600; margin-bottom:6px; }
-    .fg input, .fg select, .fg textarea {
-      width:100%; background:rgba(255,255,255,.03); border:1px solid var(--bd);
-      border-radius:9px; padding:9px 13px; color:white; font-size:12px; outline:none;
-      transition:border-color .2s;
+    #editModal .mb {
+      max-width: 540px;
     }
-    .fg input:focus, .fg select:focus, .fg textarea:focus { border-color:var(--pur); }
-    .fg select option { background:#0d1b2e; }
-    .fg textarea { resize:vertical; min-height:65px; }
-    .frow { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+
+    .fg {
+      margin-bottom: 12px;
+    }
+
+    .fg label {
+      display: block;
+      color: var(--tx);
+      font-size: 12px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .fg input,
+    .fg select,
+    .fg textarea {
+      width: 100%;
+      background: rgba(255, 255, 255, .03);
+      border: 1px solid var(--bd);
+      border-radius: 9px;
+      padding: 9px 13px;
+      color: white;
+      font-size: 12px;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .fg input:focus,
+    .fg select:focus,
+    .fg textarea:focus {
+      border-color: var(--pur);
+    }
+
+    .fg select option {
+      background: #0d1b2e;
+    }
+
+    .fg textarea {
+      resize: vertical;
+      min-height: 65px;
+    }
+
+    .frow {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
 
     /* receipt view modal */
-    #receiptModal .mb { max-width:500px; text-align:center; }
-    #receiptModal img { max-width:100%; border-radius:12px; border:1px solid var(--bd); margin-bottom:14px; max-height:400px; object-fit:contain; }
+    #receiptModal .mb {
+      max-width: 500px;
+      text-align: center;
+    }
+
+    #receiptModal img {
+      max-width: 100%;
+      border-radius: 12px;
+      border: 1px solid var(--bd);
+      margin-bottom: 14px;
+      max-height: 400px;
+      object-fit: contain;
+    }
 
     /* ═══ EMPTY STATE ═══ */
-    .ep { text-align:center; padding:44px 20px; color:var(--mu); }
-    .ep-i { font-size:34px; margin-bottom:10px; }
-    .ep h3 { color:var(--tx); font-size:13px; font-weight:700; margin-bottom:5px; }
-    .ep p  { font-size:11px; line-height:1.6; }
+    .ep {
+      text-align: center;
+      padding: 44px 20px;
+      color: var(--mu);
+    }
+
+    .ep-i {
+      font-size: 34px;
+      margin-bottom: 10px;
+    }
+
+    .ep h3 {
+      color: var(--tx);
+      font-size: 13px;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .ep p {
+      font-size: 11px;
+      line-height: 1.6;
+    }
 
     /* ═══ BUTTONS ═══ */
-    .btn { padding:9px 16px; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer; border:none; transition:all .2s; display:inline-flex; align-items:center; gap:7px; }
-    .btn-pur { background:linear-gradient(135deg,#a855f7,#6366f1); color:white; box-shadow:0 5px 18px rgba(168,85,247,.3); }
-    .btn-pur:hover { transform:translateY(-1px); }
-    .btn-ghost { background:rgba(255,255,255,.04); border:1px solid var(--bd); color:var(--tx); }
-    .btn-ghost:hover { background:rgba(255,255,255,.08); }
-    .btn-grn { background:linear-gradient(135deg,#2ed8a8,#4f8ef7); color:#060b14; font-weight:800; }
-    .btn-danger { background:var(--red-d); color:var(--red); border:1px solid rgba(248,113,113,.2); }
-    .btn-danger:hover { background:rgba(248,113,113,.18); }
+    .btn {
+      padding: 9px 16px;
+      border-radius: 9px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      border: none;
+      transition: all .2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .btn-pur {
+      background: linear-gradient(135deg, #a855f7, #6366f1);
+      color: white;
+      box-shadow: 0 5px 18px rgba(168, 85, 247, .3);
+    }
+
+    .btn-pur:hover {
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost {
+      background: rgba(255, 255, 255, .04);
+      border: 1px solid var(--bd);
+      color: var(--tx);
+    }
+
+    .btn-ghost:hover {
+      background: rgba(255, 255, 255, .08);
+    }
+
+    .btn-grn {
+      background: linear-gradient(135deg, #2ed8a8, #4f8ef7);
+      color: #060b14;
+      font-weight: 800;
+    }
+
+    .btn-danger {
+      background: var(--red-d);
+      color: var(--red);
+      border: 1px solid rgba(248, 113, 113, .2);
+    }
+
+    .btn-danger:hover {
+      background: rgba(248, 113, 113, .18);
+    }
 
     /* ═══ FORM (Add) ═══ */
-    .form-box { background:var(--card); border:1px solid var(--bd); border-radius:15px; padding:24px; max-width:580px; }
-    .form-box h2 { color:var(--wh); font-size:14px; font-weight:800; margin-bottom:18px; }
+    .form-box {
+      background: var(--card);
+      border: 1px solid var(--bd);
+      border-radius: 15px;
+      padding: 24px;
+      max-width: 580px;
+    }
+
+    .form-box h2 {
+      color: var(--wh);
+      font-size: 14px;
+      font-weight: 800;
+      margin-bottom: 18px;
+    }
 
     /* ═══ INFO BOX ═══ */
-    .info-b { background:var(--blu-d); border:1px solid rgba(79,142,247,.18); border-radius:12px; padding:12px 16px; font-size:12px; line-height:1.7; margin-bottom:18px; }
-    .info-b strong { color:var(--wh); }
+    .info-b {
+      background: var(--blu-d);
+      border: 1px solid rgba(79, 142, 247, .18);
+      border-radius: 12px;
+      padding: 12px 16px;
+      font-size: 12px;
+      line-height: 1.7;
+      margin-bottom: 18px;
+    }
+
+    .info-b strong {
+      color: var(--wh);
+    }
 
     /* ═══ DATA FILE INFO ═══ */
     .data-file {
-      background:rgba(46,216,168,.06);
-      border:1px solid rgba(46,216,168,.18);
-      border-radius:12px;
-      padding:14px 18px;
-      margin-bottom:18px;
-      font-size:12px;
+      background: rgba(46, 216, 168, .06);
+      border: 1px solid rgba(46, 216, 168, .18);
+      border-radius: 12px;
+      padding: 14px 18px;
+      margin-bottom: 18px;
+      font-size: 12px;
     }
-    .data-file strong { color:var(--grn); }
+
+    .data-file strong {
+      color: var(--grn);
+    }
+
     .data-file .file-name {
-      font-family:'JetBrains Mono',monospace;
-      background:rgba(0,0,0,.3);
-      padding:4px 10px;
-      border-radius:6px;
-      font-size:12px;
-      color:var(--wh);
-      display:inline-block;
-      margin-top:5px;
+      font-family: 'JetBrains Mono', monospace;
+      background: rgba(0, 0, 0, .3);
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      color: var(--wh);
+      display: inline-block;
+      margin-top: 5px;
     }
 
     /* ═══ TOAST ═══ */
-    .toast { position:fixed; bottom:22px; left:50%; transform:translateX(-50%); background:#1a2d1a; border:1px solid rgba(46,216,168,.3); border-radius:11px; padding:11px 20px; color:var(--grn); font-size:13px; font-weight:700; z-index:900; display:none; animation:fadeUp .3s ease; }
-    @keyframes fadeUp { from { opacity:0; transform:translateX(-50%) translateY(10px); } }
+    .toast {
+      position: fixed;
+      bottom: 22px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #1a2d1a;
+      border: 1px solid rgba(46, 216, 168, .3);
+      border-radius: 11px;
+      padding: 11px 20px;
+      color: var(--grn);
+      font-size: 13px;
+      font-weight: 700;
+      z-index: 900;
+      display: none;
+      animation: fadeUp .3s ease;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateX(-50%) translateY(10px);
+      }
+    }
 
     /* ═══ RECEIPT UPLOAD ═══ */
-    .upload-zone { border:2px dashed var(--bd); border-radius:12px; padding:20px; text-align:center; cursor:pointer; transition:all .2s; }
-    .upload-zone:hover, .upload-zone.drag { border-color:var(--pur); background:var(--pur-d); }
-    .upload-zone input { display:none; }
-    .upload-zone p { color:var(--mu); font-size:12px; margin-top:6px; }
-    .upload-zone .up-ico { font-size:28px; }
-    .upload-prev { margin-top:10px; }
-    .upload-prev img { max-width:100%; max-height:160px; border-radius:10px; border:1px solid var(--bd); object-fit:contain; }
+    .upload-zone {
+      border: 2px dashed var(--bd);
+      border-radius: 12px;
+      padding: 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .upload-zone:hover,
+    .upload-zone.drag {
+      border-color: var(--pur);
+      background: var(--pur-d);
+    }
+
+    .upload-zone input {
+      display: none;
+    }
+
+    .upload-zone p {
+      color: var(--mu);
+      font-size: 12px;
+      margin-top: 6px;
+    }
+
+    .upload-zone .up-ico {
+      font-size: 28px;
+    }
+
+    .upload-prev {
+      margin-top: 10px;
+    }
+
+    .upload-prev img {
+      max-width: 100%;
+      max-height: 160px;
+      border-radius: 10px;
+      border: 1px solid var(--bd);
+      object-fit: contain;
+    }
 
     /* Scrollbar */
-    ::-webkit-scrollbar { width:4px; }
-    ::-webkit-scrollbar-thumb { background:rgba(255,255,255,.07); border-radius:10px; }
+    ::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, .07);
+      border-radius: 10px;
+    }
 
     @media(max-width:700px) {
-      .sb { display:none; }
-      .mn { margin-right:0; max-width:100%; padding:16px; }
-      .frow { grid-template-columns:1fr; }
-      .stats { grid-template-columns:repeat(2,1fr); }
+      .sb {
+        display: none;
+      }
+
+      .mn {
+        margin-right: 0;
+        max-width: 100%;
+        padding: 16px;
+      }
+
+      .frow {
+        grid-template-columns: 1fr;
+      }
+
+      .stats {
+        grid-template-columns: repeat(2, 1fr);
+      }
     }
   </style>
 </head>
+
 <body>
 
-<!-- ═══════════════ LOGIN ═══════════════ -->
-<div id="loginScreen">
-  <div class="lc">
-    <div class="lc-logo">
-      <div class="lc-ico">🔐</div>
-      <h1>لوحة تحكم الأدمن</h1>
-      <p>JudoManager Pro — وصول خاص فقط</p>
+  <!-- ═══════════════ LOGIN ═══════════════ -->
+  <div id="loginScreen">
+    <div class="lc">
+      <div class="lc-logo">
+        <div class="lc-ico">🔐</div>
+        <h1>لوحة تحكم الأدمن</h1>
+        <p>JudoManager Pro — وصول خاص فقط</p>
+      </div>
+      <div class="l-err" id="loginErr">❌ بيانات الدخول غير صحيحة</div>
+      <div class="l-fg">
+        <label>اسم المستخدم</label>
+        <input type="text" id="lu" placeholder="admin" autocomplete="off">
+      </div>
+      <div class="l-fg">
+        <label>كلمة المرور</label>
+        <input type="password" id="lp" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn-login" onclick="doLogin()">🔓 دخول</button>
     </div>
-    <div class="l-err" id="loginErr">❌ بيانات الدخول غير صحيحة</div>
-    <div class="l-fg">
-      <label>اسم المستخدم</label>
-      <input type="text" id="lu" placeholder="admin" autocomplete="off">
-    </div>
-    <div class="l-fg">
-      <label>كلمة المرور</label>
-      <input type="password" id="lp" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
-    </div>
-    <button class="btn-login" onclick="doLogin()">🔓 دخول</button>
   </div>
-</div>
 
-<!-- ═══════════════ APP ═══════════════ -->
-<div id="app">
+  <!-- ═══════════════ APP ═══════════════ -->
+  <div id="app">
 
-  <!-- SIDEBAR -->
-  <aside class="sb">
-    <div class="sb-logo">
-      <div class="sb-ico">🔐</div>
-      <div>
-        <div class="sb-name">Admin Panel</div>
-        <div class="sb-sub">JudoManager Pro v2.1</div>
-      </div>
-    </div>
-    <nav class="sb-nav">
-      <div class="nl">عام</div>
-      <button class="nb on" onclick="showPage('dashboard',this)">📊 لوحة البيانات</button>
-
-      <div class="nl" style="margin-top:6px;">الطلبات</div>
-      <button class="nb" onclick="showPage('inbox',this)">📥 الطلبات الواردة المباشرة <span class="nbadge" id="inboxBadge" style="background:var(--pur);color:white;">0</span></button>
-      <button class="nb" onclick="showPage('requests',this)">📋 كل الطلبات <span class="nbadge" id="pendBadge">0</span></button>
-      <button class="nb" onclick="showPage('add',this)">➕ إضافة طلب يدوي</button>
-      <button class="nb" onclick="showPage('approved',this)">✅ المفعّلة</button>
-
-      <div class="nl" style="margin-top:6px;">النظام</div>
-      <button class="nb" onclick="showPage('data',this)">💾 إدارة البيانات</button>
-      <button class="nb" onclick="showPage('settings',this)">⚙️ الإعدادات</button>
-    </nav>
-    <div class="sb-ft">
-      <div class="sb-user" onclick="doLogout()">
-        <div class="sb-av">👤</div>
+    <!-- SIDEBAR -->
+    <aside class="sb">
+      <div class="sb-logo">
+        <div class="sb-ico">🔐</div>
         <div>
-          <div class="sb-uname">المبرمج</div>
-          <div class="sb-role">Super Admin</div>
-        </div>
-        <div class="sb-out" title="خروج">⏻</div>
-      </div>
-    </div>
-  </aside>
-
-  <!-- MAIN -->
-  <main class="mn">
-
-    <!-- ══ DASHBOARD ══ -->
-    <div class="ps on" id="page-dashboard">
-      <div class="ph">
-        <div><h1>📊 لوحة البيانات</h1><p>نظرة عامة شاملة على الطلبات والتراخيص</p></div>
-        <div style="display:flex;gap:8px;">
-          <button class="btn btn-ghost" onclick="fetchServerRequests()" title="جلب أحدث طلبات الزبائن فوراً">⚡ جلب الطلبات السحابية</button>
-          <button class="btn btn-ghost" onclick="exportData()">📤 تصدير JSON</button>
-          <button class="btn btn-pur" onclick="fetchServerRequests(); refreshAll();">🔄 تحديث البيانات</button>
+          <div class="sb-name">Admin Panel</div>
+          <div class="sb-sub">JudoManager Pro v2.1</div>
         </div>
       </div>
+      <nav class="sb-nav">
+        <div class="nl">عام</div>
+        <button class="nb on" onclick="showPage('dashboard',this)">📊 لوحة البيانات</button>
 
-      <div class="data-file">
-        📁 البيانات محفوظة على جهازك في: <br>
-        <span class="file-name">judo-requests-data.json</span>
-        <span style="color:var(--mu);font-size:11px;display:block;margin-top:5px;">
-          استخدم زر "تصدير JSON" لحفظ نسخة على جهازك دائماً. البيانات تُحفظ أيضاً في المتصفح تلقائياً.
-        </span>
-      </div>
+        <div class="nl" style="margin-top:6px;">الطلبات</div>
+        <button class="nb" onclick="showPage('inbox',this)">📥 الطلبات الواردة المباشرة <span class="nbadge"
+            id="inboxBadge" style="background:var(--pur);color:white;">0</span></button>
+        <button class="nb" onclick="showPage('requests',this)">📋 كل الطلبات <span class="nbadge"
+            id="pendBadge">0</span></button>
+        <button class="nb" onclick="showPage('add',this)">➕ إضافة طلب يدوي</button>
+        <button class="nb" onclick="showPage('approved',this)">✅ المفعّلة</button>
 
-      <div class="stats">
-        <div class="st"><div class="st-v" id="s-total" style="color:var(--wh)">0</div><div class="st-l">إجمالي الطلبات</div></div>
-        <div class="st"><div class="st-v" id="s-pend" style="color:var(--amb)">0</div><div class="st-l">قيد التحقق</div></div>
-        <div class="st"><div class="st-v" id="s-appv" style="color:var(--grn)">0</div><div class="st-l">تم التفعيل</div></div>
-        <div class="st"><div class="st-v" id="s-paid" style="color:var(--pur)">0</div><div class="st-l">مدفوع (9,000 دج)</div></div>
-        <div class="st"><div class="st-v" id="s-trial" style="color:var(--blu)">0</div><div class="st-l">تجريبي</div></div>
-      </div>
-
-      <div class="tw">
-        <div class="th"><div><h2>📋 آخر الطلبات</h2></div></div>
-        <div id="dashRecent"><div class="ep"><div class="ep-i">📭</div><h3>لا طلبات بعد</h3></div></div>
-      </div>
-    </div>
-
-    <!-- ══ INBOX DIRECT REQUESTS ══ -->
-    <div class="ps" id="page-inbox">
-      <div class="ph">
-        <div><h1>📥 الطلبات الواردة المباشرة</h1><p>استقبال ومعاينة كافة الطلبات والمدفوعات المحولة فورياً من الزبائن</p></div>
-        <div>
-          <button class="btn btn-pur" onclick="fetchServerRequests(); refreshAll();">🔄 مزامنة وجلب الحية</button>
+        <div class="nl" style="margin-top:6px;">النظام</div>
+        <button class="nb" onclick="showPage('data',this)">💾 إدارة البيانات</button>
+        <button class="nb" onclick="showPage('settings',this)">⚙️ الإعدادات</button>
+      </nav>
+      <div class="sb-ft">
+        <div class="sb-user" onclick="doLogout()">
+          <div class="sb-av">👤</div>
+          <div>
+            <div class="sb-uname">المبرمج</div>
+            <div class="sb-role">Super Admin</div>
+          </div>
+          <div class="sb-out" title="خروج">⏻</div>
         </div>
       </div>
+    </aside>
 
-      <div id="inboxCards" style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px;">
-        <!-- Filled dynamically -->
-      </div>
-    </div>
+    <!-- MAIN -->
+    <main class="mn">
 
-    <!-- ══ REQUESTS ══ -->
-    <div class="ps" id="page-requests">
-      <div class="ph">
-        <div><h1>📋 طلبات التفعيل</h1><p>فحص الطلبات، التحقق من وصل الدفع، وإصدار مفاتيح التفعيل</p></div>
-      </div>
-      <div class="tw">
-        <div class="th">
-          <div><h2>كل الطلبات</h2></div>
-          <div class="tf">
-            <button class="fb on" onclick="setFilter('all',this)">الكل</button>
-            <button class="fb" onclick="setFilter('PENDING',this)">⏳ قيد التحقق</button>
-            <button class="fb" onclick="setFilter('APPROVED',this)">✅ مفعّل</button>
-            <button class="fb" onclick="setFilter('REJECTED',this)">✕ مرفوض</button>
+      <!-- ══ DASHBOARD ══ -->
+      <div class="ps on" id="page-dashboard">
+        <div class="ph">
+          <div>
+            <h1>📊 لوحة البيانات</h1>
+            <p>نظرة عامة شاملة على الطلبات والتراخيص</p>
+          </div>
+          <div style="display:flex;gap:8px;">
+            <button class="btn btn-ghost" onclick="fetchServerRequests()" title="جلب أحدث طلبات الزبائن فوراً">⚡ جلب
+              الطلبات السحابية</button>
+            <button class="btn btn-ghost" onclick="exportData()">📤 تصدير JSON</button>
+            <button class="btn btn-pur" onclick="fetchServerRequests(); refreshAll();">🔄 تحديث البيانات</button>
           </div>
         </div>
-        <div style="overflow-x:auto;">
-          <table>
-            <thead><tr>
-              <th>#</th><th>النادي / المسؤول</th><th>البريد / الهاتف</th>
-              <th>النوع</th><th>وصل الدفع (صورة)</th><th>الحالة</th><th>المفتاح</th><th>الإجراءات</th>
-            </tr></thead>
-            <tbody id="reqsTbody"></tbody>
-          </table>
-        </div>
-        <div class="ep" id="reqsEp" style="display:none"><div class="ep-i">📭</div><h3>لا توجد طلبات</h3><p>لا نتائج لهذا الفلتر</p></div>
-      </div>
-    </div>
 
-    <!-- ══ ADD ══ -->
-    <div class="ps" id="page-add">
-      <div class="ph"><div><h1>➕ إضافة طلب يدوي</h1><p>أضف طلب تفعيل لنادٍ تواصل معك مباشرة</p></div></div>
-      <div class="form-box">
-        <div class="info-b">
-          💰 <strong>سعر النظام: 15,000 دج</strong> — ترخيص مدى الحياة مع ضمان شهر كامل.<br>
-          التجربة المجانية: 14 يوم بدون دفع.
-        </div>
-        <div class="frow">
-          <div class="fg"><label>اسم النادي *</label><input type="text" id="a-club" placeholder="نادي الرياضي للجودو"></div>
-          <div class="fg"><label>المسؤول</label><input type="text" id="a-mgr" placeholder="الاسم الكامل"></div>
-          <div class="fg"><label>البريد الإلكتروني *</label><input type="email" id="a-email" placeholder="example@gmail.com"></div>
-          <div class="fg"><label>رقم الهاتف</label><input type="tel" id="a-phone" placeholder="0551234567"></div>
-          <div class="fg"><label>نوع الاشتراك *</label>
-            <select id="a-type">
-              <option value="TRIAL">تجربة مجانية 14 يوم</option>
-              <option value="LIFETIME">ترخيص مدى الحياة – 15,000 دج</option>
-            </select>
-          </div>
-          <div class="fg"><label>رقم وصل الدفع (BaridiMob)</label><input type="text" id="a-receipt-num" placeholder="مثال: #00982415"></div>
-        </div>
-        <div class="fg">
-          <label>صورة وصل الدفع (اختياري)</label>
-          <div class="upload-zone" onclick="document.getElementById('a-img').click()" id="uploadZone">
-            <input type="file" id="a-img" accept="image/*" onchange="previewImage(this)">
-            <div class="up-ico">🧾</div>
-            <p>اضغط هنا لرفع صورة وصل الدفع</p>
-            <p style="font-size:10px;color:var(--mu);margin-top:4px;">JPG / PNG / WEBP</p>
-          </div>
-          <div class="upload-prev" id="uploadPrev" style="display:none;"></div>
-        </div>
-        <div class="fg"><label>ملاحظات</label><textarea id="a-notes" placeholder="أي معلومات إضافية..."></textarea></div>
-        <div style="display:flex;gap:9px;margin-top:14px;">
-          <button class="btn btn-pur" onclick="addRequest()">➕ إضافة الطلب</button>
-          <button class="btn btn-ghost" onclick="clearForm()">مسح</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- ══ APPROVED ══ -->
-    <div class="ps" id="page-approved">
-      <div class="ph"><div><h1>✅ الطلبات المفعّلة</h1><p>سجل المفاتيح الصادرة</p></div></div>
-      <div class="tw">
-        <div style="overflow-x:auto;">
-          <table>
-            <thead><tr><th>#</th><th>النادي</th><th>البريد</th><th>النوع</th><th>المفتاح الصادر</th><th>إعادة الإرسال</th></tr></thead>
-            <tbody id="appvTbody"></tbody>
-          </table>
-        </div>
-        <div class="ep" id="appvEp" style="display:none"><div class="ep-i">🔑</div><h3>لا يوجد تفعيلات بعد</h3></div>
-      </div>
-    </div>
-
-    <!-- ══ DATA MANAGEMENT ══ -->
-    <div class="ps" id="page-data">
-      <div class="ph"><div><h1>💾 إدارة البيانات</h1><p>حفظ واستعادة بيانات الطلبات على جهازك</p></div></div>
-
-      <div style="background:var(--card);border:1px solid var(--bd);border-radius:15px;padding:24px;max-width:500px;">
-
-        <div class="data-file" style="margin-bottom:22px;">
-          📁 اسم ملف البيانات على جهازك:<br>
+        <div class="data-file">
+          📁 البيانات محفوظة على جهازك في: <br>
           <span class="file-name">judo-requests-data.json</span>
-          <div style="color:var(--mu);font-size:11px;margin-top:6px;line-height:1.7;">
-            هذا الملف يحتوي على جميع بيانات الطلبات والمفاتيح الصادرة.<br>
-            احتفظ بنسخة منه دائماً كنسخة احتياطية.
+          <span style="color:var(--mu);font-size:11px;display:block;margin-top:5px;">
+            استخدم زر "تصدير JSON" لحفظ نسخة على جهازك دائماً. البيانات تُحفظ أيضاً في المتصفح تلقائياً.
+          </span>
+        </div>
+
+        <div class="stats">
+          <div class="st">
+            <div class="st-v" id="s-total" style="color:var(--wh)">0</div>
+            <div class="st-l">إجمالي الطلبات</div>
+          </div>
+          <div class="st">
+            <div class="st-v" id="s-pend" style="color:var(--amb)">0</div>
+            <div class="st-l">قيد التحقق</div>
+          </div>
+          <div class="st">
+            <div class="st-v" id="s-appv" style="color:var(--grn)">0</div>
+            <div class="st-l">تم التفعيل</div>
+          </div>
+          <div class="st">
+            <div class="st-v" id="s-paid" style="color:var(--pur)">0</div>
+            <div class="st-l">مدفوع (9,000 دج)</div>
+          </div>
+          <div class="st">
+            <div class="st-v" id="s-trial" style="color:var(--blu)">0</div>
+            <div class="st-l">تجريبي</div>
           </div>
         </div>
 
-        <h3 style="color:var(--wh);font-size:14px;font-weight:800;margin-bottom:14px;">📤 تصدير البيانات</h3>
-        <p style="font-size:12px;color:var(--mu);margin-bottom:12px;">اضغط لتحميل جميع بيانات الطلبات كملف JSON على جهازك.</p>
-        <button class="btn btn-grn" onclick="exportData()" style="margin-bottom:22px;">
-          📥 تحميل ملف judo-requests-data.json
-        </button>
-
-        <hr style="border-color:var(--bd);margin-bottom:22px;">
-
-        <h3 style="color:var(--wh);font-size:14px;font-weight:800;margin-bottom:14px;">📂 استيراد البيانات</h3>
-        <p style="font-size:12px;color:var(--mu);margin-bottom:12px;">لاستعادة البيانات من ملف JSON محفوظ مسبقاً.</p>
-        <div style="display:flex;gap:9px;flex-wrap:wrap;">
-          <label class="btn btn-pur" style="cursor:pointer;">
-            📂 استيراد من ملف JSON
-            <input type="file" accept=".json" style="display:none" onchange="importData(this)">
-          </label>
-        </div>
-
-        <hr style="border-color:var(--bd);margin:22px 0;">
-
-        <h3 style="color:var(--red);font-size:14px;font-weight:800;margin-bottom:12px;">⚠️ خطر: حذف البيانات</h3>
-        <button class="btn btn-danger" onclick="if(confirm('سيتم حذف جميع البيانات نهائياً! هل أنت متأكد؟'))clearAll()">
-          🗑️ حذف جميع البيانات
-        </button>
-      </div>
-    </div>
-
-    <!-- ══ SETTINGS ══ -->
-    <div class="ps" id="page-settings">
-      <div class="ph"><div><h1>⚙️ الإعدادات</h1><p>إعدادات لوحة التحكم</p></div></div>
-      <div style="background:var(--card);border:1px solid var(--bd);border-radius:15px;padding:24px;max-width:440px;">
-        <h3 style="color:var(--wh);font-size:13px;font-weight:800;margin-bottom:16px;">🔑 تغيير كلمة المرور</h3>
-        <div class="fg"><label>كلمة المرور الجديدة</label><input type="password" id="np" placeholder="••••••••"></div>
-        <div class="fg" style="margin-bottom:16px;"><label>تأكيد كلمة المرور</label><input type="password" id="cp" placeholder="••••••••"></div>
-        <button class="btn btn-pur" onclick="changePass()" style="margin-bottom:22px;">💾 حفظ</button>
-
-        <hr style="border-color:var(--bd);margin-bottom:22px;">
-
-        <h3 style="color:var(--wh);font-size:13px;font-weight:800;margin-bottom:14px;">📞 معلومات التواصل</h3>
-        <div style="background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:11px;padding:13px;font-size:12px;line-height:2;">
-          <div>📱 واتساب: <span style="color:var(--grn);">0553823611</span></div>
-          <div>✈️ تلغرام: <span style="color:var(--blu);">@nisoo09</span></div>
-          <div>💰 سعر الترخيص: <span style="color:var(--pur);">15,000 دج</span></div>
-          <div>🛡️ ضمان: <span style="color:var(--amb);">شهر كامل</span></div>
+        <div class="tw">
+          <div class="th">
+            <div>
+              <h2>📋 آخر الطلبات</h2>
+            </div>
+          </div>
+          <div id="dashRecent">
+            <div class="ep">
+              <div class="ep-i">📭</div>
+              <h3>لا طلبات بعد</h3>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
 
-  </main>
-</div><!-- /app -->
+      <!-- ══ INBOX DIRECT REQUESTS ══ -->
+      <div class="ps" id="page-inbox">
+        <div class="ph">
+          <div>
+            <h1>📥 الطلبات الواردة المباشرة</h1>
+            <p>استقبال ومعاينة كافة الطلبات والمدفوعات المحولة فورياً من الزبائن</p>
+          </div>
+          <div>
+            <button class="btn btn-pur" onclick="fetchServerRequests(); refreshAll();">🔄 مزامنة وجلب الحية</button>
+          </div>
+        </div>
 
-<!-- ═══════════════ MODALS ═══════════════ -->
-
-<!-- Key Modal -->
-<div class="mo" id="keyModal">
-  <div class="mb" style="max-width:430px;">
-    <button class="mb-close" onclick="closeModal('keyModal')">✕</button>
-    <h3>🎉 تم توليد مفتاح التفعيل</h3>
-    <p id="keyModalDesc">أرسل المفتاح للعميل عبر واتساب أو بريد إلكتروني</p>
-    <div class="key-box" id="keyDisplay" onclick="copyKey()" title="اضغط للنسخ">JUDO-XXXX-XXXX</div>
-    <p style="font-size:11px;text-align:center;margin:-10px 0 14px;color:var(--mu);">اضغط على المفتاح لنسخه 📋</p>
-    <div class="ma">
-      <button class="bm bm-g" onclick="sendEmail()">📧 إرسال بالإيميل</button>
-      <button class="bm bm-w" onclick="sendWA()">💬 إرسال واتساب</button>
-      <button class="bm bm-x" onclick="closeModal('keyModal')">إغلاق</button>
-    </div>
-  </div>
-</div>
-
-<!-- Edit Modal -->
-<div class="mo" id="editModal">
-  <div class="mb" style="max-width:520px;">
-    <button class="mb-close" onclick="closeModal('editModal')">✕</button>
-    <h3>✏️ تعديل الطلب</h3>
-    <p>تعديل بيانات هذا الطلب</p>
-    <input type="hidden" id="e-id">
-    <div class="frow">
-      <div class="fg"><label>اسم النادي *</label><input type="text" id="e-club"></div>
-      <div class="fg"><label>المسؤول</label><input type="text" id="e-mgr"></div>
-      <div class="fg"><label>البريد الإلكتروني *</label><input type="email" id="e-email"></div>
-      <div class="fg"><label>رقم الهاتف</label><input type="tel" id="e-phone"></div>
-      <div class="fg"><label>نوع الاشتراك</label>
-        <select id="e-type">
-          <option value="TRIAL">تجربة مجانية 14 يوم</option>
-          <option value="LIFETIME">ترخيص مدى الحياة – 15,000 دج</option>
-        </select>
+        <div id="inboxCards"
+          style="display:grid; grid-template-columns:repeat(auto-fill, minmax(320px, 1fr)); gap:16px;">
+          <!-- Filled dynamically -->
+        </div>
       </div>
-      <div class="fg"><label>الحالة</label>
-        <select id="e-status">
-          <option value="PENDING">⏳ قيد التحقق</option>
-          <option value="APPROVED">✅ مفعّل</option>
-          <option value="REJECTED">✕ مرفوض</option>
-        </select>
+
+      <!-- ══ REQUESTS ══ -->
+      <div class="ps" id="page-requests">
+        <div class="ph">
+          <div>
+            <h1>📋 طلبات التفعيل</h1>
+            <p>فحص الطلبات، التحقق من وصل الدفع، وإصدار مفاتيح التفعيل</p>
+          </div>
+        </div>
+        <div class="tw">
+          <div class="th">
+            <div>
+              <h2>كل الطلبات</h2>
+            </div>
+            <div class="tf">
+              <button class="fb on" onclick="setFilter('all',this)">الكل</button>
+              <button class="fb" onclick="setFilter('PENDING',this)">⏳ قيد التحقق</button>
+              <button class="fb" onclick="setFilter('APPROVED',this)">✅ مفعّل</button>
+              <button class="fb" onclick="setFilter('REJECTED',this)">✕ مرفوض</button>
+            </div>
+          </div>
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>النادي / المسؤول</th>
+                  <th>البريد / الهاتف</th>
+                  <th>النوع</th>
+                  <th>وصل الدفع (صورة)</th>
+                  <th>الحالة</th>
+                  <th>المفتاح</th>
+                  <th>الإجراءات</th>
+                </tr>
+              </thead>
+              <tbody id="reqsTbody"></tbody>
+            </table>
+          </div>
+          <div class="ep" id="reqsEp" style="display:none">
+            <div class="ep-i">📭</div>
+            <h3>لا توجد طلبات</h3>
+            <p>لا نتائج لهذا الفلتر</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ ADD ══ -->
+      <div class="ps" id="page-add">
+        <div class="ph">
+          <div>
+            <h1>➕ إضافة طلب يدوي</h1>
+            <p>أضف طلب تفعيل لنادٍ تواصل معك مباشرة</p>
+          </div>
+        </div>
+        <div class="form-box">
+          <div class="info-b">
+            💰 <strong>سعر النظام: 15,000 دج</strong> — ترخيص مدى الحياة مع ضمان شهر كامل.<br>
+            التجربة المجانية: 14 يوم بدون دفع.
+          </div>
+          <div class="frow">
+            <div class="fg"><label>اسم النادي *</label><input type="text" id="a-club" placeholder="نادي الرياضي للجودو">
+            </div>
+            <div class="fg"><label>المسؤول</label><input type="text" id="a-mgr" placeholder="الاسم الكامل"></div>
+            <div class="fg"><label>البريد الإلكتروني *</label><input type="email" id="a-email"
+                placeholder="example@gmail.com"></div>
+            <div class="fg"><label>رقم الهاتف</label><input type="tel" id="a-phone" placeholder="0551234567"></div>
+            <div class="fg"><label>نوع الاشتراك *</label>
+              <select id="a-type">
+                <option value="TRIAL">تجربة مجانية 14 يوم</option>
+                <option value="LIFETIME">ترخيص مدى الحياة – 15,000 دج</option>
+              </select>
+            </div>
+            <div class="fg"><label>رقم وصل الدفع (BaridiMob)</label><input type="text" id="a-receipt-num"
+                placeholder="مثال: #00982415"></div>
+          </div>
+          <div class="fg">
+            <label>صورة وصل الدفع (اختياري)</label>
+            <div class="upload-zone" onclick="document.getElementById('a-img').click()" id="uploadZone">
+              <input type="file" id="a-img" accept="image/*" onchange="previewImage(this)">
+              <div class="up-ico">🧾</div>
+              <p>اضغط هنا لرفع صورة وصل الدفع</p>
+              <p style="font-size:10px;color:var(--mu);margin-top:4px;">JPG / PNG / WEBP</p>
+            </div>
+            <div class="upload-prev" id="uploadPrev" style="display:none;"></div>
+          </div>
+          <div class="fg"><label>ملاحظات</label><textarea id="a-notes" placeholder="أي معلومات إضافية..."></textarea>
+          </div>
+          <div style="display:flex;gap:9px;margin-top:14px;">
+            <button class="btn btn-pur" onclick="addRequest()">➕ إضافة الطلب</button>
+            <button class="btn btn-ghost" onclick="clearForm()">مسح</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ APPROVED ══ -->
+      <div class="ps" id="page-approved">
+        <div class="ph">
+          <div>
+            <h1>✅ الطلبات المفعّلة</h1>
+            <p>سجل المفاتيح الصادرة</p>
+          </div>
+        </div>
+        <div class="tw">
+          <div style="overflow-x:auto;">
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>النادي</th>
+                  <th>البريد</th>
+                  <th>النوع</th>
+                  <th>المفتاح الصادر</th>
+                  <th>إعادة الإرسال</th>
+                </tr>
+              </thead>
+              <tbody id="appvTbody"></tbody>
+            </table>
+          </div>
+          <div class="ep" id="appvEp" style="display:none">
+            <div class="ep-i">🔑</div>
+            <h3>لا يوجد تفعيلات بعد</h3>
+          </div>
+        </div>
+      </div>
+
+      <!-- ══ DATA MANAGEMENT ══ -->
+      <div class="ps" id="page-data">
+        <div class="ph">
+          <div>
+            <h1>💾 إدارة البيانات</h1>
+            <p>حفظ واستعادة بيانات الطلبات على جهازك</p>
+          </div>
+        </div>
+
+        <div style="background:var(--card);border:1px solid var(--bd);border-radius:15px;padding:24px;max-width:500px;">
+
+          <div class="data-file" style="margin-bottom:22px;">
+            📁 اسم ملف البيانات على جهازك:<br>
+            <span class="file-name">judo-requests-data.json</span>
+            <div style="color:var(--mu);font-size:11px;margin-top:6px;line-height:1.7;">
+              هذا الملف يحتوي على جميع بيانات الطلبات والمفاتيح الصادرة.<br>
+              احتفظ بنسخة منه دائماً كنسخة احتياطية.
+            </div>
+          </div>
+
+          <h3 style="color:var(--wh);font-size:14px;font-weight:800;margin-bottom:14px;">📤 تصدير البيانات</h3>
+          <p style="font-size:12px;color:var(--mu);margin-bottom:12px;">اضغط لتحميل جميع بيانات الطلبات كملف JSON على
+            جهازك.</p>
+          <button class="btn btn-grn" onclick="exportData()" style="margin-bottom:22px;">
+            📥 تحميل ملف judo-requests-data.json
+          </button>
+
+          <hr style="border-color:var(--bd);margin-bottom:22px;">
+
+          <h3 style="color:var(--wh);font-size:14px;font-weight:800;margin-bottom:14px;">📂 استيراد البيانات</h3>
+          <p style="font-size:12px;color:var(--mu);margin-bottom:12px;">لاستعادة البيانات من ملف JSON محفوظ مسبقاً.</p>
+          <div style="display:flex;gap:9px;flex-wrap:wrap;">
+            <label class="btn btn-pur" style="cursor:pointer;">
+              📂 استيراد من ملف JSON
+              <input type="file" accept=".json" style="display:none" onchange="importData(this)">
+            </label>
+          </div>
+
+          <hr style="border-color:var(--bd);margin:22px 0;">
+
+          <h3 style="color:var(--red);font-size:14px;font-weight:800;margin-bottom:12px;">⚠️ خطر: حذف البيانات</h3>
+          <button class="btn btn-danger"
+            onclick="if(confirm('سيتم حذف جميع البيانات نهائياً! هل أنت متأكد؟'))clearAll()">
+            🗑️ حذف جميع البيانات
+          </button>
+        </div>
+      </div>
+
+      <!-- ══ SETTINGS ══ -->
+      <div class="ps" id="page-settings">
+        <div class="ph">
+          <div>
+            <h1>⚙️ الإعدادات</h1>
+            <p>إعدادات لوحة التحكم</p>
+          </div>
+        </div>
+        <div style="background:var(--card);border:1px solid var(--bd);border-radius:15px;padding:24px;max-width:440px;">
+          <h3 style="color:var(--wh);font-size:13px;font-weight:800;margin-bottom:16px;">🔑 تغيير كلمة المرور</h3>
+          <div class="fg"><label>كلمة المرور الجديدة</label><input type="password" id="np" placeholder="••••••••"></div>
+          <div class="fg" style="margin-bottom:16px;"><label>تأكيد كلمة المرور</label><input type="password" id="cp"
+              placeholder="••••••••"></div>
+          <button class="btn btn-pur" onclick="changePass()" style="margin-bottom:22px;">💾 حفظ</button>
+
+          <hr style="border-color:var(--bd);margin-bottom:22px;">
+
+          <h3 style="color:var(--wh);font-size:13px;font-weight:800;margin-bottom:14px;">📞 معلومات التواصل</h3>
+          <div
+            style="background:rgba(255,255,255,.03);border:1px solid var(--bd);border-radius:11px;padding:13px;font-size:12px;line-height:2;">
+            <div>📱 واتساب: <span style="color:var(--grn);">0553823611</span></div>
+            <div>✈️ تلغرام: <span style="color:var(--blu);">@nisoo09</span></div>
+            <div>💰 سعر الترخيص: <span style="color:var(--pur);">15,000 دج</span></div>
+            <div>🛡️ ضمان: <span style="color:var(--amb);">شهر كامل</span></div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div><!-- /app -->
+
+  <!-- ═══════════════ MODALS ═══════════════ -->
+
+  <!-- Key Modal -->
+  <div class="mo" id="keyModal">
+    <div class="mb" style="max-width:430px;">
+      <button class="mb-close" onclick="closeModal('keyModal')">✕</button>
+      <h3>🎉 تم توليد مفتاح التفعيل</h3>
+      <p id="keyModalDesc">أرسل المفتاح للعميل عبر واتساب أو بريد إلكتروني</p>
+      <div class="key-box" id="keyDisplay" onclick="copyKey()" title="اضغط للنسخ">JUDO-XXXX-XXXX</div>
+      <p style="font-size:11px;text-align:center;margin:-10px 0 14px;color:var(--mu);">اضغط على المفتاح لنسخه 📋</p>
+      <div class="ma">
+        <button class="bm bm-g" onclick="sendEmail()">📧 إرسال بالإيميل</button>
+        <button class="bm bm-w" onclick="sendWA()">💬 إرسال واتساب</button>
+        <button class="bm bm-x" onclick="closeModal('keyModal')">إغلاق</button>
       </div>
     </div>
-    <div class="fg"><label>ملاحظات</label><textarea id="e-notes"></textarea></div>
-    <div style="display:flex;gap:9px;margin-top:4px;">
-      <button class="btn btn-pur" onclick="saveEdit()">💾 حفظ التعديلات</button>
-      <button class="btn btn-ghost" onclick="closeModal('editModal')">إلغاء</button>
+  </div>
+
+  <!-- Edit Modal -->
+  <div class="mo" id="editModal">
+    <div class="mb" style="max-width:520px;">
+      <button class="mb-close" onclick="closeModal('editModal')">✕</button>
+      <h3>✏️ تعديل الطلب</h3>
+      <p>تعديل بيانات هذا الطلب</p>
+      <input type="hidden" id="e-id">
+      <div class="frow">
+        <div class="fg"><label>اسم النادي *</label><input type="text" id="e-club"></div>
+        <div class="fg"><label>المسؤول</label><input type="text" id="e-mgr"></div>
+        <div class="fg"><label>البريد الإلكتروني *</label><input type="email" id="e-email"></div>
+        <div class="fg"><label>رقم الهاتف</label><input type="tel" id="e-phone"></div>
+        <div class="fg"><label>نوع الاشتراك</label>
+          <select id="e-type">
+            <option value="TRIAL">تجربة مجانية 14 يوم</option>
+            <option value="LIFETIME">ترخيص مدى الحياة – 15,000 دج</option>
+          </select>
+        </div>
+        <div class="fg"><label>الحالة</label>
+          <select id="e-status">
+            <option value="PENDING">⏳ قيد التحقق</option>
+            <option value="APPROVED">✅ مفعّل</option>
+            <option value="REJECTED">✕ مرفوض</option>
+          </select>
+        </div>
+      </div>
+      <div class="fg"><label>ملاحظات</label><textarea id="e-notes"></textarea></div>
+      <div style="display:flex;gap:9px;margin-top:4px;">
+        <button class="btn btn-pur" onclick="saveEdit()">💾 حفظ التعديلات</button>
+        <button class="btn btn-ghost" onclick="closeModal('editModal')">إلغاء</button>
+      </div>
     </div>
   </div>
-</div>
 
-<!-- Receipt View Modal -->
-<div class="mo" id="receiptModal">
-  <div class="mb" style="max-width:480px;text-align:center;">
-    <button class="mb-close" onclick="closeModal('receiptModal')">✕</button>
-    <h3>🧾 وصل الدفع</h3>
-    <p id="receiptInfo"></p>
-    <div id="receiptContent" style="margin:16px 0;"></div>
-    <button class="btn btn-ghost" onclick="closeModal('receiptModal')" style="margin:0 auto;">إغلاق</button>
+  <!-- Receipt View Modal -->
+  <div class="mo" id="receiptModal">
+    <div class="mb" style="max-width:480px;text-align:center;">
+      <button class="mb-close" onclick="closeModal('receiptModal')">✕</button>
+      <h3>🧾 وصل الدفع</h3>
+      <p id="receiptInfo"></p>
+      <div id="receiptContent" style="margin:16px 0;"></div>
+      <button class="btn btn-ghost" onclick="closeModal('receiptModal')" style="margin:0 auto;">إغلاق</button>
+    </div>
   </div>
-</div>
 
-<!-- Toast -->
-<div class="toast" id="toast"></div>
+  <!-- Toast -->
+  <div class="toast" id="toast"></div>
 
-<script>
-/* ═══════ CONFIG & STORAGE ═══════ */
-let ADMIN_PASS = localStorage.getItem('judo_adminPass') || 'judo2025secret';
-const DATA_KEY = 'judo_requests_v2';
-let filterState = 'all';
-let currentReq = null;
-let uploadedImageBase64 = null;
+  <script>
+    /* ═══════ CONFIG & STORAGE ═══════ */
+    let ADMIN_PASS = localStorage.getItem('judo_adminPass') || 'judo2025secret';
+    const DATA_KEY = 'judo_requests_v2';
+    let filterState = 'all';
+    let currentReq = null;
+    let uploadedImageBase64 = null;
 
-function getData() {
-  try { return JSON.parse(localStorage.getItem(DATA_KEY) || '[]'); } catch { return []; }
-}
-function saveData(d) {
-  localStorage.setItem(DATA_KEY, JSON.stringify(d));
-  refreshAll();
-}
+    function getData() {
+      try { return JSON.parse(localStorage.getItem(DATA_KEY) || '[]'); } catch { return []; }
+    }
+    function saveData(d) {
+      localStorage.setItem(DATA_KEY, JSON.stringify(d));
+      refreshAll();
+    }
 
-async function fetchServerRequests() {
-  const customApiUrl = localStorage.getItem('judo_admin_api_endpoint') || '';
-  const endpoints = customApiUrl ? [customApiUrl] : [
-    'https://api.jsonbin.io/v3/b/66b0a887ad19ca34f893112a/latest',
-    '/api/license-requests',
-    'http://localhost:3000/api/license-requests',
-  ];
+    async function fetchServerRequests() {
+      const customApiUrl = localStorage.getItem('judo_admin_api_endpoint') || '';
+      const endpoints = customApiUrl ? [customApiUrl] : [
+        'https://api.jsonbin.io/v3/b/66b0a887ad19ca34f893112a/latest',
+        '/api/license-requests',
+        'http://localhost:3000/api/license-requests',
+      ];
 
-  toast("⏳ جاري فحص وجلب طلبات الزبائن السحابية الحية...");
+      toast("⏳ جاري فحص وجلب طلبات الزبائن السحابية الحية...");
 
-  for (const ep of endpoints) {
-    try {
-      const res = await fetch(ep, {
-        headers: ep.includes('jsonbin') ? { "X-Master-Key": "$2a$10$w8T0l5n3N5W1P2X3Y4Z5e6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U" } : {}
-      });
-      if (res.ok) {
-        let rawData = await res.json();
-        const serverReqs = rawData.record || rawData;
-        if (Array.isArray(serverReqs) && serverReqs.length > 0) {
-          const local = getData();
-          const localIds = new Set(local.map(r => r.id));
-          const merged = [...local];
-          let addedCount = 0;
-          
-          for (const sReq of serverReqs) {
-            if (!localIds.has(sReq.id)) {
-              merged.unshift({
-                id: sReq.id || 'REQ-' + Date.now(),
-                clubName: sReq.clubName || 'نادي جديد',
-                manager: sReq.managerName || sReq.manager || sReq.clubName || '',
-                email: sReq.email || '',
-                phone: sReq.phone || '',
-                type: (sReq.requestType === 'LIFETIME_PRO' || sReq.type === 'LIFETIME') ? 'LIFETIME' : 'TRIAL',
-                receiptNum: sReq.receiptUrl || sReq.receiptNum || '',
-                status: sReq.status || 'PENDING',
-                createdAt: sReq.createdAt ? new Date(sReq.createdAt).toLocaleString('ar-DZ') : new Date().toLocaleString('ar-DZ'),
-                key: sReq.key || sReq.generatedKey || null
-              });
-              addedCount++;
+      for (const ep of endpoints) {
+        try {
+          const res = await fetch(ep, {
+            headers: ep.includes('jsonbin') ? { "X-Master-Key": "$2a$10$w8T0l5n3N5W1P2X3Y4Z5e6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U" } : {}
+          });
+          if (res.ok) {
+            let rawData = await res.json();
+            const serverReqs = rawData.record || rawData;
+            if (Array.isArray(serverReqs) && serverReqs.length > 0) {
+              const local = getData();
+              const localIds = new Set(local.map(r => r.id));
+              const merged = [...local];
+              let addedCount = 0;
+
+              for (const sReq of serverReqs) {
+                if (!localIds.has(sReq.id)) {
+                  merged.unshift({
+                    id: sReq.id || 'REQ-' + Date.now(),
+                    clubName: sReq.clubName || 'نادي جديد',
+                    manager: sReq.managerName || sReq.manager || sReq.clubName || '',
+                    email: sReq.email || '',
+                    phone: sReq.phone || '',
+                    type: (sReq.requestType === 'LIFETIME_PRO' || sReq.type === 'LIFETIME') ? 'LIFETIME' : 'TRIAL',
+                    receiptNum: sReq.receiptUrl || sReq.receiptNum || '',
+                    status: sReq.status || 'PENDING',
+                    createdAt: sReq.createdAt ? new Date(sReq.createdAt).toLocaleString('ar-DZ') : new Date().toLocaleString('ar-DZ'),
+                    key: sReq.key || sReq.generatedKey || null
+                  });
+                  addedCount++;
+                }
+              }
+
+              localStorage.setItem(DATA_KEY, JSON.stringify(merged));
+              refreshAll();
+              if (addedCount > 0) {
+                toast(`🎉 وصلك ${addedCount} طلب جديد من الزبائن!`);
+              } else {
+                toast(`✅ البيانات محدثة 100% (${merged.length} طلب في القاعدة).`);
+              }
+              break;
             }
           }
-          
-          localStorage.setItem(DATA_KEY, JSON.stringify(merged));
-          refreshAll();
-          if (addedCount > 0) {
-            toast(`🎉 وصلك ${addedCount} طلب جديد من الزبائن!`);
-          } else {
-            toast(`✅ البيانات محدثة 100% (${merged.length} طلب في القاعدة).`);
-          }
-          break;
-        }
+        } catch (e) { }
       }
-    } catch(e) {}
-  }
 
-  const allReqs = getData();
-  if (allReqs.length > 0) {
-    renderInboxCards(allReqs);
-  }
-}
+      const allReqs = getData();
+      if (allReqs.length > 0) {
+        renderInboxCards(allReqs);
+      }
+    }
 
-/* ═══════ LOGIN ═══════ */
-function doLogin() {
-  const u = document.getElementById('lu').value.trim();
-  const p = document.getElementById('lp').value;
-  if (u === 'admin' && p === ADMIN_PASS) {
-    document.getElementById('loginScreen').style.display = 'none';
-    document.getElementById('app').classList.add('on');
-    fetchServerRequests();
-    refreshAll();
-    setInterval(fetchServerRequests, 10000); // Auto-sync every 10 sec
-  } else {
-    document.getElementById('loginErr').style.display = 'block';
-    document.getElementById('lp').value = '';
-    setTimeout(() => document.getElementById('loginErr').style.display = 'none', 3000);
-  }
-}
-function doLogout() {
-  if (!confirm('هل تريد تسجيل الخروج؟')) return;
-  document.getElementById('loginScreen').style.display = 'flex';
-  document.getElementById('app').classList.remove('on');
-  document.getElementById('lp').value = '';
-}
+    /* ═══════ LOGIN ═══════ */
+    function doLogin() {
+      const u = document.getElementById('lu').value.trim();
+      const p = document.getElementById('lp').value;
+      if (u === 'admin' && p === ADMIN_PASS) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('app').classList.add('on');
+        fetchServerRequests();
+        refreshAll();
+        setInterval(fetchServerRequests, 10000); // Auto-sync every 10 sec
+      } else {
+        document.getElementById('loginErr').style.display = 'block';
+        document.getElementById('lp').value = '';
+        setTimeout(() => document.getElementById('loginErr').style.display = 'none', 3000);
+      }
+    }
+    function doLogout() {
+      if (!confirm('هل تريد تسجيل الخروج؟')) return;
+      document.getElementById('loginScreen').style.display = 'flex';
+      document.getElementById('app').classList.remove('on');
+      document.getElementById('lp').value = '';
+    }
 
-/* ═══════ NAVIGATION ═══════ */
-function showPage(id, btn) {
-  document.querySelectorAll('.ps').forEach(s => s.classList.remove('on'));
-  document.getElementById('page-' + id).classList.add('on');
-  document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
-  if (btn) btn.classList.add('on');
-}
+    /* ═══════ NAVIGATION ═══════ */
+    function showPage(id, btn) {
+      document.querySelectorAll('.ps').forEach(s => s.classList.remove('on'));
+      document.getElementById('page-' + id).classList.add('on');
+      document.querySelectorAll('.nb').forEach(b => b.classList.remove('on'));
+      if (btn) btn.classList.add('on');
+    }
 
-/* ═══════ REFRESH ALL ═══════ */
-function refreshAll() {
-  const data = getData();
-  const pend = data.filter(r => r.status === 'PENDING');
-  const appv = data.filter(r => r.status === 'APPROVED');
-  const paid = data.filter(r => r.type === 'LIFETIME');
-  const trial = data.filter(r => r.type === 'TRIAL');
+    /* ═══════ REFRESH ALL ═══════ */
+    function refreshAll() {
+      const data = getData();
+      const pend = data.filter(r => r.status === 'PENDING');
+      const appv = data.filter(r => r.status === 'APPROVED');
+      const paid = data.filter(r => r.type === 'LIFETIME');
+      const trial = data.filter(r => r.type === 'TRIAL');
 
-  document.getElementById('s-total').textContent = data.length;
-  document.getElementById('s-pend').textContent  = pend.length;
-  document.getElementById('s-appv').textContent  = appv.length;
-  document.getElementById('s-paid').textContent  = paid.length;
-  document.getElementById('s-trial').textContent = trial.length;
-  document.getElementById('pendBadge').textContent = pend.length;
-  document.getElementById('inboxBadge').textContent = data.length;
+      document.getElementById('s-total').textContent = data.length;
+      document.getElementById('s-pend').textContent = pend.length;
+      document.getElementById('s-appv').textContent = appv.length;
+      document.getElementById('s-paid').textContent = paid.length;
+      document.getElementById('s-trial').textContent = trial.length;
+      document.getElementById('pendBadge').textContent = pend.length;
+      document.getElementById('inboxBadge').textContent = data.length;
 
-  renderDashRecent(data.slice(-6).reverse());
-  renderReqs(data);
-  renderApproved(appv);
-  renderInboxCards(data);
-}
+      renderDashRecent(data.slice(-6).reverse());
+      renderReqs(data);
+      renderApproved(appv);
+      renderInboxCards(data);
+    }
 
-function renderInboxCards(items) {
-  const container = document.getElementById('inboxCards');
-  if (!container) return;
+    function renderInboxCards(items) {
+      const container = document.getElementById('inboxCards');
+      if (!container) return;
 
-  if (!items || items.length === 0) {
-    container.innerHTML = `
+      if (!items || items.length === 0) {
+        container.innerHTML = `
       <div style="grid-column: 1 / -1; text-align:center; padding:40px; background:var(--card); border:1px solid var(--bd); border-radius:20px;">
         <span style="font-size:40px; display:block; margin-bottom:8px;">📥</span>
         <h3 style="color:var(--wh); font-weight:800; font-size:16px;">لا توجد طلبات حية واردة بعد</h3>
         <p style="color:var(--mu); font-size:12px; margin-top:4px;">ستظهر طلبات الاشتراكات المحولة من الزبائن فورياً في هذا القسم</p>
       </div>
     `;
-    return;
-  }
+        return;
+      }
 
-  container.innerHTML = items.map(r => {
-    const waText = encodeURIComponent(`السلام عليكم ${r.manager || r.clubName}، تم تفعيل حسابكم في JudoManager Pro بنجاح! مفتاح التفعيل الخاص بكم هو:\n${r.key || 'جاري التفعيل'}`);
-    return `
-      <div style="background:var(--card); border:1px solid ${r.status==='PENDING' ? 'rgba(245,158,11,0.4)' : 'var(--bd)'}; border-radius:18px; padding:18px; display:flex; flex-direction:column; justify-between; gap:12px; box-shadow:0 8px 24px rgba(0,0,0,0.3);">
+      container.innerHTML = items.map(r => {
+        const waText = encodeURIComponent(`السلام عليكم ${r.manager || r.clubName}، تم تفعيل حسابكم في JudoManager Pro بنجاح! مفتاح التفعيل الخاص بكم هو:\n${r.key || 'جاري التفعيل'}`);
+        return `
+      <div style="background:var(--card); border:1px solid ${r.status === 'PENDING' ? 'rgba(245,158,11,0.4)' : 'var(--bd)'}; border-radius:18px; padding:18px; display:flex; flex-direction:column; justify-between; gap:12px; box-shadow:0 8px 24px rgba(0,0,0,0.3);">
         <div style="display:flex; justify-content:space-between; align-items:center; border-b border-gray-800 pb-2;">
           <h3 style="color:var(--wh); font-weight:900; font-size:15px; display:flex; align-items:center; gap:6px;">
             🏛️ ${r.clubName}
@@ -753,17 +1662,17 @@ function renderInboxCards(items) {
         </div>
       </div>
     `;
-  }).join('');
-}
+      }).join('');
+    }
 
-/* ═══════ DASHBOARD RECENT ═══════ */
-function renderDashRecent(items) {
-  const el = document.getElementById('dashRecent');
-  if (!items.length) {
-    el.innerHTML = `<div class="ep"><div class="ep-i">📭</div><h3>لا طلبات بعد</h3><p>ستظهر هنا عند وصول أول طلب</p></div>`;
-    return;
-  }
-  el.innerHTML = `
+    /* ═══════ DASHBOARD RECENT ═══════ */
+    function renderDashRecent(items) {
+      const el = document.getElementById('dashRecent');
+      if (!items.length) {
+        el.innerHTML = `<div class="ep"><div class="ep-i">📭</div><h3>لا طلبات بعد</h3><p>ستظهر هنا عند وصول أول طلب</p></div>`;
+        return;
+      }
+      el.innerHTML = `
     <table>
       <thead><tr><th>النادي</th><th>البريد</th><th>النوع</th><th>الوصل</th><th>الحالة</th><th>إجراء سريع</th></tr></thead>
       <tbody>
@@ -774,25 +1683,25 @@ function renderDashRecent(items) {
             <td>${typeBadge(r.type)}</td>
             <td>${receiptCell(r)}</td>
             <td>${statusBadge(r.status)}</td>
-            <td>${r.status==='PENDING'
-              ? `<button class="ab ab-grn" onclick="approveReq('${r.id}')">⚡ تفعيل</button>`
-              : `<span style="color:var(--mu);font-size:11px;">–</span>`}</td>
+            <td>${r.status === 'PENDING'
+          ? `<button class="ab ab-grn" onclick="approveReq('${r.id}')">⚡ تفعيل</button>`
+          : `<span style="color:var(--mu);font-size:11px;">–</span>`}</td>
           </tr>
         `).join('')}
       </tbody>
     </table>`;
-}
+    }
 
-/* ═══════ REQUESTS TABLE ═══════ */
-function renderReqs(data) {
-  const filtered = filterState === 'all' ? data : data.filter(r => r.status === filterState);
-  const tbody = document.getElementById('reqsTbody');
-  const ep    = document.getElementById('reqsEp');
-  if (!filtered.length) { tbody.innerHTML = ''; ep.style.display = 'block'; return; }
-  ep.style.display = 'none';
-  tbody.innerHTML = filtered.map((r, i) => `
+    /* ═══════ REQUESTS TABLE ═══════ */
+    function renderReqs(data) {
+      const filtered = filterState === 'all' ? data : data.filter(r => r.status === filterState);
+      const tbody = document.getElementById('reqsTbody');
+      const ep = document.getElementById('reqsEp');
+      if (!filtered.length) { tbody.innerHTML = ''; ep.style.display = 'block'; return; }
+      ep.style.display = 'none';
+      tbody.innerHTML = filtered.map((r, i) => `
     <tr>
-      <td style="color:var(--mu);font-size:11px;">${i+1}</td>
+      <td style="color:var(--mu);font-size:11px;">${i + 1}</td>
       <td>
         <div style="color:var(--wh);font-weight:700;font-size:12px;">${r.clubName}</div>
         <div style="color:var(--mu);font-size:10px;">${r.manager || ''}</div>
@@ -807,10 +1716,10 @@ function renderReqs(data) {
       <td>${r.key ? `<span class="mono">${r.key}</span>` : '<span style="color:var(--mu)">–</span>'}</td>
       <td>
         <div class="acts">
-          ${r.status==='PENDING' ? `
+          ${r.status === 'PENDING' ? `
             <button class="ab ab-grn" onclick="approveReq('${r.id}')">⚡ تفعيل</button>
             <button class="ab ab-red" onclick="rejectReq('${r.id}')">✕ رفض</button>
-          ` : r.status==='APPROVED' ? `
+          ` : r.status === 'APPROVED' ? `
             <button class="ab ab-blu" onclick="resendKey('${r.id}')">📤 إعادة إرسال</button>
           ` : ''}
           <button class="ab ab-pur" onclick="openEdit('${r.id}')">✏️ تعديل</button>
@@ -819,24 +1728,24 @@ function renderReqs(data) {
       </td>
     </tr>
   `).join('');
-}
+    }
 
-function setFilter(f, btn) {
-  filterState = f;
-  document.querySelectorAll('.fb').forEach(b => b.classList.remove('on'));
-  btn.classList.add('on');
-  renderReqs(getData());
-}
+    function setFilter(f, btn) {
+      filterState = f;
+      document.querySelectorAll('.fb').forEach(b => b.classList.remove('on'));
+      btn.classList.add('on');
+      renderReqs(getData());
+    }
 
-/* ═══════ APPROVED TABLE ═══════ */
-function renderApproved(items) {
-  const tbody = document.getElementById('appvTbody');
-  const ep    = document.getElementById('appvEp');
-  if (!items.length) { tbody.innerHTML = ''; ep.style.display = 'block'; return; }
-  ep.style.display = 'none';
-  tbody.innerHTML = items.map((r, i) => `
+    /* ═══════ APPROVED TABLE ═══════ */
+    function renderApproved(items) {
+      const tbody = document.getElementById('appvTbody');
+      const ep = document.getElementById('appvEp');
+      if (!items.length) { tbody.innerHTML = ''; ep.style.display = 'block'; return; }
+      ep.style.display = 'none';
+      tbody.innerHTML = items.map((r, i) => `
     <tr>
-      <td style="color:var(--mu);">${i+1}</td>
+      <td style="color:var(--mu);">${i + 1}</td>
       <td style="color:var(--wh);font-weight:700;">${r.clubName}</td>
       <td class="email-c">${r.email}</td>
       <td>${typeBadge(r.type)}</td>
@@ -844,139 +1753,139 @@ function renderApproved(items) {
       <td><button class="ab ab-blu" onclick="resendKey('${r.id}')">📤 إرسال مجدداً</button></td>
     </tr>
   `).join('');
-}
+    }
 
-/* ═══════ RECEIPT CELL ═══════ */
-function receiptCell(r) {
-  if (r.receiptImg) {
-    return `<img src="${r.receiptImg}" class="receipt-thumb" onclick="viewReceipt('${r.id}')" title="عرض الوصل">`;
-  }
-  if (r.receiptNum) {
-    return `<span class="ab ab-amb" onclick="viewReceipt('${r.id}')" style="cursor:pointer;">🧾 ${r.receiptNum}</span>`;
-  }
-  return `<span class="receipt-no">لا يوجد وصل</span>`;
-}
+    /* ═══════ RECEIPT CELL ═══════ */
+    function receiptCell(r) {
+      if (r.receiptImg) {
+        return `<img src="${r.receiptImg}" class="receipt-thumb" onclick="viewReceipt('${r.id}')" title="عرض الوصل">`;
+      }
+      if (r.receiptNum) {
+        return `<span class="ab ab-amb" onclick="viewReceipt('${r.id}')" style="cursor:pointer;">🧾 ${r.receiptNum}</span>`;
+      }
+      return `<span class="receipt-no">لا يوجد وصل</span>`;
+    }
 
-/* ═══════ BADGES ═══════ */
-function typeBadge(t) {
-  return t === 'LIFETIME'
-    ? `<span class="bx bl">♾️ 9,000 دج</span>`
-    : `<span class="bx bt">⏱️ تجريبي 14 يوم</span>`;
-}
-function statusBadge(s) {
-  if (s === 'APPROVED') return `<span class="bx ba">✅ مفعّل</span>`;
-  if (s === 'REJECTED') return `<span class="bx br">✕ مرفوض</span>`;
-  return `<span class="bx bp">⏳ قيد التحقق</span>`;
-}
+    /* ═══════ BADGES ═══════ */
+    function typeBadge(t) {
+      return t === 'LIFETIME'
+        ? `<span class="bx bl">♾️ 9,000 دج</span>`
+        : `<span class="bx bt">⏱️ تجريبي 14 يوم</span>`;
+    }
+    function statusBadge(s) {
+      if (s === 'APPROVED') return `<span class="bx ba">✅ مفعّل</span>`;
+      if (s === 'REJECTED') return `<span class="bx br">✕ مرفوض</span>`;
+      return `<span class="bx bp">⏳ قيد التحقق</span>`;
+    }
 
-/* ═══════ APPROVE / REJECT / DELETE ═══════ */
-function genKey(type) {
-  const p = type === 'LIFETIME' ? 'JUDO-PRO' : 'JUDO-TRL';
-  const r = () => Math.floor(1000 + Math.random() * 9000);
-  return `${p}-${r()}-${r()}`;
-}
+    /* ═══════ APPROVE / REJECT / DELETE ═══════ */
+    function genKey(type) {
+      const p = type === 'LIFETIME' ? 'JUDO-PRO' : 'JUDO-TRL';
+      const r = () => Math.floor(1000 + Math.random() * 9000);
+      return `${p}-${r()}-${r()}`;
+    }
 
-function approveReq(id) {
-  const data = getData();
-  const req = data.find(r => r.id === id);
-  if (!req) return;
-  req.key = genKey(req.type);
-  req.status = 'APPROVED';
-  req.approvedAt = new Date().toLocaleString('ar-DZ');
-  saveData(data);
-  currentReq = req;
-  showKeyModal(req);
-}
+    function approveReq(id) {
+      const data = getData();
+      const req = data.find(r => r.id === id);
+      if (!req) return;
+      req.key = genKey(req.type);
+      req.status = 'APPROVED';
+      req.approvedAt = new Date().toLocaleString('ar-DZ');
+      saveData(data);
+      currentReq = req;
+      showKeyModal(req);
+    }
 
-function rejectReq(id) {
-  if (!confirm('هل أنت متأكد من رفض هذا الطلب؟')) return;
-  const data = getData();
-  const req = data.find(r => r.id === id);
-  if (req) { req.status = 'REJECTED'; saveData(data); }
-  toast('تم رفض الطلب');
-}
+    function rejectReq(id) {
+      if (!confirm('هل أنت متأكد من رفض هذا الطلب؟')) return;
+      const data = getData();
+      const req = data.find(r => r.id === id);
+      if (req) { req.status = 'REJECTED'; saveData(data); }
+      toast('تم رفض الطلب');
+    }
 
-function deleteReq(id) {
-  if (!confirm('هل أنت متأكد من حذف هذا الطلب نهائياً؟')) return;
-  const data = getData().filter(r => r.id !== id);
-  saveData(data);
-  toast('🗑️ تم حذف الطلب');
-}
+    function deleteReq(id) {
+      if (!confirm('هل أنت متأكد من حذف هذا الطلب نهائياً؟')) return;
+      const data = getData().filter(r => r.id !== id);
+      saveData(data);
+      toast('🗑️ تم حذف الطلب');
+    }
 
-function resendKey(id) {
-  const req = getData().find(r => r.id === id);
-  if (!req) return;
-  currentReq = req;
-  showKeyModal(req);
-}
+    function resendKey(id) {
+      const req = getData().find(r => r.id === id);
+      if (!req) return;
+      currentReq = req;
+      showKeyModal(req);
+    }
 
-/* ═══════ KEY MODAL ═══════ */
-function showKeyModal(req) {
-  document.getElementById('keyDisplay').textContent = req.key;
-  document.getElementById('keyModalDesc').textContent =
-    `نادي "${req.clubName}" — أرسل المفتاح إلى: ${req.email}`;
-  document.getElementById('keyModal').classList.add('on');
-}
-function closeModal(id) { document.getElementById(id).classList.remove('on'); }
-function copyKey() {
-  navigator.clipboard.writeText(document.getElementById('keyDisplay').textContent);
-  toast('✅ تم نسخ المفتاح!');
-}
-function sendEmail() {
-  if (!currentReq) return;
-  const sub = encodeURIComponent(`مفتاح تفعيل نظام JudoManager – ${currentReq.clubName}`);
-  const body = encodeURIComponent(
-    `السلام عليكم،\n\nتم قبول طلبكم بنجاح!\n\nمفتاح التفعيل الخاص بناديكم:\n${currentReq.key}\n\nسعر الترخيص المدفوع: 15,000 دج — ضمان شهر كامل.\nللدعم الفني: واتساب 0553823611\n\nشكراً لاختياركم JudoManager Pro 🥋`
-  );
-  window.open(`mailto:${currentReq.email}?subject=${sub}&body=${body}`, '_blank');
-}
-function sendWA() {
-  if (!currentReq) return;
-  const msg = encodeURIComponent(
-    `السلام عليكم ${currentReq.manager || currentReq.clubName}،\n\nتم قبول طلبكم! مفتاح تفعيل نظام JudoManager Pro:\n\n${currentReq.key}\n\nضمان شهر كامل - للدعم الفني: 0553823611 🥋`
-  );
-  window.open(`https://wa.me/?text=${msg}`, '_blank');
-}
+    /* ═══════ KEY MODAL ═══════ */
+    function showKeyModal(req) {
+      document.getElementById('keyDisplay').textContent = req.key;
+      document.getElementById('keyModalDesc').textContent =
+        `نادي "${req.clubName}" — أرسل المفتاح إلى: ${req.email}`;
+      document.getElementById('keyModal').classList.add('on');
+    }
+    function closeModal(id) { document.getElementById(id).classList.remove('on'); }
+    function copyKey() {
+      navigator.clipboard.writeText(document.getElementById('keyDisplay').textContent);
+      toast('✅ تم نسخ المفتاح!');
+    }
+    function sendEmail() {
+      if (!currentReq) return;
+      const sub = encodeURIComponent(`مفتاح تفعيل نظام JudoManager – ${currentReq.clubName}`);
+      const body = encodeURIComponent(
+        `السلام عليكم،\n\nتم قبول طلبكم بنجاح!\n\nمفتاح التفعيل الخاص بناديكم:\n${currentReq.key}\n\nسعر الترخيص المدفوع: 15,000 دج — ضمان شهر كامل.\nللدعم الفني: واتساب 0553823611\n\nشكراً لاختياركم JudoManager Pro 🥋`
+      );
+      window.open(`mailto:${currentReq.email}?subject=${sub}&body=${body}`, '_blank');
+    }
+    function sendWA() {
+      if (!currentReq) return;
+      const msg = encodeURIComponent(
+        `السلام عليكم ${currentReq.manager || currentReq.clubName}،\n\nتم قبول طلبكم! مفتاح تفعيل نظام JudoManager Pro:\n\n${currentReq.key}\n\nضمان شهر كامل - للدعم الفني: 0553823611 🥋`
+      );
+      window.open(`https://wa.me/?text=${msg}`, '_blank');
+    }
 
-/* ═══════ EDIT MODAL ═══════ */
-function openEdit(id) {
-  const req = getData().find(r => r.id === id);
-  if (!req) return;
-  document.getElementById('e-id').value    = req.id;
-  document.getElementById('e-club').value  = req.clubName;
-  document.getElementById('e-mgr').value   = req.manager || '';
-  document.getElementById('e-email').value = req.email;
-  document.getElementById('e-phone').value = req.phone || '';
-  document.getElementById('e-type').value  = req.type;
-  document.getElementById('e-status').value = req.status;
-  document.getElementById('e-notes').value = req.notes || '';
-  document.getElementById('editModal').classList.add('on');
-}
-function saveEdit() {
-  const id   = document.getElementById('e-id').value;
-  const data = getData();
-  const req  = data.find(r => r.id === id);
-  if (!req) return;
-  req.clubName = document.getElementById('e-club').value.trim();
-  req.manager  = document.getElementById('e-mgr').value.trim();
-  req.email    = document.getElementById('e-email').value.trim();
-  req.phone    = document.getElementById('e-phone').value.trim();
-  req.type     = document.getElementById('e-type').value;
-  req.status   = document.getElementById('e-status').value;
-  req.notes    = document.getElementById('e-notes').value.trim();
-  if (req.status === 'APPROVED' && !req.key) req.key = genKey(req.type);
-  saveData(data);
-  closeModal('editModal');
-  toast('✅ تم حفظ التعديلات');
-}
+    /* ═══════ EDIT MODAL ═══════ */
+    function openEdit(id) {
+      const req = getData().find(r => r.id === id);
+      if (!req) return;
+      document.getElementById('e-id').value = req.id;
+      document.getElementById('e-club').value = req.clubName;
+      document.getElementById('e-mgr').value = req.manager || '';
+      document.getElementById('e-email').value = req.email;
+      document.getElementById('e-phone').value = req.phone || '';
+      document.getElementById('e-type').value = req.type;
+      document.getElementById('e-status').value = req.status;
+      document.getElementById('e-notes').value = req.notes || '';
+      document.getElementById('editModal').classList.add('on');
+    }
+    function saveEdit() {
+      const id = document.getElementById('e-id').value;
+      const data = getData();
+      const req = data.find(r => r.id === id);
+      if (!req) return;
+      req.clubName = document.getElementById('e-club').value.trim();
+      req.manager = document.getElementById('e-mgr').value.trim();
+      req.email = document.getElementById('e-email').value.trim();
+      req.phone = document.getElementById('e-phone').value.trim();
+      req.type = document.getElementById('e-type').value;
+      req.status = document.getElementById('e-status').value;
+      req.notes = document.getElementById('e-notes').value.trim();
+      if (req.status === 'APPROVED' && !req.key) req.key = genKey(req.type);
+      saveData(data);
+      closeModal('editModal');
+      toast('✅ تم حفظ التعديلات');
+    }
 
-/* ═══════ RECEIPT VIEW ═══════ */
-function viewReceipt(id) {
-  const req = getData().find(r => r.id === id);
-  if (!req) return;
+    /* ═══════ RECEIPT VIEW ═══════ */
+    function viewReceipt(id) {
+      const req = getData().find(r => r.id === id);
+      if (!req) return;
 
-  const cont = document.getElementById('receiptContent');
-  cont.innerHTML = `
+      const cont = document.getElementById('receiptContent');
+      cont.innerHTML = `
     <div style="background:var(--bg); border:1px solid var(--bd); border-radius:16px; padding:18px; text-align:right; font-size:13px; space-y-3;">
       <div style="color:var(--pur); font-weight:900; font-size:16px; border-bottom:1px solid var(--bd); padding-bottom:8px; margin-bottom:12px;">
         🏛️ ${req.clubName}
@@ -1025,139 +1934,140 @@ function viewReceipt(id) {
     ${req.receiptImg ? `<div style="margin-top:14px;"><img src="${req.receiptImg}" alt="صورة الوصل" style="max-width:100%;max-height:380px;border-radius:12px;border:1px solid var(--bd);"></div>` : ''}
   `;
 
-  document.getElementById('receiptModal').classList.add('on');
-}
-
-/* ═══════ ADD MANUAL REQUEST ═══════ */
-function previewImage(input) {
-  if (!input.files || !input.files[0]) return;
-  const file = input.files[0];
-  const reader = new FileReader();
-  reader.onload = e => {
-    uploadedImageBase64 = e.target.result;
-    const prev = document.getElementById('uploadPrev');
-    prev.style.display = 'block';
-    prev.innerHTML = `<img src="${uploadedImageBase64}" alt="وصل الدفع"><br>
-      <button class="ab ab-red" style="margin-top:6px;" onclick="clearUpload()">✕ إزالة الصورة</button>`;
-  };
-  reader.readAsDataURL(file);
-}
-function clearUpload() {
-  uploadedImageBase64 = null;
-  document.getElementById('a-img').value = '';
-  document.getElementById('uploadPrev').style.display = 'none';
-  document.getElementById('uploadPrev').innerHTML = '';
-}
-
-function addRequest() {
-  const club  = document.getElementById('a-club').value.trim();
-  const email = document.getElementById('a-email').value.trim();
-  if (!club || !email) { alert('الرجاء إدخال اسم النادي والبريد الإلكتروني'); return; }
-  const data = getData();
-  data.push({
-    id:         'REQ-' + Date.now(),
-    clubName:   club,
-    manager:    document.getElementById('a-mgr').value.trim(),
-    email,
-    phone:      document.getElementById('a-phone').value.trim(),
-    type:       document.getElementById('a-type').value,
-    receiptNum: document.getElementById('a-receipt-num').value.trim(),
-    receiptImg: uploadedImageBase64 || null,
-    notes:      document.getElementById('a-notes').value.trim(),
-    status:     'PENDING',
-    createdAt:  new Date().toLocaleString('ar-DZ'),
-    key:        null
-  });
-  saveData(data);
-  clearForm();
-  toast('✅ تم إضافة الطلب بنجاح');
-  showPage('requests', document.querySelectorAll('.nb')[1]);
-}
-function clearForm() {
-  ['a-club','a-mgr','a-email','a-phone','a-receipt-num','a-notes'].forEach(id => document.getElementById(id).value = '');
-  document.getElementById('a-type').value = 'TRIAL';
-  clearUpload();
-}
-
-/* ═══════ DATA EXPORT / IMPORT ═══════ */
-function exportData() {
-  const data = getData();
-  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-  const a = document.createElement('a');
-  a.href = URL.createObjectURL(blob);
-  a.download = 'judo-requests-data.json';
-  a.click();
-  toast('📥 تم تحميل ملف judo-requests-data.json');
-}
-function importData(input) {
-  if (!input.files || !input.files[0]) return;
-  const reader = new FileReader();
-  reader.onload = e => {
-    try {
-      const parsed = JSON.parse(e.target.result);
-      if (!Array.isArray(parsed)) throw new Error('صيغة غير صحيحة');
-      if (!confirm(`سيتم استيراد ${parsed.length} طلب. هل تريد دمجهم مع البيانات الحالية؟`)) return;
-      const existing = getData();
-      const existingIds = new Set(existing.map(r => r.id));
-      const merged = [...existing, ...parsed.filter(r => !existingIds.has(r.id))];
-      saveData(merged);
-      toast(`✅ تم استيراد ${parsed.length} طلب بنجاح`);
-    } catch { alert('❌ خطأ: الملف غير صالح أو تالف'); }
-  };
-  reader.readAsText(input.files[0]);
-}
-function clearAll() {
-  localStorage.removeItem(DATA_KEY);
-  refreshAll();
-  toast('🗑️ تم حذف جميع البيانات');
-}
-
-/* ═══════ SETTINGS ═══════ */
-function changePass() {
-  const np = document.getElementById('np').value;
-  const cp = document.getElementById('cp').value;
-  if (!np) { alert('أدخل كلمة مرور جديدة'); return; }
-  if (np !== cp) { alert('كلمتا المرور غير متطابقتين'); return; }
-  if (np.length < 6) { alert('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
-  ADMIN_PASS = np;
-  localStorage.setItem('judo_adminPass', np);
-  document.getElementById('np').value = '';
-  document.getElementById('cp').value = '';
-  toast('✅ تم تغيير كلمة المرور');
-}
-
-/* ═══════ TOAST ═══════ */
-function toast(msg) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.style.display = 'block';
-  clearTimeout(t._timer);
-  t._timer = setTimeout(() => t.style.display = 'none', 2800);
-}
-
-/* ═══════ CLOSE MODAL ON OVERLAY CLICK ═══════ */
-document.querySelectorAll('.mo').forEach(m => {
-  m.addEventListener('click', e => { if (e.target === m) m.classList.remove('on'); });
-});
-
-/* ═══════ SAMPLE DATA (first run) ═══════ */
-if (!localStorage.getItem(DATA_KEY)) {
-  const now = new Date().toLocaleString('ar-DZ');
-  localStorage.setItem(DATA_KEY, JSON.stringify([
-    {
-      id: 'REQ-1001', clubName: 'نادي الأمل الرياضي للجودو',
-      manager: 'عبد القادر بلحاج', email: 'elamal.judo@gmail.com',
-      phone: '0550123456', type: 'TRIAL', receiptNum: null, receiptImg: null,
-      notes: 'طلب تجربة مجانية', status: 'PENDING', createdAt: now, key: null
-    },
-    {
-      id: 'REQ-1002', clubName: 'جمعية الأبطال للجودو والقتال',
-      manager: 'ياسين زروقي', email: 'champions.judo@gmail.com',
-      phone: '0661987654', type: 'LIFETIME',
-      receiptNum: '#00982415 – 15,000 دج BaridiMob', receiptImg: null,
-      notes: 'تم الدفع – ينتظر التفعيل', status: 'PENDING', createdAt: now, key: null
+      document.getElementById('receiptModal').classList.add('on');
     }
-  ]));
-}
-</script>
+
+    /* ═══════ ADD MANUAL REQUEST ═══════ */
+    function previewImage(input) {
+      if (!input.files || !input.files[0]) return;
+      const file = input.files[0];
+      const reader = new FileReader();
+      reader.onload = e => {
+        uploadedImageBase64 = e.target.result;
+        const prev = document.getElementById('uploadPrev');
+        prev.style.display = 'block';
+        prev.innerHTML = `<img src="${uploadedImageBase64}" alt="وصل الدفع"><br>
+      <button class="ab ab-red" style="margin-top:6px;" onclick="clearUpload()">✕ إزالة الصورة</button>`;
+      };
+      reader.readAsDataURL(file);
+    }
+    function clearUpload() {
+      uploadedImageBase64 = null;
+      document.getElementById('a-img').value = '';
+      document.getElementById('uploadPrev').style.display = 'none';
+      document.getElementById('uploadPrev').innerHTML = '';
+    }
+
+    function addRequest() {
+      const club = document.getElementById('a-club').value.trim();
+      const email = document.getElementById('a-email').value.trim();
+      if (!club || !email) { alert('الرجاء إدخال اسم النادي والبريد الإلكتروني'); return; }
+      const data = getData();
+      data.push({
+        id: 'REQ-' + Date.now(),
+        clubName: club,
+        manager: document.getElementById('a-mgr').value.trim(),
+        email,
+        phone: document.getElementById('a-phone').value.trim(),
+        type: document.getElementById('a-type').value,
+        receiptNum: document.getElementById('a-receipt-num').value.trim(),
+        receiptImg: uploadedImageBase64 || null,
+        notes: document.getElementById('a-notes').value.trim(),
+        status: 'PENDING',
+        createdAt: new Date().toLocaleString('ar-DZ'),
+        key: null
+      });
+      saveData(data);
+      clearForm();
+      toast('✅ تم إضافة الطلب بنجاح');
+      showPage('requests', document.querySelectorAll('.nb')[1]);
+    }
+    function clearForm() {
+      ['a-club', 'a-mgr', 'a-email', 'a-phone', 'a-receipt-num', 'a-notes'].forEach(id => document.getElementById(id).value = '');
+      document.getElementById('a-type').value = 'TRIAL';
+      clearUpload();
+    }
+
+    /* ═══════ DATA EXPORT / IMPORT ═══════ */
+    function exportData() {
+      const data = getData();
+      const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'judo-requests-data.json';
+      a.click();
+      toast('📥 تم تحميل ملف judo-requests-data.json');
+    }
+    function importData(input) {
+      if (!input.files || !input.files[0]) return;
+      const reader = new FileReader();
+      reader.onload = e => {
+        try {
+          const parsed = JSON.parse(e.target.result);
+          if (!Array.isArray(parsed)) throw new Error('صيغة غير صحيحة');
+          if (!confirm(`سيتم استيراد ${parsed.length} طلب. هل تريد دمجهم مع البيانات الحالية؟`)) return;
+          const existing = getData();
+          const existingIds = new Set(existing.map(r => r.id));
+          const merged = [...existing, ...parsed.filter(r => !existingIds.has(r.id))];
+          saveData(merged);
+          toast(`✅ تم استيراد ${parsed.length} طلب بنجاح`);
+        } catch { alert('❌ خطأ: الملف غير صالح أو تالف'); }
+      };
+      reader.readAsText(input.files[0]);
+    }
+    function clearAll() {
+      localStorage.removeItem(DATA_KEY);
+      refreshAll();
+      toast('🗑️ تم حذف جميع البيانات');
+    }
+
+    /* ═══════ SETTINGS ═══════ */
+    function changePass() {
+      const np = document.getElementById('np').value;
+      const cp = document.getElementById('cp').value;
+      if (!np) { alert('أدخل كلمة مرور جديدة'); return; }
+      if (np !== cp) { alert('كلمتا المرور غير متطابقتين'); return; }
+      if (np.length < 6) { alert('كلمة المرور يجب أن تكون 6 أحرف على الأقل'); return; }
+      ADMIN_PASS = np;
+      localStorage.setItem('judo_adminPass', np);
+      document.getElementById('np').value = '';
+      document.getElementById('cp').value = '';
+      toast('✅ تم تغيير كلمة المرور');
+    }
+
+    /* ═══════ TOAST ═══════ */
+    function toast(msg) {
+      const t = document.getElementById('toast');
+      t.textContent = msg; t.style.display = 'block';
+      clearTimeout(t._timer);
+      t._timer = setTimeout(() => t.style.display = 'none', 2800);
+    }
+
+    /* ═══════ CLOSE MODAL ON OVERLAY CLICK ═══════ */
+    document.querySelectorAll('.mo').forEach(m => {
+      m.addEventListener('click', e => { if (e.target === m) m.classList.remove('on'); });
+    });
+
+    /* ═══════ SAMPLE DATA (first run) ═══════ */
+    if (!localStorage.getItem(DATA_KEY)) {
+      const now = new Date().toLocaleString('ar-DZ');
+      localStorage.setItem(DATA_KEY, JSON.stringify([
+        {
+          id: 'REQ-1001', clubName: 'نادي الأمل الرياضي للجودو',
+          manager: 'عبد القادر بلحاج', email: 'elamal.judo@gmail.com',
+          phone: '0550123456', type: 'TRIAL', receiptNum: null, receiptImg: null,
+          notes: 'طلب تجربة مجانية', status: 'PENDING', createdAt: now, key: null
+        },
+        {
+          id: 'REQ-1002', clubName: 'جمعية الأبطال للجودو والقتال',
+          manager: 'ياسين زروقي', email: 'champions.judo@gmail.com',
+          phone: '0661987654', type: 'LIFETIME',
+          receiptNum: '#00982415 – 15,000 دج BaridiMob', receiptImg: null,
+          notes: 'تم الدفع – ينتظر التفعيل', status: 'PENDING', createdAt: now, key: null
+        }
+      ]));
+    }
+  </script>
 </body>
+
 </html>
