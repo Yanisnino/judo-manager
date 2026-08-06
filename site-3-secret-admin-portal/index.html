@@ -590,22 +590,22 @@ function saveData(d) {
 async function fetchServerRequests() {
   const customApiUrl = localStorage.getItem('judo_admin_api_endpoint') || '';
   const endpoints = customApiUrl ? [customApiUrl] : [
+    'https://api.jsonbin.io/v3/b/66b0a887ad19ca34f893112a/latest',
     '/api/license-requests',
     'http://localhost:3000/api/license-requests',
-    'https://judo-manager.vercel.app/api/license-requests'
   ];
 
-  toast("⏳ جاري فحص ومزامنة الطلبات السحابية...");
-
-  let fetchedData = null;
+  toast("⏳ جاري فحص وجلب طلبات الزبائن السحابية الحية...");
 
   for (const ep of endpoints) {
     try {
-      const res = await fetch(ep);
+      const res = await fetch(ep, {
+        headers: ep.includes('jsonbin') ? { "X-Master-Key": "$2a$10$w8T0l5n3N5W1P2X3Y4Z5e6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U" } : {}
+      });
       if (res.ok) {
-        const serverReqs = await res.json();
+        let rawData = await res.json();
+        const serverReqs = rawData.record || rawData;
         if (Array.isArray(serverReqs) && serverReqs.length > 0) {
-          fetchedData = serverReqs;
           const local = getData();
           const localIds = new Set(local.map(r => r.id));
           const merged = [...local];
@@ -616,14 +616,14 @@ async function fetchServerRequests() {
               merged.unshift({
                 id: sReq.id || 'REQ-' + Date.now(),
                 clubName: sReq.clubName || 'نادي جديد',
-                manager: sReq.managerName || sReq.clubName || '',
+                manager: sReq.managerName || sReq.manager || sReq.clubName || '',
                 email: sReq.email || '',
                 phone: sReq.phone || '',
                 type: (sReq.requestType === 'LIFETIME_PRO' || sReq.type === 'LIFETIME') ? 'LIFETIME' : 'TRIAL',
                 receiptNum: sReq.receiptUrl || sReq.receiptNum || '',
                 status: sReq.status || 'PENDING',
                 createdAt: sReq.createdAt ? new Date(sReq.createdAt).toLocaleString('ar-DZ') : new Date().toLocaleString('ar-DZ'),
-                key: sReq.key || null
+                key: sReq.key || sReq.generatedKey || null
               });
               addedCount++;
             }
@@ -631,22 +631,20 @@ async function fetchServerRequests() {
           
           localStorage.setItem(DATA_KEY, JSON.stringify(merged));
           refreshAll();
+          if (addedCount > 0) {
+            toast(`🎉 وصلك ${addedCount} طلب جديد من الزبائن!`);
+          } else {
+            toast(`✅ البيانات محدثة 100% (${merged.length} طلب في القاعدة).`);
+          }
           break;
         }
       }
-    } catch(e) {
-      // Continue next endpoint
-    }
+    } catch(e) {}
   }
 
   const allReqs = getData();
   if (allReqs.length > 0) {
-    const latest = allReqs[0];
-    viewReceipt(latest.id);
-    toast(`✅ تم فتح بيانات طلب النادي: ${latest.clubName}`);
-  } else {
-    showPage('add', document.querySelectorAll('.nb')[2]);
-    toast("💡 يرجى إضافة الطلب أو تأكيد استلامه من الواتساب.");
+    renderInboxCards(allReqs);
   }
 }
 

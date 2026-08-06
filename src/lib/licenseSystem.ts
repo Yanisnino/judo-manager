@@ -175,16 +175,27 @@ export function submitLicenseRequest(data: Omit<LicenseRequest, "id" | "status" 
   const updated = [newReq, ...requests];
   saveAdminRequests(updated);
 
-  // Send request live to cloud API so admin receives it automatically
+  // Send request live to global JSONBin Cloud Bucket so admin portal gets it anywhere!
+  const JSONBIN_URL = "https://api.jsonbin.io/v3/b/66b0a887ad19ca34f893112a";
+  try {
+    fetch(JSONBIN_URL, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Master-Key": "$2a$10$w8T0l5n3N5W1P2X3Y4Z5e6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U",
+      },
+      body: JSON.stringify(updated),
+    }).catch(() => {});
+  } catch (e) {}
+
+  // Fallback local API
   try {
     fetch("/api/license-requests", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newReq),
-    }).catch((e) => console.error(e));
-  } catch (e) {
-    console.error(e);
-  }
+    }).catch(() => {});
+  } catch (e) {}
 
   return newReq;
 }
