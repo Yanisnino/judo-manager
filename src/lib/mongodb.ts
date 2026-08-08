@@ -1,10 +1,9 @@
 import { MongoClient } from "mongodb";
 
-const MONGODB_URI = process.env.MONGODB_URI as string;
+// Direct fallback URI with user credentials provided
+const DEFAULT_MONGODB_URI = "mongodb+srv://nis174731_db_user:CKu0xGBwMaykHaVp@cluster0.wtv2khg.mongodb.net/judomanager?retryWrites=true&w=majority&appName=Cluster0";
 
-if (!MONGODB_URI) {
-  throw new Error("Please define the MONGODB_URI environment variable");
-}
+const MONGODB_URI = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
 
 let client: MongoClient;
 let clientPromise: Promise<MongoClient>;
