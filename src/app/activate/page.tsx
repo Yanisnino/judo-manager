@@ -35,7 +35,9 @@ export default function ActivatePage() {
     }
   };
 
-  const executeSubmit = (type: "TRIAL_14_DAYS" | "LIFETIME_PRO") => {
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const executeSubmit = async (type: "TRIAL_14_DAYS" | "LIFETIME_PRO") => {
     if (!clubName.trim() || !phone.trim() || !email.trim()) {
       alert("يرجى ملء كافة البيانات المطلوبة: اسم النادي، رقم الهاتف، والبريد الإلكتروني!");
       return;
@@ -46,22 +48,30 @@ export default function ActivatePage() {
       return;
     }
 
-    const req = submitLicenseRequest({
-      clubName,
-      managerName: managerName || clubName,
-      phone,
-      email,
-      requestType: type,
-      receiptUrl: type === "LIFETIME_PRO" ? receiptUrl || "وصل تحويل بريدي موب مرفوق" : undefined,
-    });
+    setIsSubmitting(true);
 
-    setSubmittedReqId(req.id);
+    try {
+      const req = await submitLicenseRequest({
+        clubName,
+        managerName: managerName || clubName,
+        phone,
+        email,
+        requestType: type,
+        receiptUrl: type === "LIFETIME_PRO" ? receiptUrl || "وصل تحويل بريدي موب مرفوق" : undefined,
+      });
 
-    // Open WhatsApp directly with formatted request
-    const waText = encodeURIComponent(
-      `السلام عليكم، قمت بإرسال طلب تفعيل JudoManager Pro:\n- اسم النادي: ${clubName}\n- رقم الطلب: ${req.id}\n- الإيميل: ${email}\n- الوصل/التحويل: ${receiptUrl || "تحويل بريدي موب"}`
-    );
-    window.open(`https://wa.me/213553823611?text=${waText}`, "_blank");
+      setSubmittedReqId(req.id);
+
+      // Open WhatsApp directly with formatted request
+      const waText = encodeURIComponent(
+        `السلام عليكم، قمت بإرسال طلب تفعيل JudoManager Pro:\n- اسم النادي: ${clubName}\n- رقم الطلب: ${req.id}\n- الإيميل: ${email}\n- الوصل/التحويل: ${receiptUrl || "تحويل بريدي موب"}`
+      );
+      window.open(`https://wa.me/213553823611?text=${waText}`, "_blank");
+    } catch(e) {
+      alert("حدث خطأ أثناء الإرسال. يرجى إعادة المحاولة.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (

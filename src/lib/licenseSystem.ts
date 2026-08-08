@@ -23,7 +23,7 @@ export interface LicenseRequest {
   createdAt: string;
 }
 
-const STORAGE_KEY_LICENSE = "judomanager_club_license";
+const STORAGE_KEY_LICENSE = "judo_manager_active_license";
 const STORAGE_KEY_REQUESTS = "judo_requests_v2";
 
 // Default seed requests for Secret Admin Portal Demonstration
@@ -164,38 +164,47 @@ export function saveAdminRequests(requests: LicenseRequest[]) {
   }
 }
 
-export function submitLicenseRequest(data: Omit<LicenseRequest, "id" | "status" | "createdAt">): LicenseRequest {
-  const requests = getAdminRequests();
+export async function submitLicenseRequest(data: Omit<LicenseRequest, "id" | "status" | "createdAt">): Promise<LicenseRequest> {
+  const localRequests = getAdminRequests();
   const newReq: LicenseRequest = {
     ...data,
     id: "REQ-" + Math.floor(1000 + Math.random() * 9000),
     status: "PENDING",
     createdAt: new Date().toISOString(),
   };
-  const updated = [newReq, ...requests];
-  saveAdminRequests(updated);
+  const updatedLocal = [newReq, ...localRequests];
+  saveAdminRequests(updatedLocal);
 
   // Send request live to global JSONBin Cloud Bucket so admin portal gets it anywhere!
   const JSONBIN_URL = "https://api.jsonbin.io/v3/b/66b0a887ad19ca34f893112a";
   try {
-    fetch(JSONBIN_URL, {
+    // 1. Fetch current cloud requests list first
+    let cloudList: any[] = [];
+    try {
+      const getRes = await fetch(JSONBIN_URL + "/latest", {
+        headers: { "X-Master-Key": "$2a$10$w8T0l5n3N5W1P2X3Y4Z5e6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U" }
+      });
+      if (getRes.ok) {
+        const json = await getRes.json();
+        cloudList = Array.isArray(json.record) ? json.record : [];
+      }
+    } catch(e) {}
+
+    // 2. Prepend new request
+    const finalCloudList = [newReq, ...cloudList.filter((r: any) => r.id !== newReq.id)];
+
+    // 3. Put updated list back to cloud
+    await fetch(JSONBIN_URL, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
         "X-Master-Key": "$2a$10$w8T0l5n3N5W1P2X3Y4Z5e6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U",
       },
-      body: JSON.stringify(updated),
-    }).catch(() => {});
-  } catch (e) {}
-
-  // Fallback local API
-  try {
-    fetch("/api/license-requests", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(newReq),
-    }).catch(() => {});
-  } catch (e) {}
+      body: JSON.stringify(finalCloudList),
+    });
+  } catch (e) {
+    console.error("Cloud Submit Error:", e);
+  }
 
   return newReq;
 }
