@@ -88,9 +88,11 @@ jobs:
         with:
           files: dist-exe/*.exe
           name: "🥋 JudoManager Pro ${{ github.ref_name }}"
+          draft: false
+          prerelease: false
           body: |
             ## 🥋 JudoManager Pro ${{ github.ref_name }}
-            ### نظام إدارة أندية الجودو
+            ### نظام إدارة أندية الجودو - الإصدار العام المباشر
 
             ---
 
