@@ -175,30 +175,45 @@ export async function submitLicenseRequest(data: Omit<LicenseRequest, "id" | "st
   const updatedLocal = [newReq, ...localRequests];
   saveAdminRequests(updatedLocal);
 
-  // Send request live to global instant cloud storage so admin portal gets it anywhere!
-  const CLOUD_URL = "https://kvdb.io/Wk6fCjH8mBvV2N1X3Y4Z5e/judo_requests_live";
+  // Send request to hosted Vercel API (works from any device anywhere!)
+  const VERCEL_API = "https://judo-manager.vercel.app/api/license-requests";
+  const CLOUD_FALLBACK = "https://kvdb.io/Wk6fCjH8mBvV2N1X3Y4Z5e/judo_requests_live";
+
+  let cloudSuccess = false;
+
+  // 1. Try Vercel API (primary - connects to MongoDB)
   try {
-    // 1. Fetch current cloud requests
-    let currentCloudList: any[] = [];
-    try {
-      const getRes = await fetch(CLOUD_URL);
-      if (getRes.ok) {
-        const json = await getRes.json();
-        currentCloudList = Array.isArray(json) ? json : [];
-      }
-    } catch (e) {}
-
-    // 2. Add new request at top
-    const updatedCloudList = [newReq, ...currentCloudList.filter((r: any) => r.id !== newReq.id)];
-
-    // 3. Post back to cloud
-    await fetch(CLOUD_URL, {
+    const res = await fetch(VERCEL_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(updatedCloudList),
+      body: JSON.stringify(newReq),
     });
-  } catch (e) {
-    console.error("Cloud Submit Error:", e);
+    if (res.ok) {
+      cloudSuccess = true;
+    }
+  } catch (e) {}
+
+  // 2. Fallback to kvdb if Vercel API failed
+  if (!cloudSuccess) {
+    try {
+      let currentCloudList: any[] = [];
+      try {
+        const getRes = await fetch(CLOUD_FALLBACK);
+        if (getRes.ok) {
+          const json = await getRes.json();
+          currentCloudList = Array.isArray(json) ? json : [];
+        }
+      } catch (e) {}
+
+      const updatedCloudList = [newReq, ...currentCloudList.filter((r: any) => r.id !== newReq.id)];
+      await fetch(CLOUD_FALLBACK, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(updatedCloudList),
+      });
+    } catch (e) {
+      console.error("All cloud submit attempts failed:", e);
+    }
   }
 
   return newReq;

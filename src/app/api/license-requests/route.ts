@@ -1,32 +1,55 @@
 import { NextResponse } from "next/server";
+
+// MongoDB Atlas connection via REST API (Data API)
+// Free tier - no server needed!
+const MONGODB_APP_ID = process.env.MONGODB_APP_ID || "judo-manager-api";
+const MONGODB_API_KEY = process.env.MONGODB_API_KEY || "";
+const MONGODB_BASE_URL = `https://data.mongodb-api.com/app/${MONGODB_APP_ID}/endpoint/data/v1`;
+const MONGODB_DATABASE = "judomanager";
+const MONGODB_COLLECTION = "license_requests";
+const MONGODB_DATA_SOURCE = "Cluster0";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Methods": "GET, POST, OPTIONS, PUT, DELETE",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization, apiKey",
+};
+
+// Fallback: use local file storage if MongoDB not configured
 import fs from "fs";
 import path from "path";
 import os from "os";
 
 const getStorageDir = () => {
-  const appData = process.env.APPDATA || (process.platform === "darwin" ? path.join(os.homedir(), "Library", "Preferences") : path.join(os.homedir(), ".config"));
+  const appData =
+    process.env.APPDATA ||
+    (process.platform === "darwin"
+      ? path.join(os.homedir(), "Library", "Preferences")
+      : path.join(os.homedir(), ".config"));
   const persistentDir = path.join(appData, "JudoManagerProData");
-  if (fs.existsSync(persistentDir)) return persistentDir;
-  return path.join(process.cwd(), "data");
+  if (!fs.existsSync(persistentDir)) {
+    fs.mkdirSync(persistentDir, { recursive: true });
+  }
+  return persistentDir;
 };
 
-const DATA_DIR = getStorageDir();
-const REQUESTS_FILE = path.join(DATA_DIR, "license_requests.json");
+const REQUESTS_FILE = path.join(getStorageDir(), "license_requests.json");
 
-function ensureFileExists() {
-  if (!fs.existsSync(DATA_DIR)) {
-    fs.mkdirSync(DATA_DIR, { recursive: true });
-  }
-  if (!fs.existsSync(REQUESTS_FILE)) {
-    fs.writeFileSync(REQUESTS_FILE, JSON.stringify([], null, 2), "utf-8");
+function readLocalRequests(): any[] {
+  try {
+    if (!fs.existsSync(REQUESTS_FILE)) {
+      fs.writeFileSync(REQUESTS_FILE, "[]", "utf-8");
+      return [];
+    }
+    return JSON.parse(fs.readFileSync(REQUESTS_FILE, "utf-8"));
+  } catch {
+    return [];
   }
 }
 
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-};
+function writeLocalRequests(requests: any[]) {
+  fs.writeFileSync(REQUESTS_FILE, JSON.stringify(requests, null, 2), "utf-8");
+}
 
 export async function OPTIONS() {
   return NextResponse.json({}, { headers: corsHeaders });
@@ -34,21 +57,40 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
-    ensureFileExists();
-    const content = fs.readFileSync(REQUESTS_FILE, "utf-8");
-    const requests = JSON.parse(content);
+    // Try MongoDB Atlas Data API first
+    if (MONGODB_API_KEY) {
+      const res = await fetch(`${MONGODB_BASE_URL}/action/find`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apiKey: MONGODB_API_KEY,
+        },
+        body: JSON.stringify({
+          dataSource: MONGODB_DATA_SOURCE,
+          database: MONGODB_DATABASE,
+          collection: MONGODB_COLLECTION,
+          sort: { createdAt: -1 },
+          limit: 100,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        return NextResponse.json(data.documents || [], { headers: corsHeaders });
+      }
+    }
+
+    // Fallback to local file
+    const requests = readLocalRequests();
     return NextResponse.json(requests, { headers: corsHeaders });
   } catch (error) {
-    return NextResponse.json([], { status: 500, headers: corsHeaders });
+    const requests = readLocalRequests();
+    return NextResponse.json(requests, { headers: corsHeaders });
   }
 }
 
 export async function POST(request: Request) {
   try {
-    ensureFileExists();
     const body = await request.json();
-    const content = fs.readFileSync(REQUESTS_FILE, "utf-8");
-    const requests = JSON.parse(content);
 
     const newReq = {
       id: body.id || "REQ-" + Math.floor(1000 + Math.random() * 9000),
@@ -58,15 +100,46 @@ export async function POST(request: Request) {
       email: body.email || "",
       requestType: body.requestType || body.type || "LIFETIME_PRO",
       receiptUrl: body.receiptUrl || body.receiptNum || "",
-      status: "PENDING",
-      createdAt: new Date().toISOString(),
+      status: body.status || "PENDING",
+      createdAt: body.createdAt || new Date().toISOString(),
     };
 
-    const updated = [newReq, ...requests];
-    fs.writeFileSync(REQUESTS_FILE, JSON.stringify(updated, null, 2), "utf-8");
+    // Try MongoDB Atlas Data API first
+    if (MONGODB_API_KEY) {
+      const res = await fetch(`${MONGODB_BASE_URL}/action/insertOne`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          apiKey: MONGODB_API_KEY,
+        },
+        body: JSON.stringify({
+          dataSource: MONGODB_DATA_SOURCE,
+          database: MONGODB_DATABASE,
+          collection: MONGODB_COLLECTION,
+          document: newReq,
+        }),
+      });
+      if (res.ok) {
+        return NextResponse.json(
+          { success: true, id: newReq.id, message: "تم إرسال الطلب بنجاح!" },
+          { headers: corsHeaders }
+        );
+      }
+    }
 
-    return NextResponse.json({ success: true, data: newReq }, { headers: corsHeaders });
+    // Fallback to local file
+    const requests = readLocalRequests();
+    requests.unshift(newReq);
+    writeLocalRequests(requests);
+
+    return NextResponse.json(
+      { success: true, id: newReq.id, message: "تم إرسال الطلب بنجاح!" },
+      { headers: corsHeaders }
+    );
   } catch (error) {
-    return NextResponse.json({ error: "Failed to save license request" }, { status: 500, headers: corsHeaders });
+    return NextResponse.json(
+      { success: false, message: "فشل في إرسال الطلب" },
+      { status: 500, headers: corsHeaders }
+    );
   }
 }
