@@ -1499,18 +1499,16 @@
     async function fetchServerRequests() {
       const customApiUrl = localStorage.getItem('judo_admin_api_endpoint') || '';
       const endpoints = customApiUrl ? [customApiUrl] : [
+        'https://kvdb.io/Wk6fCjH8mBvV2N1X3Y4Z5e/judo_requests_live',
         'https://api.jsonbin.io/v3/b/66b0a887ad19ca34f893112a/latest',
         '/api/license-requests',
-        'http://localhost:3000/api/license-requests',
       ];
 
       toast("⏳ جاري فحص وجلب طلبات الزبائن السحابية الحية...");
 
       for (const ep of endpoints) {
         try {
-          const res = await fetch(ep, {
-            headers: ep.includes('jsonbin') ? { "X-Master-Key": "$2a$10$w8T0l5n3N5W1P2X3Y4Z5e6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U" } : {}
-          });
+          const res = await fetch(ep);
           if (res.ok) {
             let rawData = await res.json();
             const serverReqs = rawData.record || rawData;

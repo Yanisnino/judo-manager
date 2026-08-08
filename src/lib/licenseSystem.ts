@@ -175,32 +175,27 @@ export async function submitLicenseRequest(data: Omit<LicenseRequest, "id" | "st
   const updatedLocal = [newReq, ...localRequests];
   saveAdminRequests(updatedLocal);
 
-  // Send request live to global JSONBin Cloud Bucket so admin portal gets it anywhere!
-  const JSONBIN_URL = "https://api.jsonbin.io/v3/b/66b0a887ad19ca34f893112a";
+  // Send request live to global instant cloud storage so admin portal gets it anywhere!
+  const CLOUD_URL = "https://kvdb.io/Wk6fCjH8mBvV2N1X3Y4Z5e/judo_requests_live";
   try {
-    // 1. Fetch current cloud requests list first
-    let cloudList: any[] = [];
+    // 1. Fetch current cloud requests
+    let currentCloudList: any[] = [];
     try {
-      const getRes = await fetch(JSONBIN_URL + "/latest", {
-        headers: { "X-Master-Key": "$2a$10$w8T0l5n3N5W1P2X3Y4Z5e6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U" }
-      });
+      const getRes = await fetch(CLOUD_URL);
       if (getRes.ok) {
         const json = await getRes.json();
-        cloudList = Array.isArray(json.record) ? json.record : [];
+        currentCloudList = Array.isArray(json) ? json : [];
       }
-    } catch(e) {}
+    } catch (e) {}
 
-    // 2. Prepend new request
-    const finalCloudList = [newReq, ...cloudList.filter((r: any) => r.id !== newReq.id)];
+    // 2. Add new request at top
+    const updatedCloudList = [newReq, ...currentCloudList.filter((r: any) => r.id !== newReq.id)];
 
-    // 3. Put updated list back to cloud
-    await fetch(JSONBIN_URL, {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-        "X-Master-Key": "$2a$10$w8T0l5n3N5W1P2X3Y4Z5e6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U",
-      },
-      body: JSON.stringify(finalCloudList),
+    // 3. Post back to cloud
+    await fetch(CLOUD_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(updatedCloudList),
     });
   } catch (e) {
     console.error("Cloud Submit Error:", e);
