@@ -175,15 +175,16 @@ export async function submitLicenseRequest(data: Omit<LicenseRequest, "id" | "st
   const updatedLocal = [newReq, ...localRequests];
   saveAdminRequests(updatedLocal);
 
-  // Send request to hosted Vercel API (works from any device anywhere!)
+  // Send request to hosted Render / Vercel API (works from any device anywhere!)
+  const RENDER_API = "https://judo-manager.onrender.com/api/license-requests";
   const VERCEL_API = "https://judo-manager.vercel.app/api/license-requests";
   const CLOUD_FALLBACK = "https://kvdb.io/Wk6fCjH8mBvV2N1X3Y4Z5e/judo_requests_live";
 
   let cloudSuccess = false;
 
-  // 1. Try Vercel API (primary - connects to MongoDB)
+  // 1. Try Render API
   try {
-    const res = await fetch(VERCEL_API, {
+    const res = await fetch(RENDER_API, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(newReq),
@@ -192,6 +193,20 @@ export async function submitLicenseRequest(data: Omit<LicenseRequest, "id" | "st
       cloudSuccess = true;
     }
   } catch (e) {}
+
+  // 2. Try Vercel API if Render failed
+  if (!cloudSuccess) {
+    try {
+      const res = await fetch(VERCEL_API, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(newReq),
+      });
+      if (res.ok) {
+        cloudSuccess = true;
+      }
+    } catch (e) {}
+  }
 
   // 2. Fallback to kvdb if Vercel API failed
   if (!cloudSuccess) {

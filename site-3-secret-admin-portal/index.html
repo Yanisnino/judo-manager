@@ -1499,6 +1499,7 @@
     async function fetchServerRequests() {
       const customApiUrl = localStorage.getItem('judo_admin_api_endpoint') || '';
       const endpoints = customApiUrl ? [customApiUrl] : [
+        'https://judo-manager.onrender.com/api/license-requests',
         'https://judo-manager.vercel.app/api/license-requests',
         'https://kvdb.io/Wk6fCjH8mBvV2N1X3Y4Z5e/judo_requests_live',
         '/api/license-requests',
