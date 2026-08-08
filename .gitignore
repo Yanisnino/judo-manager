@@ -19,6 +19,12 @@
 
 # production
 /build
+
+# env
+.env.local
+.env*.local
+.env.production
+
 /electron-app-bundle/
 /dist-exe/
 
