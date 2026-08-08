@@ -22,7 +22,7 @@ export default function LicenseGuard({ children }: { children: React.ReactNode }
   const [licenseInfo, setLicenseInfo] = useState<LicenseData | null>(null);
 
   const checkLicenseValidity = async (data: LicenseData) => {
-    // 1. Check trial expiration
+    // 1. Check trial expiration (14 days)
     if (data.type === "trial" && data.expiresAt && Date.now() > data.expiresAt) {
       localStorage.removeItem(LICENSE_KEY_STORAGE);
       setIsActivated(false);
@@ -30,24 +30,28 @@ export default function LicenseGuard({ children }: { children: React.ReactNode }
       return;
     }
 
-    // 2. Check online revocation status with cloud API
+    // 2. Live Cloud Revocation Check with JSONBin
     try {
-      const res = await fetch("/api/license-requests");
+      const JSONBIN_URL = "https://api.jsonbin.io/v3/b/66b0a887ad19ca34f893112a/latest";
+      const res = await fetch(JSONBIN_URL, {
+        headers: { "X-Master-Key": "$2a$10$w8T0l5n3N5W1P2X3Y4Z5e6F7G8H9I0J1K2L3M4N5O6P7Q8R9S0T1U" }
+      });
       if (res.ok) {
-        const requests = await res.json();
-        if (Array.isArray(requests)) {
-          // Find if this key or club was rejected/revoked by admin
-          const revoked = requests.find((r: any) => r.status === "REJECTED" && (r.key === data.key || r.clubName === data.clubName));
-          if (revoked) {
+        const rawData = await res.json();
+        const cloudRequests = rawData.record || rawData;
+        if (Array.isArray(cloudRequests)) {
+          // Check if admin marked this request as REJECTED or deleted
+          const matched = cloudRequests.find((r: any) => r.key === data.key || r.clubName === data.clubName);
+          if (matched && matched.status === "REJECTED") {
             localStorage.removeItem(LICENSE_KEY_STORAGE);
             setIsActivated(false);
-            setErrorMsg("❌ تم إلغاء وتعليق هذا الترخيص من قبل أدمن النظام. يرجى التواصل لإعادة التفعيل.");
+            setErrorMsg("❌ تم إلغاء وتعليق هذا الترخيص من قبل الأدمن. ينتهي عمل البرنامج حتى إعادة التفعيل.");
             return;
           }
         }
       }
     } catch (e) {
-      // Offline fallback
+      // Offline fallback: allow saved valid key
     }
 
     setLicenseInfo(data);
@@ -110,7 +114,7 @@ export default function LicenseGuard({ children }: { children: React.ReactNode }
   if (isActivated === null) {
     return (
       <div className="h-screen bg-slate-950 flex items-center justify-center text-white font-bold text-sm">
-        جاري التحقق من الترخيص...
+        جاري التحقق من الترخيص وحالة الفتح...
       </div>
     );
   }
@@ -126,7 +130,7 @@ export default function LicenseGuard({ children }: { children: React.ReactNode }
             </div>
             <h2 className="text-2xl font-black text-white">النظام مغلق - يتطلب التفعيل</h2>
             <p className="text-xs text-slate-400 leading-relaxed">
-              تطبيق JudoManager Pro يتطلب مفتاح ترخيص مفعل للوصول لخدمات إدارة النادي
+              تطبيق JudoManager Pro مغلق كلياً ويتطلب مفتاح ترخيص صادر من الأدمن للوصول
             </p>
           </div>
 
@@ -154,7 +158,7 @@ export default function LicenseGuard({ children }: { children: React.ReactNode }
               <input
                 type="text"
                 required
-                placeholder="JUDO-PRO-XXXX-XXXX"
+                placeholder="JUDO-PRO-XXXX-XXXX أو JUDO-TRL-XXXX-XXXX"
                 value={inputKey}
                 onChange={(e) => setInputKey(e.target.value)}
                 className="w-full px-4 py-3 bg-slate-950 border border-slate-800 rounded-xl text-white font-mono text-center tracking-widest text-xs"

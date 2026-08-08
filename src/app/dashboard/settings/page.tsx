@@ -113,6 +113,23 @@ export default function ClubSettingsPage() {
           </div>
         </div>
 
+        {/* Database & Data Privacy Card */}
+        <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+          <h2 className="text-lg font-bold text-gray-900 border-b pb-2">مسار حفظ البيانات وأمان الخصوصية</h2>
+          <div className="space-y-3 text-xs leading-relaxed">
+            <p className="text-gray-600 font-semibold">
+              يتم حفظ بيانات النادي الحقيقية (اللاعبين، الحضور، والمالية) أوفلاين بشكل دائم في مجلد محمي على حاسوبك:
+            </p>
+            <div className="p-3 bg-slate-900 text-emerald-400 font-mono text-xs rounded-xl dir-ltr text-left overflow-x-auto shadow-inner">
+              %APPDATA%\JudoManagerProData\athletes.json
+            </div>
+            <div className="p-3 bg-blue-50 border border-blue-200 text-blue-800 rounded-xl font-bold flex items-center gap-2 text-xs">
+              <span>🛡️</span>
+              <span>بياناتك محفوظة 100% ولن تتأثر أو تُحذف عند تثبيت أي تحديثات جديدة للبرنامج.</span>
+            </div>
+          </div>
+        </div>
+
         {/* Language & Localisation */}
         <div className="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
           <h2 className="text-lg font-bold text-gray-900 border-b pb-2">لغة واجهة النظام (Language)</h2>
