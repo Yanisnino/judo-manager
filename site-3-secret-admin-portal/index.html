@@ -1560,7 +1560,7 @@
     function doLogin() {
       const u = document.getElementById('lu').value.trim();
       const p = document.getElementById('lp').value.trim();
-      if ((u === 'admin' || u === 'الأدمن') && (p === 'admin123' || p === 'judo2025secret' || p === 'judo2025' || p === ADMIN_PASS)) {
+      if ((u === 'admin' || u === 'الأدمن' || u === 'judo2025') && (p === 'admin123' || p === 'judo2025secret' || p === 'judo2025' || p === ADMIN_PASS)) {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('app').classList.add('on');
         fetchServerRequests();
