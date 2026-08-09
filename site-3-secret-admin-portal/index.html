@@ -60,12 +60,7 @@
 
     /* ═══ LOGIN ═══ */
     #loginScreen {
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: radial-gradient(ellipse at 60% 40%, rgba(168, 85, 247, .08) 0%, transparent 60%), var(--bg);
-      padding: 20px;
+      display: none !important;
     }
 
     .lc {
@@ -1556,22 +1551,22 @@
       }
     }
 
-    /* ═══════ LOGIN ═══════ */
+    /* ═══════ AUTO LOGIN - No password required ═══════ */
     function doLogin() {
-      const u = document.getElementById('lu').value.trim();
-      const p = document.getElementById('lp').value.trim();
-      if ((u === 'admin' || u === 'الأدمن' || u === 'judo2025') && (p === 'admin123' || p === 'judo2025secret' || p === 'judo2025' || p === ADMIN_PASS)) {
-        document.getElementById('loginScreen').style.display = 'none';
-        document.getElementById('app').classList.add('on');
-        fetchServerRequests();
-        refreshAll();
-        setInterval(fetchServerRequests, 10000); // Auto-sync every 10 sec
-      } else {
-        document.getElementById('loginErr').style.display = 'block';
-        document.getElementById('lp').value = '';
-        setTimeout(() => document.getElementById('loginErr').style.display = 'none', 3000);
-      }
+      // Auto login - no credentials needed
+      autoInit();
     }
+    function autoInit() {
+      document.getElementById('loginScreen').style.display = 'none';
+      document.getElementById('app').classList.add('on');
+      fetchServerRequests();
+      refreshAll();
+      setInterval(fetchServerRequests, 10000); // Auto-sync every 10 sec
+    }
+    // Initialize immediately on load
+    window.addEventListener('DOMContentLoaded', function() {
+      autoInit();
+    });
     function doLogout() {
       if (!confirm('هل تريد تسجيل الخروج؟')) return;
       document.getElementById('loginScreen').style.display = 'flex';
