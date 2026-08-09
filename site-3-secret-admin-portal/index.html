@@ -1563,10 +1563,8 @@
       refreshAll();
       setInterval(fetchServerRequests, 10000); // Auto-sync every 10 sec
     }
-    // Initialize immediately on load
-    window.addEventListener('DOMContentLoaded', function() {
-      autoInit();
-    });
+    // Script is at the bottom - DOM is already ready, call directly
+    autoInit();
     function doLogout() {
       if (!confirm('هل تريد تسجيل الخروج؟')) return;
       document.getElementById('loginScreen').style.display = 'flex';
