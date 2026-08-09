@@ -205,12 +205,42 @@ export default function BackupPage() {
               <div className="mt-3 p-3 bg-gray-50 rounded-xl border border-gray-200 space-y-2 text-[11px] text-gray-700 leading-relaxed">
                 <p>1. افتح جدول غوغل شيت الخاص بك واذهب إلى: <strong>Extensions ➔ Apps Script</strong> (الإضافات ➔ نص برمجيات تطبيق).</p>
                 <p>2. امسح الكود القديم وضّع الكود التالي ثم اضغط <strong>Deploy ➔ New Deployment ➔ Web App</strong> (نشر ➔ نشر جديد ➔ تطبيق ويب) واجعل من يمكنه الوصول <em>Anyone (أي شخص)</em>:</p>
-                <pre className="bg-slate-900 text-emerald-400 p-2.5 rounded-lg overflow-x-auto font-mono text-[10px] dir-ltr text-left">
+                <pre className="bg-slate-900 text-emerald-400 p-3 rounded-lg overflow-x-auto font-mono text-[10px] dir-ltr text-left">
                   {`function doPost(e) {
-  var data = JSON.parse(e.postData.contents);
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-  sheet.appendRow([new Date(), "نسخة احتياطية", JSON.stringify(data)]);
-  return ContentService.createTextOutput("OK");
+  try {
+    var data = JSON.parse(e.postData.contents);
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    
+    // 1. Sheet for Athletes
+    if (data.athletes && data.athletes.length > 0) {
+      var sheetAthletes = ss.getSheetByName("الرياضيين") || ss.insertSheet("الرياضيين");
+      sheetAthletes.clear();
+      var headers = Object.keys(data.athletes[0]);
+      sheetAthletes.appendRow(headers);
+      data.athletes.forEach(function(row) {
+        var values = headers.map(function(h) { return row[h] || ""; });
+        sheetAthletes.appendRow(values);
+      });
+      sheetAthletes.getRange(1, 1, 1, headers.length).setFontWeight("bold").setBackground("#1e293b").setFontColor("#ffffff");
+    }
+    
+    // 2. Sheet for Subscriptions
+    if (data.subscriptions && data.subscriptions.length > 0) {
+      var sheetSubs = ss.getSheetByName("الاشتراكات") || ss.insertSheet("الاشتراكات");
+      sheetSubs.clear();
+      var subHeaders = Object.keys(data.subscriptions[0]);
+      sheetSubs.appendRow(subHeaders);
+      data.subscriptions.forEach(function(row) {
+        var values = subHeaders.map(function(h) { return row[h] || ""; });
+        sheetSubs.appendRow(values);
+      });
+      sheetSubs.getRange(1, 1, 1, subHeaders.length).setFontWeight("bold").setBackground("#0f766e").setFontColor("#ffffff");
+    }
+    
+    return ContentService.createTextOutput("OK");
+  } catch(err) {
+    return ContentService.createTextOutput("Error: " + err.toString());
+  }
 }`}
                 </pre>
                 <p>3. انسخ رابط <strong>Web App URL</strong> وضع الرابط فوق واضغط حفظ!</p>

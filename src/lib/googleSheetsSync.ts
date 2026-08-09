@@ -37,7 +37,6 @@ export class GoogleSheetsSyncEngine {
       };
     }
 
-    // 2. Detect if user pasted standard Google Sheet edit link instead of Webhook Script link
     if (rawUrl.includes("docs.google.com/spreadsheets")) {
       return {
         success: true,
@@ -45,18 +44,45 @@ export class GoogleSheetsSyncEngine {
       };
     }
 
-    // 3. Try posting to Webhook URL
+    // Prepare clear structured rows for clean Google Sheets display
+    const formattedAthletes = (data.athletes || []).map((a: any) => ({
+      "الرقم التعريف": a.id || "-",
+      "اسم الرياضي": a.fullName || a.name || (a.firstName + " " + a.lastName) || "-",
+      "تاريخ الميلاد": a.birthDate || a.dob || "-",
+      "الفئة الوزن/العمر": a.category || a.weightCategory || "-",
+      "درجة الحزام": a.belt || a.currentBelt || "أبيض",
+      "رقم الهاتف": a.phone || a.parentPhone || "-",
+      "حالة الاشتراك": a.status === "ACTIVE" ? "مفعل ✅" : "غير مفعل ❌",
+      "تاريخ التسجيل": a.registeredAt || a.createdAt || new Date().toISOString().split("T")[0],
+    }));
+
+    const formattedSubscriptions = (data.subscriptions || []).map((s: any) => ({
+      "المعرف": s.id || "-",
+      "اسم الرياضي": s.athleteName || s.fullName || "-",
+      "مبلغ الاشتراك": s.amount || s.price || 0,
+      "تاريخ الدفع": s.paymentDate || s.date || "-",
+      "تاريخ الانتهاء": s.expiryDate || s.validUntil || "-",
+      "حالة الدفع": s.status === "PAID" ? "مدفوع 🟢" : "معلق 🟡",
+    }));
+
+    const syncPayload = {
+      clubName: data.clubName || "نادي الجودو",
+      timestamp: new Date().toLocaleString("ar-DZ"),
+      athletes: formattedAthletes,
+      subscriptions: formattedSubscriptions,
+    };
+
     try {
-      const response = await fetch(rawUrl, {
+      await fetch(rawUrl, {
         method: "POST",
-        mode: "no-cors", // Allow cross-origin Webhook requests to Google Apps Script
+        mode: "no-cors",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(data),
+        body: JSON.stringify(syncPayload),
       });
 
       return {
         success: true,
-        message: "🎉 تمت المزامنة بنجاح! تم نقل كامل بيانات اللاعبين والمالية إلى جدول غوغل شيت.",
+        message: "🎉 تمت المزامنة بنجاح! تم نقل كامل بيانات الرياضيين والمالية إلى جدول غوغل شيت بصفوف وأعمدة مرتبة.",
       };
     } catch (err) {
       return {

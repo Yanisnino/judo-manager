@@ -8,7 +8,6 @@ export default function ActivatePage() {
   const router = useRouter();
   const [licenseKeyInput, setLicenseKeyInput] = useState("");
   const [status, setStatus] = useState<LicenseStatus | null>(null);
-  const [activeTab, setActiveTab] = useState<"KEY" | "REQUEST">("KEY");
 
   // Form states
   const [clubName, setClubName] = useState("");
@@ -64,11 +63,11 @@ export default function ActivatePage() {
 
       // Open WhatsApp directly with formatted request
       const waText = encodeURIComponent(
-        `السلام عليكم، أود طلب مفتاح تفعيل لبرنامج JudoManager Pro:\n- اسم النادي/الجمعية: ${clubName}\n- اسم المسؤول: ${managerName || clubName}\n- رقم الهاتف: ${phone}\n- البريد الإلكتروني: ${email}\n- نوع الترخيص: ${typeLabel}\n- رقم الطلب المرجعي: ${req.id}`
+        `السلام عليكم، أود طلب مفتاح تفعيل لبرنامج JudoManager Pro:\n- اسم النادي/الجمعية: ${clubName}\n- اسم المسؤول: ${managerName || clubName}\n- رقم الهاتف: ${phone}\n- البريد الإلكتروني: ${email}\n- نوع الترخيص المطلوبة: ${typeLabel}\n- رقم الطلب المرجعي: ${req.id}`
       );
       window.open(`https://wa.me/213553823611?text=${waText}`, "_blank");
-    } catch(e) {
-      alert("حدث خطأ أثناء الإرسال. يرجى إعادة المحاولة.");
+    } catch (e) {
+      alert("حدث خطأ أثناء الإرسال. يرجى التكرم بفتح الواتساب مباشرة.");
     } finally {
       setIsSubmitting(false);
     }
@@ -76,20 +75,20 @@ export default function ActivatePage() {
 
   return (
     <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 selection:bg-blue-600 selection:text-white">
-      <div className="max-w-lg w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6">
+      <div className="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6">
         
-        {/* Logo & Header */}
+        {/* Header */}
         <div className="text-center space-y-2">
           <div className="w-16 h-16 rounded-3xl bg-blue-600/20 text-blue-400 border border-blue-500/30 font-black text-3xl flex items-center justify-center mx-auto shadow-inner">
             🥋
           </div>
           <h1 className="text-2xl md:text-3xl font-black text-white">تفعيل JudoManager Pro</h1>
           <p className="text-xs text-slate-400 leading-relaxed">
-            أدخل مفتاح التفعيل للبدء، أو اطلب مفتاح تفعيل جديد مباشرة من المسؤول
+            أدخل مفتاح التفعيل الخاص بك للدخول، أو أرسل طلب استلام مفتاح جديد عبر الواتساب
           </p>
         </div>
 
-        {/* Current License Banner */}
+        {/* License Status Banner */}
         {status?.isActivated ? (
           <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-center space-y-2">
             <span className="text-xs text-emerald-400 font-bold block">
@@ -104,164 +103,139 @@ export default function ActivatePage() {
           </div>
         ) : (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3.5 text-center text-xs text-amber-300 font-medium">
-            🔒 النظام مغلق: يلزم أدخال مفتاح تفعيل صادر من المسؤول لاستخدام البرنامج.
+            🔒 النظام مغلق: أدخل مفتاح التفعيل أدناه أو أرسل طلباً لاستلام المفتاح عبر الواتساب.
           </div>
         )}
 
-        {/* Navigation Tabs */}
-        <div className="grid grid-cols-2 gap-2 bg-slate-950 p-1.5 rounded-2xl border border-slate-800 text-xs font-bold">
-          <button
-            type="button"
-            onClick={() => { setActiveTab("KEY"); setSubmittedReqId(null); }}
-            className={`py-3 rounded-xl transition-all ${activeTab === "KEY" ? "bg-blue-600 text-white shadow-md" : "text-slate-400 hover:text-white"}`}
-          >
-            🔑 إدخال مفتاح التفعيل
-          </button>
-          <button
-            type="button"
-            onClick={() => { setActiveTab("REQUEST"); setSubmittedReqId(null); }}
-            className={`py-3 rounded-xl transition-all ${activeTab === "REQUEST" ? "bg-indigo-600 text-white shadow-md" : "text-slate-400 hover:text-white"}`}
-          >
-            📲 طلب مفتاح تفعيل جديد
-          </button>
-        </div>
-
-        {/* Tab 1: Enter Key */}
-        {activeTab === "KEY" && (
-          <form onSubmit={handleKeySubmit} className="space-y-4 pt-2">
-            <div>
-              <label className="block text-xs font-bold text-slate-300 mb-2">مفتاح التفعيل (License Key)</label>
-              <input
-                type="text"
-                placeholder="أدخل مفتاح التفعيل مثل: JUDO-TRIAL-XXXX-XXXX"
-                value={licenseKeyInput}
-                onChange={(e) => setLicenseKeyInput(e.target.value)}
-                className="w-full bg-slate-950 border border-slate-800 rounded-2xl px-4 py-3 text-sm text-center text-emerald-400 font-mono font-bold tracking-wider focus:outline-none focus:border-blue-500 transition-all placeholder:text-slate-600"
-              />
-            </div>
+        {/* SECTION 1: Enter Key */}
+        <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-4 md:p-5 space-y-3">
+          <h2 className="text-xs font-bold text-blue-400 flex items-center gap-2">
+            <span>🔑</span> إدخال مفتاح التفعيل
+          </h2>
+          <form onSubmit={handleKeySubmit} className="space-y-3">
+            <input
+              type="text"
+              placeholder="أدخل المفتاح مثل: JUDO-PRO-XXXX-XXXX أو JUDO-TRL-XXXX-XXXX"
+              value={licenseKeyInput}
+              onChange={(e) => setLicenseKeyInput(e.target.value)}
+              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-xs md:text-sm text-center text-emerald-400 font-mono font-bold tracking-wider focus:outline-none focus:border-blue-500 transition-all placeholder:text-slate-600"
+            />
             <button
               type="submit"
-              className="w-full bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold py-3.5 rounded-2xl text-xs shadow-lg transition-all"
+              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl text-xs shadow-md transition-all"
             >
-              تأكيد وتفعيل النظام الآن ⚡
+              تنشيط النظام الآن 🚀
             </button>
           </form>
-        )}
+        </div>
 
-        {/* Tab 2: Request Key via WhatsApp & Server */}
-        {activeTab === "REQUEST" && (
-          <div className="space-y-4 pt-2">
-            {submittedReqId ? (
-              <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5 text-center space-y-3">
-                <div className="text-3xl">📱✨</div>
-                <h3 className="text-sm font-bold text-emerald-400">تم إرسال الطلب بنجاح!</h3>
-                <p className="text-xs text-slate-300 leading-relaxed">
-                  تم تسجل طلبك بقاعدة البيانات ورقم الطلب: <strong className="text-white font-mono">{submittedReqId}</strong>.
-                  <br />
-                  تم فتح محادثة WhatsApp مباشرة مع المسؤول لاستلام مفتاح التفعيل.
-                </p>
-                <button
-                  type="button"
-                  onClick={() => { setActiveTab("KEY"); setSubmittedReqId(null); }}
-                  className="px-5 py-2.5 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xs"
-                >
-                  إدخال المفتاح المستلم الآن 🔑
-                </button>
-              </div>
-            ) : (
-              <form onSubmit={executeSubmit} className="space-y-3">
+        {/* SECTION 2: Request Key via WhatsApp */}
+        <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-4 md:p-5 space-y-3">
+          <h2 className="text-xs font-bold text-indigo-400 flex items-center gap-2">
+            <span>💬</span> طلب مفتاح تفعيل جديد (عبر الواتساب)
+          </h2>
+
+          {submittedReqId ? (
+            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 text-center space-y-2">
+              <div className="text-2xl">📱✨</div>
+              <h3 className="text-xs font-bold text-emerald-400">تم إرسال الطلب بنجاح!</h3>
+              <p className="text-[11px] text-slate-300">
+                رقم الطلب المرجعي: <strong className="text-white font-mono">{submittedReqId}</strong>
+                <br />
+                سيقوم الأدمن بتوليد وموافاتك بالمفتاح عبر الواتساب مباشرة.
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={executeSubmit} className="space-y-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">اسم النادي / الجمعية *</label>
+                  <label className="block text-[11px] font-bold text-slate-400 mb-1">اسم النادي / الجمعية *</label>
                   <input
                     type="text"
                     required
-                    placeholder="مثال: نادي الوفاق للجودو"
+                    placeholder="مثال: نادي أبطال الجودو"
                     value={clubName}
                     onChange={(e) => setClubName(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
                   />
                 </div>
-
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1">اسم المسؤول / المدرب *</label>
+                  <label className="block text-[11px] font-bold text-slate-400 mb-1">اسم المسؤول / المدرب *</label>
                   <input
                     type="text"
                     required
-                    placeholder="مثال: كابتن أحمد"
+                    placeholder="مثال: الكابتن محمد"
                     value={managerName}
                     onChange={(e) => setManagerName(e.target.value)}
-                    className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500"
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
                   />
                 </div>
+              </div>
 
-                <div className="grid grid-cols-2 gap-3">
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">رقم الهاتف (الواتساب) *</label>
-                    <input
-                      type="tel"
-                      required
-                      placeholder="05XXXXXXXX"
-                      value={phone}
-                      onChange={(e) => setPhone(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-xs font-bold text-slate-300 mb-1">البريد الإلكتروني *</label>
-                    <input
-                      type="email"
-                      required
-                      placeholder="example@gmail.com"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      className="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-xs text-white focus:outline-none focus:border-blue-500"
-                    />
-                  </div>
-                </div>
-
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-bold text-slate-300 mb-1.5">نوع المفتاح المطلوب *</label>
-                  <div className="grid grid-cols-2 gap-2">
-                    <button
-                      type="button"
-                      onClick={() => setRequestType("TRIAL_14_DAYS")}
-                      className={`p-3 rounded-xl border text-center transition-all ${
-                        requestType === "TRIAL_14_DAYS"
-                          ? "bg-indigo-600/20 border-indigo-500 text-indigo-300 font-bold"
-                          : "bg-slate-950 border-slate-800 text-slate-400"
-                      }`}
-                    >
-                      <div className="text-xs font-bold">⏱️ تجربة مجانية</div>
-                      <div className="text-[10px] opacity-70">لمدة 14 يوماً</div>
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => setRequestType("LIFETIME_PRO")}
-                      className={`p-3 rounded-xl border text-center transition-all ${
-                        requestType === "LIFETIME_PRO"
-                          ? "bg-emerald-600/20 border-emerald-500 text-emerald-300 font-bold"
-                          : "bg-slate-950 border-slate-800 text-slate-400"
-                      }`}
-                    >
-                      <div className="text-xs font-bold">🏆 ترخيص دائم</div>
-                      <div className="text-[10px] opacity-70">مدى الحياة (Lifetime Pro)</div>
-                    </button>
-                  </div>
+                  <label className="block text-[11px] font-bold text-slate-400 mb-1">رقم الهاتف (الواتساب) *</label>
+                  <input
+                    type="tel"
+                    required
+                    placeholder="05XXXXXXXX"
+                    value={phone}
+                    onChange={(e) => setPhone(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                  />
                 </div>
+                <div>
+                  <label className="block text-[11px] font-bold text-slate-400 mb-1">البريد الإلكتروني *</label>
+                  <input
+                    type="email"
+                    required
+                    placeholder="example@gmail.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                  />
+                </div>
+              </div>
 
-                <button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="w-full mt-2 bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3.5 rounded-2xl text-xs shadow-lg transition-all flex items-center justify-center space-x-2 space-x-reverse"
-                >
-                  <span>{isSubmitting ? "جاري تسجيل الطلب..." : "إرسال الطلب والتواصل عبر الواتساب 💬"}</span>
-                </button>
-              </form>
-            )}
-          </div>
-        )}
+              <div>
+                <label className="block text-[11px] font-bold text-slate-400 mb-1.5">نوع الترخيص المطلوبة *</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => setRequestType("TRIAL_14_DAYS")}
+                    className={`p-2.5 rounded-xl border text-center transition-all ${
+                      requestType === "TRIAL_14_DAYS"
+                        ? "bg-indigo-600/20 border-indigo-500 text-indigo-300 font-bold"
+                        : "bg-slate-900 border-slate-800 text-slate-400"
+                    }`}
+                  >
+                    <div className="text-xs">⏱️ تجربة مجانية (14 يوماً)</div>
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => setRequestType("LIFETIME_PRO")}
+                    className={`p-2.5 rounded-xl border text-center transition-all ${
+                      requestType === "LIFETIME_PRO"
+                        ? "bg-emerald-600/20 border-emerald-500 text-emerald-300 font-bold"
+                        : "bg-slate-900 border-slate-800 text-slate-400"
+                    }`}
+                  >
+                    <div className="text-xs">🏆 اشتراك دائم (مدى الحياة)</div>
+                  </button>
+                </div>
+              </div>
+
+              <button
+                type="submit"
+                disabled={isSubmitting}
+                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs shadow-md transition-all flex items-center justify-center space-x-2 space-x-reverse"
+              >
+                <span>{isSubmitting ? "جاري تجهيز الطلب..." : "إرسال الطلب عبر الواتساب مباشرة 💬"}</span>
+              </button>
+            </form>
+          )}
+        </div>
 
       </div>
     </div>
