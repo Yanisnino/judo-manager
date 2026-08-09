@@ -58,16 +58,8 @@ export default function ActivatePage() {
       });
 
       setSubmittedReqId(req.id);
-
-      const typeLabel = requestType === "TRIAL_14_DAYS" ? "فترة تجريبية (14 يوماً)" : "اشتراك مدى الحياة (Lifetime Pro)";
-
-      // Open WhatsApp directly with formatted request
-      const waText = encodeURIComponent(
-        `السلام عليكم، أود طلب مفتاح تفعيل لبرنامج JudoManager Pro:\n- اسم النادي/الجمعية: ${clubName}\n- اسم المسؤول: ${managerName || clubName}\n- رقم الهاتف: ${phone}\n- البريد الإلكتروني: ${email}\n- نوع الترخيص المطلوبة: ${typeLabel}\n- رقم الطلب المرجعي: ${req.id}`
-      );
-      window.open(`https://wa.me/213553823611?text=${waText}`, "_blank");
     } catch (e) {
-      alert("حدث خطأ أثناء الإرسال. يرجى التكرم بفتح الواتساب مباشرة.");
+      alert("حدث خطأ أثناء إرسال الطلب إلى السيرفر. يرجى المحاولة مرة أخرى.");
     } finally {
       setIsSubmitting(false);
     }
@@ -82,9 +74,9 @@ export default function ActivatePage() {
           <div className="w-16 h-16 rounded-3xl bg-blue-600/20 text-blue-400 border border-blue-500/30 font-black text-3xl flex items-center justify-center mx-auto shadow-inner">
             🥋
           </div>
-          <h1 className="text-2xl md:text-3xl font-black text-white">تفعيل JudoManager Pro</h1>
+          <h1 className="text-2xl md:text-3xl font-black text-white">تفعيل نظام JudoManager Pro</h1>
           <p className="text-xs text-slate-400 leading-relaxed">
-            أدخل مفتاح التفعيل الخاص بك للدخول، أو أرسل طلب استلام مفتاح جديد عبر الواتساب
+            أدخل مفتاح التفعيل، أو أرسل طلباً مباشراً للأدمن لاستلام مفتاح تفعيل الحساب
           </p>
         </div>
 
@@ -103,7 +95,7 @@ export default function ActivatePage() {
           </div>
         ) : (
           <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3.5 text-center text-xs text-amber-300 font-medium">
-            🔒 النظام مغلق: أدخل مفتاح التفعيل أدناه أو أرسل طلباً لاستلام المفتاح عبر الواتساب.
+            🔒 النظام مغلق: يلزم إدخال مفتاح ترخيص صادر من الأدمن لاستخدام النظام.
           </div>
         )}
 
@@ -124,26 +116,35 @@ export default function ActivatePage() {
               type="submit"
               className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl text-xs shadow-md transition-all"
             >
-              تنشيط النظام الآن 🚀
+              تأكيد وتأشير التفعيل الآن 🚀
             </button>
           </form>
         </div>
 
-        {/* SECTION 2: Request Key via WhatsApp */}
+        {/* SECTION 2: Direct Cloud Request (No WhatsApp) */}
         <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-4 md:p-5 space-y-3">
           <h2 className="text-xs font-bold text-indigo-400 flex items-center gap-2">
-            <span>💬</span> طلب مفتاح تفعيل جديد (عبر الواتساب)
+            <span>📥</span> إرسال طلب جديد للأدمن مباشرة
           </h2>
 
           {submittedReqId ? (
-            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-xl p-4 text-center space-y-2">
-              <div className="text-2xl">📱✨</div>
-              <h3 className="text-xs font-bold text-emerald-400">تم إرسال الطلب بنجاح!</h3>
-              <p className="text-[11px] text-slate-300">
-                رقم الطلب المرجعي: <strong className="text-white font-mono">{submittedReqId}</strong>
+            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5 text-center space-y-3">
+              <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-2xl">
+                ✓
+              </div>
+              <h3 className="text-sm font-bold text-emerald-400">تم إرسال طلبك بنجاح للأدمن!</h3>
+              <p className="text-xs text-slate-300 leading-relaxed">
+                رقم مرجع الطلب: <strong className="text-white font-mono bg-slate-900 px-2 py-0.5 rounded border border-slate-800">{submittedReqId}</strong>
                 <br />
-                سيقوم الأدمن بتوليد وموافاتك بالمفتاح عبر الواتساب مباشرة.
+                تم وصول طلبك إلى لوحة تحكم الأدمن. بعد معالجة الطلب سيزودك الأدمن بمفتاح التفعيل لاستخدامه أعلى هذه الصفحة.
               </p>
+              <button
+                type="button"
+                onClick={() => setSubmittedReqId(null)}
+                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-all"
+              >
+                إرسال طلب جديد ↺
+              </button>
             </div>
           ) : (
             <form onSubmit={executeSubmit} className="space-y-3">
@@ -164,7 +165,7 @@ export default function ActivatePage() {
                   <input
                     type="text"
                     required
-                    placeholder="مثال: الكابتن محمد"
+                    placeholder="مثال: الكابتن أحمد"
                     value={managerName}
                     onChange={(e) => setManagerName(e.target.value)}
                     className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
@@ -174,7 +175,7 @@ export default function ActivatePage() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-[11px] font-bold text-slate-400 mb-1">رقم الهاتف (الواتساب) *</label>
+                  <label className="block text-[11px] font-bold text-slate-400 mb-1">رقم الهاتف *</label>
                   <input
                     type="tel"
                     required
@@ -221,7 +222,7 @@ export default function ActivatePage() {
                         : "bg-slate-900 border-slate-800 text-slate-400"
                     }`}
                   >
-                    <div className="text-xs">🏆 اشتراك دائم (مدى الحياة)</div>
+                    <div className="text-xs">🏆 ترخيص دائم (مدى الحياة)</div>
                   </button>
                 </div>
               </div>
@@ -229,9 +230,9 @@ export default function ActivatePage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-3 rounded-xl text-xs shadow-md transition-all flex items-center justify-center space-x-2 space-x-reverse"
+                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl text-xs shadow-md transition-all flex items-center justify-center space-x-2 space-x-reverse"
               >
-                <span>{isSubmitting ? "جاري تجهيز الطلب..." : "إرسال الطلب عبر الواتساب مباشرة 💬"}</span>
+                <span>{isSubmitting ? "جاري إرسال الطلب للسيرفر..." : "إرسال الطلب للأدمن مباشرة ⚡"}</span>
               </button>
             </form>
           )}
