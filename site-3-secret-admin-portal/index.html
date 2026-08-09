@@ -1558,8 +1558,6 @@
       refreshAll();
       setInterval(fetchServerRequests, 10000);
     }
-    // Call directly - DOM is ready at bottom of page
-    autoInit();
     function doLogout() {
       if (!confirm('هل تريد تسجيل الخروج؟')) return;
       document.getElementById('loginScreen').style.display = 'flex';
@@ -2103,6 +2101,11 @@
         } catch (e) {}
       }
     }
+
+    // ═══════ INITIALIZE EVERYTHING AFTER DATA SETUP ═══════
+    // Called LAST so sample data and all functions are ready
+    autoInit();
+
   </script>
 </body>
 
