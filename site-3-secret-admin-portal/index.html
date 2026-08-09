@@ -166,7 +166,7 @@
 
     /* ═══ APP ═══ */
     #app {
-      display: none;
+      display: flex;
       min-height: 100vh;
     }
 
@@ -1552,18 +1552,13 @@
     }
 
     /* ═══════ AUTO LOGIN - No password required ═══════ */
-    function doLogin() {
-      // Auto login - no credentials needed
-      autoInit();
-    }
+    function doLogin() { autoInit(); }
     function autoInit() {
-      document.getElementById('loginScreen').style.display = 'none';
-      document.getElementById('app').classList.add('on');
       fetchServerRequests();
       refreshAll();
-      setInterval(fetchServerRequests, 10000); // Auto-sync every 10 sec
+      setInterval(fetchServerRequests, 10000);
     }
-    // Script is at the bottom - DOM is already ready, call directly
+    // Call directly - DOM is ready at bottom of page
     autoInit();
     function doLogout() {
       if (!confirm('هل تريد تسجيل الخروج؟')) return;
