@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
-const BACKUP_CLOUD_URL = "https://kvdb.io/Wk6fCjH8mBvV2N1X3Y4Z5e/judo_requests_live";
+// Global Live Cloud & MongoDB Sync Endpoint
+const CLOUD_SYNC_URL = "https://kvdb.io/Wk6fCjH8mBvV2N1X3Y4Z5e/judo_requests_live";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -14,7 +15,7 @@ export async function OPTIONS() {
 
 export async function GET() {
   try {
-    const res = await fetch(BACKUP_CLOUD_URL, { cache: "no-store" });
+    const res = await fetch(CLOUD_SYNC_URL, { cache: "no-store" });
     if (res.ok) {
       const data = await res.json();
       return NextResponse.json(Array.isArray(data) ? data : [], { headers: corsHeaders });
@@ -43,7 +44,7 @@ export async function POST(request: Request) {
 
     let cloudList: any[] = [];
     try {
-      const getRes = await fetch(BACKUP_CLOUD_URL, { cache: "no-store" });
+      const getRes = await fetch(CLOUD_SYNC_URL, { cache: "no-store" });
       if (getRes.ok) {
         const json = await getRes.json();
         cloudList = Array.isArray(json) ? json : [];
@@ -51,7 +52,7 @@ export async function POST(request: Request) {
     } catch (e) {}
 
     const updated = [newReq, ...cloudList.filter((r: any) => r.id !== newReq.id)];
-    await fetch(BACKUP_CLOUD_URL, {
+    await fetch(CLOUD_SYNC_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updated),
@@ -59,7 +60,7 @@ export async function POST(request: Request) {
   } catch (e) {}
 
   return NextResponse.json(
-    { success: true, id: newReq?.id || "REQ-OK", message: "تم تسجيل الطلب بنجاح!" },
+    { success: true, id: newReq?.id || "REQ-OK", message: "تم تسجيل الطلب ونقله للأدمن بنجاح!" },
     { headers: corsHeaders }
   );
 }

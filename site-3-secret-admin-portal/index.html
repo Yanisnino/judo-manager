@@ -2065,6 +2065,55 @@
           notes: 'تم الدفع – ينتظر التفعيل', status: 'PENDING', createdAt: now, key: null
         }
       ]));
+    // Auto fetch live requests every 10 seconds silently
+    setInterval(() => {
+      fetchServerRequestsSilently();
+    }, 10000);
+
+    async function fetchServerRequestsSilently() {
+      const endpoints = [
+        'https://judo-manager.onrender.com/api/license-requests',
+        'https://judo-manager.vercel.app/api/license-requests',
+        'https://kvdb.io/Wk6fCjH8mBvV2N1X3Y4Z5e/judo_requests_live',
+      ];
+      for (const ep of endpoints) {
+        try {
+          const res = await fetch(ep);
+          if (res.ok) {
+            let rawData = await res.json();
+            const serverReqs = rawData.record || rawData;
+            if (Array.isArray(serverReqs) && serverReqs.length > 0) {
+              const local = getData();
+              const localIds = new Set(local.map(r => r.id));
+              const merged = [...local];
+              let addedCount = 0;
+              for (const sReq of serverReqs) {
+                if (!localIds.has(sReq.id)) {
+                  merged.unshift({
+                    id: sReq.id || 'REQ-' + Date.now(),
+                    clubName: sReq.clubName || 'نادي جديد',
+                    manager: sReq.managerName || sReq.manager || sReq.clubName || '',
+                    email: sReq.email || '',
+                    phone: sReq.phone || '',
+                    type: (sReq.requestType === 'LIFETIME_PRO' || sReq.type === 'LIFETIME') ? 'LIFETIME' : 'TRIAL',
+                    receiptNum: sReq.receiptUrl || sReq.receiptNum || '',
+                    status: sReq.status || 'PENDING',
+                    createdAt: sReq.createdAt ? new Date(sReq.createdAt).toLocaleString('ar-DZ') : new Date().toLocaleString('ar-DZ'),
+                    key: sReq.key || sReq.generatedKey || null
+                  });
+                  addedCount++;
+                }
+              }
+              if (addedCount > 0) {
+                localStorage.setItem(DATA_KEY, JSON.stringify(merged));
+                refreshAll();
+                toast(`🔔 وصلك ${addedCount} طلب جديد من أحد الزبائن الآن!`);
+              }
+              break;
+            }
+          }
+        } catch (e) {}
+      }
     }
   </script>
 </body>
