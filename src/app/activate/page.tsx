@@ -2,11 +2,12 @@
 
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { activateLicense, getStoredLicense, submitLicenseRequest, LicenseStatus } from "@/lib/licenseSystem";
+import { getStoredLicense, LicenseStatus } from "@/lib/licenseSystem";
+
+const ADMIN_WHATSAPP = "213553823611"; // رقم الأدمن
 
 export default function ActivatePage() {
   const router = useRouter();
-  const [licenseKeyInput, setLicenseKeyInput] = useState("");
   const [status, setStatus] = useState<LicenseStatus | null>(null);
 
   // Form states
@@ -15,224 +16,325 @@ export default function ActivatePage() {
   const [phone, setPhone] = useState("");
   const [email, setEmail] = useState("");
   const [requestType, setRequestType] = useState<"TRIAL_14_DAYS" | "LIFETIME_PRO">("TRIAL_14_DAYS");
-  const [submittedReqId, setSubmittedReqId] = useState<string | null>(null);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [waSent, setWaSent] = useState(false);
+
+  // Key activation
+  const [licenseKey, setLicenseKey] = useState("");
+  const [keyError, setKeyError] = useState("");
+  const [keySuccess, setKeySuccess] = useState(false);
 
   useEffect(() => {
     const s = getStoredLicense();
     setStatus(s);
   }, []);
 
-  const handleKeySubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!licenseKeyInput.trim()) {
-      alert("يرجى إدخال مفتاح التفعيل!");
-      return;
-    }
-    const res = activateLicense(licenseKeyInput.trim());
-    if (res.success && res.status) {
-      setStatus(res.status);
-      alert(res.message);
-      router.push("/dashboard");
-    } else {
-      alert(res.message);
-    }
+  const buildWhatsAppMessage = () => {
+    const typeLabel = requestType === "TRIAL_14_DAYS"
+      ? "🆓 فترة تجريبية مجانية (14 يوم)"
+      : "💎 اشتراك دائم مدى الحياة — 9,000 دج";
+
+    return encodeURIComponent(
+      `🥋 *طلب تفعيل JudoManager Pro*\n\n` +
+      `🏛️ *اسم النادي/الجمعية:* ${clubName}\n` +
+      `👤 *اسم المسؤول/المدرب:* ${managerName || clubName}\n` +
+      `📱 *رقم الهاتف:* ${phone}\n` +
+      `📧 *البريد الإلكتروني:* ${email}\n\n` +
+      `📦 *نوع الطلب:* ${typeLabel}\n\n` +
+      `أرجو مراجعة الطلب وإرسال مفتاح التفعيل. شكراً 🙏`
+    );
   };
 
-  const executeSubmit = async (e: React.FormEvent) => {
+  const handleSendWhatsApp = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!clubName.trim() || !phone.trim() || !email.trim()) {
-      alert("يرجى ملء كافة البيانات المطلوبة: اسم النادي، رقم الهاتف، والبريد الإلكتروني!");
+    if (!clubName.trim() || !phone.trim()) {
+      alert("يرجى إدخال اسم النادي ورقم الهاتف على الأقل!");
+      return;
+    }
+    const url = `https://wa.me/${ADMIN_WHATSAPP}?text=${buildWhatsAppMessage()}`;
+    window.open(url, "_blank");
+    setWaSent(true);
+  };
+
+  const handleActivateKey = (e: React.FormEvent) => {
+    e.preventDefault();
+    setKeyError("");
+    const key = licenseKey.trim().toUpperCase();
+
+    if (!key) {
+      setKeyError("يرجى إدخال مفتاح التفعيل!");
       return;
     }
 
-    setIsSubmitting(true);
+    let type: "trial" | "lifetime" | null = null;
+    let expiresAt: number | undefined;
 
-    try {
-      const req = await submitLicenseRequest({
-        clubName,
-        managerName: managerName || clubName,
-        phone,
-        email,
-        requestType,
-      });
-
-      setSubmittedReqId(req.id);
-    } catch (e) {
-      alert("حدث خطأ أثناء إرسال الطلب إلى السيرفر. يرجى المحاولة مرة أخرى.");
-    } finally {
-      setIsSubmitting(false);
+    if (key.startsWith("JUDO-TRL-")) {
+      type = "trial";
+      expiresAt = Date.now() + 14 * 24 * 60 * 60 * 1000;
+    } else if (key.startsWith("JUDO-PRO-") || key.startsWith("JUDO-LIFE-")) {
+      type = "lifetime";
+    } else {
+      setKeyError("❌ المفتاح غير صحيح! تأكد من النسخ الصحيح للمفتاح الذي أرسله الأدمن.");
+      return;
     }
+
+    const licenseData = {
+      key,
+      type,
+      activatedAt: Date.now(),
+      expiresAt,
+      clubName: clubName || "نادي الجودو",
+    };
+
+    localStorage.setItem("judo_manager_active_license", JSON.stringify(licenseData));
+    setKeySuccess(true);
+    setTimeout(() => router.push("/dashboard"), 1800);
   };
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex items-center justify-center p-4 selection:bg-blue-600 selection:text-white">
-      <div className="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-6 md:p-8 shadow-2xl space-y-6">
-        
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <div className="w-16 h-16 rounded-3xl bg-blue-600/20 text-blue-400 border border-blue-500/30 font-black text-3xl flex items-center justify-center mx-auto shadow-inner">
-            🥋
-          </div>
-          <h1 className="text-2xl md:text-3xl font-black text-white">تفعيل نظام JudoManager Pro</h1>
-          <p className="text-xs text-slate-400 leading-relaxed">
-            أدخل مفتاح التفعيل، أو أرسل طلباً مباشراً للأدمن لاستلام مفتاح تفعيل الحساب
+    <div
+      dir="rtl"
+      className="min-h-screen flex items-center justify-center p-4"
+      style={{
+        background: "linear-gradient(135deg, #060b14 0%, #0d1b2e 50%, #060b14 100%)",
+        fontFamily: "'Cairo', sans-serif",
+      }}
+    >
+      {/* Google Font */}
+      <style>{`@import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap');`}</style>
+
+      <div style={{ width: "100%", maxWidth: 520 }}>
+
+        {/* ── HEADER ── */}
+        <div style={{ textAlign: "center", marginBottom: 28 }}>
+          <div style={{
+            width: 72, height: 72,
+            background: "linear-gradient(135deg,#a855f7,#6366f1)",
+            borderRadius: 20,
+            display: "inline-flex", alignItems: "center", justifyContent: "center",
+            fontSize: 34, marginBottom: 14,
+            boxShadow: "0 12px 40px rgba(168,85,247,.4)",
+          }}>🥋</div>
+          <h1 style={{ color: "#e8f0fe", fontSize: 22, fontWeight: 900, marginBottom: 6 }}>
+            تفعيل JudoManager Pro
+          </h1>
+          <p style={{ color: "#4a5e78", fontSize: 12 }}>
+            أرسل طلبك للأدمن عبر واتساب ثم أدخل مفتاح التفعيل
           </p>
         </div>
 
-        {/* License Status Banner */}
-        {status?.isActivated ? (
-          <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-4 text-center space-y-2">
-            <span className="text-xs text-emerald-400 font-bold block">
-              ✅ النظام مفعل حالياً ({status.type === "LIFETIME_PRO" ? "ترخيص دائم مدى الحياة 🏆" : `تجربة مجانية متبقي منها ${status.daysRemaining} أيام ⏱️`})
+        {/* ── ALREADY ACTIVE BANNER ── */}
+        {status?.isActivated && (
+          <div style={{
+            background: "rgba(46,216,168,.08)", border: "1px solid rgba(46,216,168,.25)",
+            borderRadius: 14, padding: "14px 18px", marginBottom: 18, textAlign: "center",
+          }}>
+            <span style={{ color: "#2ed8a8", fontWeight: 800, fontSize: 13 }}>
+              ✅ النظام مفعّل —{" "}
+              {status.type === "LIFETIME_PRO"
+                ? "ترخيص دائم مدى الحياة 🏆"
+                : `تجربة مجانية — متبقٍ ${status.daysRemaining} يوم ⏱️`}
             </span>
-            <button
-              onClick={() => router.push("/dashboard")}
-              className="px-5 py-2.5 bg-emerald-600 hover:bg-emerald-500 text-white font-bold rounded-xl text-xs shadow-md"
-            >
-              الدخول لـ لوحة التحكم ➔
-            </button>
-          </div>
-        ) : (
-          <div className="bg-amber-500/10 border border-amber-500/30 rounded-2xl p-3.5 text-center text-xs text-amber-300 font-medium">
-            🔒 النظام مغلق: يلزم إدخال مفتاح ترخيص صادر من الأدمن لاستخدام النظام.
+            <div style={{ marginTop: 10 }}>
+              <button
+                onClick={() => router.push("/dashboard")}
+                style={{
+                  background: "linear-gradient(135deg,#2ed8a8,#4f8ef7)",
+                  color: "#060b14", fontWeight: 800, fontSize: 12,
+                  padding: "9px 22px", borderRadius: 10, border: "none", cursor: "pointer",
+                }}
+              >
+                الدخول للوحة التحكم ←
+              </button>
+            </div>
           </div>
         )}
 
-        {/* SECTION 1: Enter Key */}
-        <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-4 md:p-5 space-y-3">
-          <h2 className="text-xs font-bold text-blue-400 flex items-center gap-2">
-            <span>🔑</span> إدخال مفتاح التفعيل
-          </h2>
-          <form onSubmit={handleKeySubmit} className="space-y-3">
-            <input
-              type="text"
-              placeholder="أدخل المفتاح مثل: JUDO-PRO-XXXX-XXXX أو JUDO-TRL-XXXX-XXXX"
-              value={licenseKeyInput}
-              onChange={(e) => setLicenseKeyInput(e.target.value)}
-              className="w-full bg-slate-900 border border-slate-700 rounded-xl px-4 py-3 text-xs md:text-sm text-center text-emerald-400 font-mono font-bold tracking-wider focus:outline-none focus:border-blue-500 transition-all placeholder:text-slate-600"
-            />
-            <button
-              type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold py-3 rounded-xl text-xs shadow-md transition-all"
-            >
-              تأكيد وتأشير التفعيل الآن 🚀
-            </button>
-          </form>
-        </div>
-
-        {/* SECTION 2: Direct Cloud Request (No WhatsApp) */}
-        <div className="bg-slate-950/60 border border-slate-800 rounded-2xl p-4 md:p-5 space-y-3">
-          <h2 className="text-xs font-bold text-indigo-400 flex items-center gap-2">
-            <span>📥</span> إرسال طلب جديد للأدمن مباشرة
+        {/* ════════════════════════════════════════
+            CARD 1 — طلب عبر واتساب
+        ════════════════════════════════════════ */}
+        <div style={{
+          background: "#0d1b2e", border: "1px solid rgba(255,255,255,.06)",
+          borderRadius: 18, padding: "24px 22px", marginBottom: 16,
+        }}>
+          <h2 style={{ color: "#e8f0fe", fontSize: 14, fontWeight: 800, marginBottom: 16, display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 18 }}>📲</span> أرسل طلبك للأدمن عبر واتساب
           </h2>
 
-          {submittedReqId ? (
-            <div className="bg-emerald-500/10 border border-emerald-500/30 rounded-2xl p-5 text-center space-y-3">
-              <div className="w-12 h-12 rounded-full bg-emerald-500/20 text-emerald-400 flex items-center justify-center mx-auto text-2xl">
-                ✓
-              </div>
-              <h3 className="text-sm font-bold text-emerald-400">تم إرسال طلبك بنجاح للأدمن!</h3>
-              <p className="text-xs text-slate-300 leading-relaxed">
-                رقم مرجع الطلب: <strong className="text-white font-mono bg-slate-900 px-2 py-0.5 rounded border border-slate-800">{submittedReqId}</strong>
-                <br />
-                تم وصول طلبك إلى لوحة تحكم الأدمن. بعد معالجة الطلب سيزودك الأدمن بمفتاح التفعيل لاستخدامه أعلى هذه الصفحة.
+          {waSent ? (
+            /* ─ تم الإرسال ─ */
+            <div style={{ textAlign: "center", padding: "18px 0" }}>
+              <div style={{ fontSize: 42, marginBottom: 10 }}>✅</div>
+              <p style={{ color: "#2ed8a8", fontWeight: 800, fontSize: 14, marginBottom: 6 }}>
+                تم فتح واتساب بنجاح!
+              </p>
+              <p style={{ color: "#4a5e78", fontSize: 12, lineHeight: 1.7 }}>
+                أرسل الرسالة للأدمن، وبعد الموافقة ستستلم مفتاح التفعيل.
+                <br />أدخله في الخانة أسفله لتفعيل النظام.
               </p>
               <button
-                type="button"
-                onClick={() => setSubmittedReqId(null)}
-                className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-300 font-bold rounded-xl text-xs transition-all"
+                onClick={() => setWaSent(false)}
+                style={{
+                  marginTop: 14, background: "rgba(255,255,255,.05)",
+                  border: "1px solid rgba(255,255,255,.08)", color: "#8fa8c8",
+                  fontSize: 11, fontWeight: 700, padding: "7px 16px",
+                  borderRadius: 9, cursor: "pointer",
+                }}
               >
-                إرسال طلب جديد ↺
+                ↺ إرسال طلب جديد
               </button>
             </div>
           ) : (
-            <form onSubmit={executeSubmit} className="space-y-3">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-400 mb-1">اسم النادي / الجمعية *</label>
+            <form onSubmit={handleSendWhatsApp} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+
+              {/* نوع الاشتراك */}
+              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 }}>
+                <button
+                  type="button"
+                  onClick={() => setRequestType("TRIAL_14_DAYS")}
+                  style={{
+                    padding: "12px 10px", borderRadius: 12, cursor: "pointer",
+                    border: `2px solid ${requestType === "TRIAL_14_DAYS" ? "#a855f7" : "rgba(255,255,255,.07)"}`,
+                    background: requestType === "TRIAL_14_DAYS" ? "rgba(168,85,247,.12)" : "rgba(255,255,255,.02)",
+                    color: requestType === "TRIAL_14_DAYS" ? "#a855f7" : "#4a5e78",
+                    fontWeight: 800, fontSize: 12, textAlign: "center",
+                    transition: "all .18s",
+                  }}
+                >
+                  <div style={{ fontSize: 22 }}>⏱️</div>
+                  <div style={{ marginTop: 5 }}>فترة تجريبية</div>
+                  <div style={{ fontSize: 10, fontWeight: 600, marginTop: 2, color: requestType === "TRIAL_14_DAYS" ? "#c084fc" : "#4a5e78" }}>
+                    مجانية — 14 يوم
+                  </div>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => setRequestType("LIFETIME_PRO")}
+                  style={{
+                    padding: "12px 10px", borderRadius: 12, cursor: "pointer",
+                    border: `2px solid ${requestType === "LIFETIME_PRO" ? "#f59e0b" : "rgba(255,255,255,.07)"}`,
+                    background: requestType === "LIFETIME_PRO" ? "rgba(245,158,11,.10)" : "rgba(255,255,255,.02)",
+                    color: requestType === "LIFETIME_PRO" ? "#f59e0b" : "#4a5e78",
+                    fontWeight: 800, fontSize: 12, textAlign: "center",
+                    transition: "all .18s",
+                  }}
+                >
+                  <div style={{ fontSize: 22 }}>💎</div>
+                  <div style={{ marginTop: 5 }}>اشتراك دائم</div>
+                  <div style={{ fontSize: 10, fontWeight: 600, marginTop: 2, color: requestType === "LIFETIME_PRO" ? "#fbbf24" : "#4a5e78" }}>
+                    مدى الحياة — 9,000 دج
+                  </div>
+                </button>
+              </div>
+
+              {/* الحقول */}
+              {[
+                { id: "clubName",    label: "اسم النادي / الجمعية *",  placeholder: "مثال: نادي أبطال الجودو", value: clubName,    setter: setClubName,    required: true },
+                { id: "managerName", label: "اسم المسؤول / المدرب",    placeholder: "مثال: الأستاذ أحمد",     value: managerName, setter: setManagerName, required: false },
+                { id: "phone",       label: "رقم الهاتف *",             placeholder: "05XXXXXXXX",              value: phone,       setter: setPhone,       required: true },
+                { id: "email",       label: "البريد الإلكتروني",        placeholder: "example@gmail.com",        value: email,       setter: setEmail,       required: false },
+              ].map(f => (
+                <div key={f.id}>
+                  <label style={{ display: "block", color: "#8fa8c8", fontSize: 11, fontWeight: 700, marginBottom: 5 }}>
+                    {f.label}
+                  </label>
                   <input
                     type="text"
-                    required
-                    placeholder="مثال: نادي أبطال الجودو"
-                    value={clubName}
-                    onChange={(e) => setClubName(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
+                    placeholder={f.placeholder}
+                    value={f.value}
+                    required={f.required}
+                    onChange={e => f.setter(e.target.value)}
+                    style={{
+                      width: "100%", background: "rgba(255,255,255,.03)",
+                      border: "1px solid rgba(255,255,255,.07)", borderRadius: 10,
+                      padding: "10px 14px", color: "white", fontSize: 12,
+                      outline: "none", boxSizing: "border-box",
+                      fontFamily: "'Cairo',sans-serif",
+                    }}
                   />
                 </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-400 mb-1">اسم المسؤول / المدرب *</label>
-                  <input
-                    type="text"
-                    required
-                    placeholder="مثال: الكابتن أحمد"
-                    value={managerName}
-                    onChange={(e) => setManagerName(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
-                  />
-                </div>
-              </div>
+              ))}
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-400 mb-1">رقم الهاتف *</label>
-                  <input
-                    type="tel"
-                    required
-                    placeholder="05XXXXXXXX"
-                    value={phone}
-                    onChange={(e) => setPhone(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-[11px] font-bold text-slate-400 mb-1">البريد الإلكتروني *</label>
-                  <input
-                    type="email"
-                    required
-                    placeholder="example@gmail.com"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    className="w-full bg-slate-900 border border-slate-800 rounded-xl px-3 py-2 text-xs text-white focus:outline-none focus:border-indigo-500"
-                  />
-                </div>
-              </div>
-
-              <div>
-                <label className="block text-[11px] font-bold text-slate-400 mb-1.5">نوع الترخيص المطلوبة *</label>
-                <div className="grid grid-cols-2 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setRequestType("TRIAL_14_DAYS")}
-                    className={`p-2.5 rounded-xl border text-center transition-all ${
-                      requestType === "TRIAL_14_DAYS"
-                        ? "bg-indigo-600/20 border-indigo-500 text-indigo-300 font-bold"
-                        : "bg-slate-900 border-slate-800 text-slate-400"
-                    }`}
-                  >
-                    <div className="text-xs">⏱️ تجربة مجانية (14 يوماً)</div>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setRequestType("LIFETIME_PRO")}
-                    className={`p-2.5 rounded-xl border text-center transition-all ${
-                      requestType === "LIFETIME_PRO"
-                        ? "bg-emerald-600/20 border-emerald-500 text-emerald-300 font-bold"
-                        : "bg-slate-900 border-slate-800 text-slate-400"
-                    }`}
-                  >
-                    <div className="text-xs">🏆 ترخيص دائم (مدى الحياة)</div>
-                  </button>
-                </div>
-              </div>
-
+              {/* زر واتساب */}
               <button
                 type="submit"
-                disabled={isSubmitting}
-                className="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-3 rounded-xl text-xs shadow-md transition-all flex items-center justify-center space-x-2 space-x-reverse"
+                style={{
+                  width: "100%", padding: "13px",
+                  background: "linear-gradient(135deg,#25D366,#128C7E)",
+                  border: "none", borderRadius: 12, color: "white",
+                  fontWeight: 900, fontSize: 14, cursor: "pointer",
+                  display: "flex", alignItems: "center", justifyContent: "center", gap: 9,
+                  boxShadow: "0 6px 24px rgba(37,211,102,.3)",
+                  transition: "all .2s", marginTop: 4,
+                  fontFamily: "'Cairo',sans-serif",
+                }}
               >
-                <span>{isSubmitting ? "جاري إرسال الطلب للسيرفر..." : "إرسال الطلب للأدمن مباشرة ⚡"}</span>
+                <span style={{ fontSize: 20 }}>💬</span>
+                إرسال الطلب عبر واتساب
+              </button>
+            </form>
+          )}
+        </div>
+
+        {/* ════════════════════════════════════════
+            CARD 2 — إدخال مفتاح التفعيل
+        ════════════════════════════════════════ */}
+        <div style={{
+          background: "#0d1b2e", border: "1px solid rgba(255,255,255,.06)",
+          borderRadius: 18, padding: "24px 22px",
+        }}>
+          <h2 style={{ color: "#e8f0fe", fontSize: 14, fontWeight: 800, marginBottom: 6, display: "flex", alignItems: "center", gap: 8 }}>
+            <span style={{ fontSize: 18 }}>🔑</span> إدخال مفتاح التفعيل
+          </h2>
+          <p style={{ color: "#4a5e78", fontSize: 11, marginBottom: 16, lineHeight: 1.7 }}>
+            بعد موافقة الأدمن سيرسل لك مفتاحاً مثل:&nbsp;
+            <span style={{ fontFamily: "'JetBrains Mono',monospace", color: "#2ed8a8" }}>JUDO-PRO-XXXX-XXXX</span>
+          </p>
+
+          {keySuccess ? (
+            <div style={{ textAlign: "center", padding: "16px 0" }}>
+              <div style={{ fontSize: 42 }}>🎉</div>
+              <p style={{ color: "#2ed8a8", fontWeight: 800, fontSize: 14, marginTop: 10 }}>
+                تم التفعيل بنجاح! جاري الدخول...
+              </p>
+            </div>
+          ) : (
+            <form onSubmit={handleActivateKey} style={{ display: "flex", flexDirection: "column", gap: 12 }}>
+              {keyError && (
+                <div style={{
+                  background: "rgba(248,113,113,.08)", border: "1px solid rgba(248,113,113,.2)",
+                  borderRadius: 9, padding: "9px 14px", color: "#f87171", fontSize: 12, fontWeight: 700,
+                }}>
+                  {keyError}
+                </div>
+              )}
+              <input
+                type="text"
+                placeholder="JUDO-PRO-XXXX-XXXX  أو  JUDO-TRL-XXXX-XXXX"
+                value={licenseKey}
+                onChange={e => { setLicenseKey(e.target.value); setKeyError(""); }}
+                style={{
+                  width: "100%", background: "rgba(255,255,255,.03)",
+                  border: "1px solid rgba(46,216,168,.25)", borderRadius: 10,
+                  padding: "12px 14px", color: "#2ed8a8",
+                  fontFamily: "'JetBrains Mono',monospace", fontSize: 14,
+                  fontWeight: 600, textAlign: "center", letterSpacing: ".08em",
+                  outline: "none", boxSizing: "border-box",
+                }}
+              />
+              <button
+                type="submit"
+                style={{
+                  width: "100%", padding: "13px",
+                  background: "linear-gradient(135deg,#a855f7,#6366f1)",
+                  border: "none", borderRadius: 12, color: "white",
+                  fontWeight: 900, fontSize: 14, cursor: "pointer",
+                  boxShadow: "0 6px 24px rgba(168,85,247,.35)",
+                  transition: "all .2s", fontFamily: "'Cairo',sans-serif",
+                }}
+              >
+                🚀 تفعيل النظام والدخول
               </button>
             </form>
           )}

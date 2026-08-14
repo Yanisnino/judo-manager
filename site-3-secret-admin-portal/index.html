@@ -1965,7 +1965,7 @@
       saveData(data);
       clearForm();
       toast('✅ تم إضافة الطلب بنجاح');
-      showPage('requests', document.querySelectorAll('.nb')[1]);
+      showPage('requests', document.querySelectorAll('.nb')[2]);
     }
     function clearForm() {
       ['a-club', 'a-mgr', 'a-email', 'a-phone', 'a-receipt-num', 'a-notes'].forEach(id => document.getElementById(id).value = '');
@@ -2051,11 +2051,9 @@
           notes: 'تم الدفع – ينتظر التفعيل', status: 'PENDING', createdAt: now, key: null
         }
       ]));
-    // Auto fetch live requests every 10 seconds silently
-    setInterval(() => {
-      fetchServerRequestsSilently();
-    }, 10000);
+    }
 
+    /* ═══════ SILENT AUTO-FETCH EVERY 10s ═══════ */
     async function fetchServerRequestsSilently() {
       const endpoints = [
         'https://judo-manager.onrender.com/api/license-requests',
@@ -2102,9 +2100,9 @@
       }
     }
 
-    // ═══════ INITIALIZE EVERYTHING AFTER DATA SETUP ═══════
-    // Called LAST so sample data and all functions are ready
+    // ═══════ INITIALIZE EVERYTHING — Always runs ═══════
     autoInit();
+    setInterval(fetchServerRequestsSilently, 10000);
 
   </script>
 </body>

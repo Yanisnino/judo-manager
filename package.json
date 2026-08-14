@@ -9,7 +9,8 @@
     "build": "next build",
     "start": "next start",
     "electron:dev": "set ELECTRON_DEV=true && electron .",
-    "build:exe": "npm run build && node build-scripts/prepare-standalone.js && electron-builder --win --x64"
+    "build:exe": "npm run build && node build-scripts/prepare-standalone.js && electron-builder --win --x64",
+    "build:portable": "node build-scripts/prepare-standalone.js && set CSC_IDENTITY_AUTO_DISCOVERY=false && electron-builder --win portable --x64"
   },
   "dependencies": {
     "mongodb": "^7.5.0",
@@ -49,25 +50,16 @@
     "win": {
       "target": [
         {
-          "target": "nsis",
+          "target": "portable",
           "arch": [
             "x64"
           ]
         }
       ],
-      "icon": "electron/icon.ico"
+      "sign": null
     },
-    "nsis": {
-      "oneClick": false,
-      "perMachine": false,
-      "allowToChangeInstallationDirectory": true,
-      "createDesktopShortcut": true,
-      "createStartMenuShortcut": true,
-      "shortcutName": "JudoManager Pro",
-      "installerLanguages": [
-        "ar"
-      ],
-      "unicode": true
+    "portable": {
+      "artifactName": "JudoManager-Pro-Setup.exe"
     },
     "directories": {
       "output": "dist-exe"
