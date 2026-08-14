@@ -50,7 +50,7 @@
     "win": {
       "target": [
         {
-          "target": "portable",
+          "target": "nsis",
           "arch": [
             "x64"
           ]
@@ -58,7 +58,12 @@
       ],
       "sign": null
     },
-    "portable": {
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true,
+      "createDesktopShortcut": true,
+      "createStartMenuShortcut": true,
+      "shortcutName": "JudoManager Pro",
       "artifactName": "JudoManager-Pro-Setup.exe"
     },
     "directories": {

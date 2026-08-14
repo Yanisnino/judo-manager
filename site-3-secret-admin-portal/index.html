@@ -1763,23 +1763,43 @@
       return `<span class="bx bp">⏳ قيد التحقق</span>`;
     }
 
-    /* ═══════ APPROVE / REJECT / DELETE ═══════ */
+    /* ═══════ APPROVE / REJECT / DELETE WITH MONGODB SYNC ═══════ */
     function genKey(type) {
-      const p = type === 'LIFETIME' ? 'JUDO-PRO' : 'JUDO-TRL';
+      const p = (type === 'LIFETIME' || type === 'LIFETIME_PRO') ? 'JUDO-PRO' : 'JUDO-TRL';
       const r = () => Math.floor(1000 + Math.random() * 9000);
       return `${p}-${r()}-${r()}`;
     }
 
-    function approveReq(id) {
+    async function approveReq(id) {
       const data = getData();
       const req = data.find(r => r.id === id);
       if (!req) return;
-      req.key = genKey(req.type);
+
+      const generatedKey = genKey(req.type);
+      req.key = generatedKey;
       req.status = 'APPROVED';
       req.approvedAt = new Date().toLocaleString('ar-DZ');
       saveData(data);
       currentReq = req;
       showKeyModal(req);
+
+      // ── Sync Approval & Key with MongoDB Atlas Server ──
+      try {
+        await fetch('https://judo-manager.onrender.com/api/license', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'GENERATE_KEY',
+            requestId: req.id,
+            requestType: (req.type === 'LIFETIME' || req.type === 'LIFETIME_PRO') ? 'LIFETIME_PRO' : 'TRIAL_14_DAYS',
+            clubName: req.clubName,
+            managerName: req.manager || '',
+            phone: req.phone || '',
+          })
+        });
+      } catch (e) {
+        console.warn('MongoDB Sync warning:', e);
+      }
     }
 
     function rejectReq(id) {

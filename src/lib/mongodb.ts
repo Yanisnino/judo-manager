@@ -1,7 +1,6 @@
 import { MongoClient } from "mongodb";
 
-// Direct fallback URI with user credentials provided
-const DEFAULT_MONGODB_URI = "mongodb+srv://nis174731_db_user:CKu0xGBwMaykHaVp@cluster0.wtv2khg.mongodb.net/judomanager?retryWrites=true&w=majority&appName=Cluster0";
+const DEFAULT_MONGODB_URI = "mongodb+srv://nis174731_db_user:sRucG04SfejdTYHD@cluster0.wtv2khg.mongodb.net/judomanager?retryWrites=true&w=majority&appName=Cluster0";
 
 const MONGODB_URI = process.env.MONGODB_URI || DEFAULT_MONGODB_URI;
 

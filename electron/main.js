@@ -67,8 +67,8 @@ function createWindow(url) {
     minHeight: 680,
     title: 'JudoManager Pro',
     autoHideMenuBar: true,
-    backgroundColor: '#0f172a',
-    show: false, // show after load
+    backgroundColor: '#060b14',
+    show: true, // Show window instantly so user knows it launched
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
@@ -76,10 +76,6 @@ function createWindow(url) {
   });
 
   mainWindow.loadURL(url);
-
-  mainWindow.once('ready-to-show', () => {
-    mainWindow.show();
-  });
 
   mainWindow.on('closed', () => {
     mainWindow = null;
