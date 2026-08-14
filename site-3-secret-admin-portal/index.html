@@ -1963,29 +1963,46 @@
       document.getElementById('uploadPrev').innerHTML = '';
     }
 
-    function addRequest() {
+    async function addRequest() {
       const club = document.getElementById('a-club').value.trim();
       const email = document.getElementById('a-email').value.trim();
       if (!club || !email) { alert('الرجاء إدخال اسم النادي والبريد الإلكتروني'); return; }
-      const data = getData();
-      data.push({
+
+      const newObj = {
         id: 'REQ-' + Date.now(),
         clubName: club,
         manager: document.getElementById('a-mgr').value.trim(),
+        managerName: document.getElementById('a-mgr').value.trim(),
         email,
         phone: document.getElementById('a-phone').value.trim(),
         type: document.getElementById('a-type').value,
+        requestType: (document.getElementById('a-type').value === 'LIFETIME' || document.getElementById('a-type').value === 'LIFETIME_PRO') ? 'LIFETIME_PRO' : 'TRIAL_14_DAYS',
         receiptNum: document.getElementById('a-receipt-num').value.trim(),
+        receiptUrl: document.getElementById('a-receipt-num').value.trim(),
         receiptImg: uploadedImageBase64 || null,
         notes: document.getElementById('a-notes').value.trim(),
         status: 'PENDING',
         createdAt: new Date().toLocaleString('ar-DZ'),
         key: null
-      });
+      };
+
+      const data = getData();
+      data.unshift(newObj);
       saveData(data);
       clearForm();
-      toast('✅ تم إضافة الطلب بنجاح');
+      toast('✅ تم إضافة الطلب وحفظه في MongoDB Atlas بنجاح');
       showPage('requests', document.querySelectorAll('.nb')[2]);
+
+      // ── Sync to MongoDB Atlas API ──
+      try {
+        await fetch('https://judo-manager.onrender.com/api/license-requests', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(newObj)
+        });
+      } catch (e) {
+        console.warn('MongoDB Sync warning:', e);
+      }
     }
     function clearForm() {
       ['a-club', 'a-mgr', 'a-email', 'a-phone', 'a-receipt-num', 'a-notes'].forEach(id => document.getElementById(id).value = '');
