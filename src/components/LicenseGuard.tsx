@@ -97,55 +97,55 @@ export default function LicenseGuard({ children }: { children: React.ReactNode }
     setTab("key");
   };
 
-  const handleActivateKey = (e: React.FormEvent) => {
+  const handleActivateKey = async (e: React.FormEvent) => {
     e.preventDefault();
     setKeyError("");
     const key = licenseKey.trim().toUpperCase();
     if (!key) { setKeyError("يرجى إدخال مفتاح التفعيل!"); return; }
 
-    let licType: "TRIAL_14_DAYS" | "LIFETIME_PRO";
-    let legacyType: "trial" | "lifetime";
-    let days: number;
+    try {
+      // 1. الاتصال المباشر بقاعدة بيانات MongoDB لتفعيل وقفل الجهاز للمرة الواحدة
+      const deviceHwId = typeof window !== "undefined" ? (window.navigator.userAgent + window.navigator.platform).replace(/\s+/g, '') : "DEVICE-HW-ID";
 
-    if (key.startsWith("JUDO-TRL-")) {
-      licType = "TRIAL_14_DAYS";
-      legacyType = "trial";
-      days = 14;
-    } else if (key.startsWith("JUDO-PRO-") || key.startsWith("JUDO-LIFE-")) {
-      licType = "LIFETIME_PRO";
-      legacyType = "lifetime";
-      days = 3650;
-    } else {
-      setKeyError("❌ المفتاح غير صحيح! تأكد من النسخ الصحيح للمفتاح الذي أرسله الأدمن.");
-      return;
+      const res = await fetch("/api/license", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          action: "ACTIVATE_KEY",
+          key,
+          deviceHardwareId: deviceHwId,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (!res.ok || !data.success) {
+        setKeyError(data.message || "❌ فشل التفعيل في قاعدة البيانات المركزية!");
+        return;
+      }
+
+      // 2. الحفظ المحلي الموحد عند النجاح
+      const now = new Date();
+      const isLifetime = data.license?.type === "LIFETIME_PRO" || key.includes("PRO");
+      const days = isLifetime ? 3650 : 14;
+      const expiresAt = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+
+      const licenseStatus = {
+        isActivated: true,
+        licenseKey: key,
+        type: isLifetime ? "LIFETIME_PRO" : "TRIAL_14_DAYS",
+        clubName: data.license?.clubName || clubName || "نادي الجودو المحترف",
+        activatedAt: now.toISOString(),
+        expiresAt: expiresAt.toISOString(),
+        daysRemaining: days,
+      };
+
+      localStorage.setItem(LICENSE_KEY_STORAGE, JSON.stringify(licenseStatus));
+      setIsActivated(true);
+
+    } catch (err) {
+      setKeyError("⚠️ تعذر الاتصال بسيرفر التراخيص المركزي MongoDB Atlas. يرجى التأكد من الاتصال بالإنترنت.");
     }
-
-    const now = new Date();
-    const expiresAt = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
-    const club = clubName || "نادي الجودو";
-
-    // ── صيغة licenseSystem.ts (يستخدمها dashboard/page.tsx) ──
-    const licenseStatus = {
-      isActivated: true,
-      licenseKey: key,
-      type: licType,
-      clubName: club,
-      activatedAt: now.toISOString(),
-      expiresAt: expiresAt.toISOString(),
-      daysRemaining: days,
-    };
-    localStorage.setItem(LICENSE_KEY_STORAGE, JSON.stringify(licenseStatus));
-
-    // ── صيغة LicenseGuard القديمة (احتياطي) ──
-    localStorage.setItem("judo_manager_active_license_v2", JSON.stringify({
-      key,
-      type: legacyType,
-      activatedAt: Date.now(),
-      expiresAt: expiresAt.getTime(),
-      clubName: club,
-    }));
-
-    setIsActivated(true);
   };
 
   /* ── Loading ── */

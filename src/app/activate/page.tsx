@@ -66,29 +66,37 @@ export default function ActivatePage() {
     }
 
     let type: "trial" | "lifetime" | null = null;
-    let expiresAt: number | undefined;
+    let days = 14;
 
     if (key.startsWith("JUDO-TRL-")) {
       type = "trial";
-      expiresAt = Date.now() + 14 * 24 * 60 * 60 * 1000;
+      days = 14;
     } else if (key.startsWith("JUDO-PRO-") || key.startsWith("JUDO-LIFE-")) {
       type = "lifetime";
+      days = 3650;
     } else {
       setKeyError("❌ المفتاح غير صحيح! تأكد من النسخ الصحيح للمفتاح الذي أرسله الأدمن.");
       return;
     }
 
+    const now = new Date();
+    const expiresDate = new Date(now.getTime() + days * 24 * 60 * 60 * 1000);
+
     const licenseData = {
-      key,
-      type,
-      activatedAt: Date.now(),
-      expiresAt,
+      isActivated: true,
+      licenseKey: key,
+      type: type === "trial" ? "TRIAL_14_DAYS" : "LIFETIME_PRO",
       clubName: clubName || "نادي الجودو",
+      activatedAt: now.toISOString(),
+      expiresAt: expiresDate.toISOString(),
+      daysRemaining: days,
     };
 
     localStorage.setItem("judo_manager_active_license", JSON.stringify(licenseData));
     setKeySuccess(true);
-    setTimeout(() => router.push("/dashboard"), 1800);
+    setTimeout(() => {
+      window.location.href = "/dashboard";
+    }, 1000);
   };
 
   return (
