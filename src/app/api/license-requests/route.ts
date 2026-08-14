@@ -20,13 +20,16 @@ export async function GET() {
     const formatted = requests.map(r => ({
       id: r.id || r._id.toString(),
       clubName: r.clubName,
-      managerName: r.managerName,
-      phone: r.phone,
-      email: r.email,
-      requestType: r.requestType,
-      receiptUrl: r.receiptUrl || "",
+      managerName: r.managerName || r.manager || "",
+      phone: r.phone || "",
+      email: r.email || "",
+      requestType: r.requestType || r.type || "TRIAL_14_DAYS",
+      receiptNum: r.receiptNum || r.receiptUrl || "",
+      receiptUrl: r.receiptUrl || r.receiptNum || "",
+      notes: r.notes || "",
+      hardwareId: r.hardwareId || "",
       status: r.status,
-      generatedKey: r.generatedKey || "",
+      generatedKey: r.generatedKey || r.key || "",
       createdAt: r.createdAt,
     }));
 
@@ -46,14 +49,17 @@ export async function POST(request: Request) {
     const newReq = {
       id: body.id || "REQ-" + Math.floor(1000 + Math.random() * 9000),
       clubName: body.clubName || "نادي جديد",
-      managerName: body.managerName || "",
+      managerName: body.managerName || body.manager || "",
       phone: body.phone || "",
       email: body.email || "",
-      requestType: body.requestType || "TRIAL_14_DAYS",
-      receiptUrl: body.receiptUrl || "",
+      requestType: body.requestType || body.type || "TRIAL_14_DAYS",
+      receiptNum: body.receiptNum || body.receiptUrl || "",
+      receiptUrl: body.receiptUrl || body.receiptNum || "",
+      notes: body.notes || "",
       hardwareId: body.hardwareId || "",
-      status: "PENDING",
-      createdAt: new Date().toISOString(),
+      status: body.status || "PENDING",
+      generatedKey: body.generatedKey || body.key || "",
+      createdAt: body.createdAt || new Date().toISOString(),
     };
 
     await db.collection("license_requests").updateOne(

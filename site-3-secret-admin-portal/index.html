@@ -1777,13 +1777,39 @@
 
       const generatedKey = genKey(req.type);
       req.key = generatedKey;
+      req.generatedKey = generatedKey;
       req.status = 'APPROVED';
       req.approvedAt = new Date().toLocaleString('ar-DZ');
       saveData(data);
       currentReq = req;
       showKeyModal(req);
 
-      // ── Sync Approval & Key with MongoDB Atlas Server ──
+      // ── 1. Update license_requests collection in MongoDB ──
+      try {
+        await fetch('https://judo-manager.onrender.com/api/license-requests', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: req.id,
+            clubName: req.clubName,
+            managerName: req.manager || '',
+            phone: req.phone || '',
+            email: req.email || '',
+            requestType: (req.type === 'LIFETIME' || req.type === 'LIFETIME_PRO') ? 'LIFETIME_PRO' : 'TRIAL_14_DAYS',
+            receiptUrl: req.receiptNum || '',
+            receiptNum: req.receiptNum || '',
+            notes: req.notes || '',
+            status: 'APPROVED',
+            generatedKey: generatedKey,
+            key: generatedKey,
+            createdAt: req.createdAt || new Date().toISOString()
+          })
+        });
+      } catch (e) {
+        console.warn('MongoDB Request update warning:', e);
+      }
+
+      // ── 2. Insert into licenses collection for device locking ──
       try {
         await fetch('https://judo-manager.onrender.com/api/license', {
           method: 'POST',
@@ -1798,7 +1824,7 @@
           })
         });
       } catch (e) {
-        console.warn('MongoDB Sync warning:', e);
+        console.warn('MongoDB License lock warning:', e);
       }
     }
 
